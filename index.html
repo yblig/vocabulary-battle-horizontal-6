@@ -1,12 +1,13 @@
+```html
 <!DOCTYPE html>
-<html lang="id" class="h-full w-full bg-slate-950 text-white select-none">
+<html lang="id" class="h-full w-full bg-slate-950 text-white select-none overflow-hidden">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vocabulary Battle - TV & Mobile Edition</title>
+    <title>Vocabulary Battle - Arena Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fonts -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,12 +22,12 @@
                     },
                     colors: {
                         redTeam: '#ff0055',
-                        redDark: '#3b0013',
+                        redDark: '#2a000e',
                         blueTeam: '#00d2ff',
-                        blueDark: '#002b36',
+                        blueDark: '#002233',
                         neonYellow: '#ffea00',
                         neonGreen: '#00ff66',
-                        darkBg: '#090a10',
+                        darkBg: '#08090f',
                     }
                 }
             }
@@ -41,30 +42,32 @@
         }
 
         body {
-            background-color: #090a10;
+            background-color: #08090f;
             font-family: 'Rajdhani', sans-serif;
-            overflow-x: hidden;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
         }
 
         .cyber-grid {
             background-image: 
                 linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 24px 24px;
+            background-size: 20px 20px;
         }
 
-        .text-glow-red { text-shadow: 0 0 12px rgba(255, 0, 85, 0.8); }
-        .text-glow-blue { text-shadow: 0 0 12px rgba(0, 210, 255, 0.8); }
-        .text-glow-yellow { text-shadow: 0 0 12px rgba(255, 234, 0, 0.8); }
+        .text-glow-red { text-shadow: 0 0 10px rgba(255, 0, 85, 0.8); }
+        .text-glow-blue { text-shadow: 0 0 10px rgba(0, 210, 255, 0.8); }
+        .text-glow-yellow { text-shadow: 0 0 10px rgba(255, 234, 0, 0.8); }
 
-        .border-glow-red { box-shadow: 0 0 12px rgba(255, 0, 85, 0.35); }
-        .border-glow-blue { box-shadow: 0 0 12px rgba(0, 210, 255, 0.35); }
+        .border-glow-red { box-shadow: 0 0 15px rgba(255, 0, 85, 0.3); }
+        .border-glow-blue { box-shadow: 0 0 15px rgba(0, 210, 255, 0.3); }
 
         .btn-game {
-            transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .btn-game:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
             filter: brightness(1.2);
         }
 
@@ -74,120 +77,135 @@
         ::-webkit-scrollbar-thumb { background: #ff0055; border-radius: 4px; }
     </style>
 </head>
-<body class="cyber-grid min-h-screen w-full flex flex-col justify-between relative text-white">
+<body class="cyber-grid h-screen w-screen flex flex-col justify-between relative text-white select-none">
 
-    <header class="w-full bg-slate-900/90 border-b border-slate-800 px-3 py-2 flex items-center justify-between z-30 sticky top-0 backdrop-blur-md">
-        <!-- Team Red HUD -->
+    <!-- Top Floating Header Bar -->
+    <header class="w-full h-10 bg-slate-900/90 border-b border-slate-800 px-3 flex items-center justify-between z-30 flex-shrink-0 backdrop-blur-md">
+        <!-- Team Red Mini Info -->
         <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-redTeam animate-pulse"></span>
-            <span id="hud-p1-name" class="font-orbitron font-bold text-xs sm:text-sm text-redTeam">MERAH</span>
-            <span id="hud-p1-score" class="font-orbitron font-black text-sm sm:text-base text-white bg-redDark px-2.5 py-0.5 rounded border border-redTeam/60">0</span>
+            <span id="hud-p1-name" class="font-orbitron font-bold text-xs text-redTeam">TIM MERAH</span>
+            <span id="hud-p1-score" class="font-orbitron font-black text-xs text-white bg-redDark px-2 py-0.5 rounded border border-redTeam/60">0</span>
         </div>
 
-        <!-- Center Match Stats & Sound Control -->
+        <!-- Center Match Control -->
         <div class="flex items-center gap-2 sm:gap-4">
-            <span id="hud-q-count" class="font-orbitron text-[11px] sm:text-xs text-slate-400">SOAL 1/15</span>
-            <div id="hud-timer" class="font-orbitron font-black text-sm sm:text-base text-neonYellow bg-black px-2.5 py-0.5 rounded border border-neonYellow/60 shadow">
+            <span id="hud-q-count" class="font-orbitron text-[10px] sm:text-xs text-slate-400">SOAL 1/15</span>
+            <div id="hud-timer" class="font-orbitron font-black text-xs sm:text-sm text-neonYellow bg-black px-2 py-0.5 rounded border border-neonYellow/60 shadow">
                 10s
             </div>
-            <button onclick="toggleAudio()" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-xs text-slate-300">
+            <button onclick="toggleAudio()" class="p-1 bg-slate-800 hover:bg-slate-700 rounded text-xs text-slate-300">
                 <i id="sound-icon" class="fa-solid fa-volume-high text-neonGreen"></i>
             </button>
         </div>
 
-        <!-- Team Blue HUD -->
+        <!-- Team Blue Mini Info -->
         <div class="flex items-center gap-2">
-            <span id="hud-p2-score" class="font-orbitron font-black text-sm sm:text-base text-white bg-blueDark px-2.5 py-0.5 rounded border border-blueTeam/60">0</span>
-            <span id="hud-p2-name" class="font-orbitron font-bold text-xs sm:text-sm text-blueTeam">BIRU</span>
+            <span id="hud-p2-score" class="font-orbitron font-black text-xs text-white bg-blueDark px-2 py-0.5 rounded border border-blueTeam/60">0</span>
+            <span id="hud-p2-name" class="font-orbitron font-bold text-xs text-blueTeam">TIM BIRU</span>
             <span class="w-2.5 h-2.5 rounded-full bg-blueTeam animate-pulse"></span>
         </div>
     </header>
 
-    <main class="flex-1 w-full max-w-7xl mx-auto p-2 sm:p-4 flex flex-col md:flex-row gap-3 md:gap-4 justify-between items-stretch">
+    <!-- Main Split Screen Battle Field (Matches User Sketch Exact Layout) -->
+    <main class="flex-1 w-full h-[calc(100vh-2.5rem)] flex flex-row items-stretch justify-between p-2 gap-2 overflow-hidden">
         
-        <!-- ================= SISI TIM MERAH (P1) ================= -->
-        <section id="side-p1" class="flex-1 flex flex-col justify-between bg-slate-900/70 border-2 border-redTeam/40 rounded-2xl p-3 sm:p-4 border-glow-red relative">
-            <div class="flex items-center justify-between pb-2 border-b border-redTeam/30 mb-2">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-fire text-redTeam text-base sm:text-lg"></i>
-                    <span class="font-orbitron font-bold text-sm sm:text-base text-redTeam tracking-wide">TIM MERAH (P1)</span>
+        <!-- ================= SISI KIRI: TIM MERAH (P1) ================= -->
+        <section id="side-p1" class="flex-1 flex flex-col justify-between bg-slate-900/80 border-2 border-redTeam/50 rounded-xl p-2.5 sm:p-3 border-glow-red relative h-full overflow-hidden">
+            
+            <!-- 1. TOP ROW: PROGRESS BAR -->
+            <div class="w-full flex-shrink-0 mb-1">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-orbitron text-[10px] sm:text-xs text-redTeam font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-fire"></i> TIM MERAH
+                    </span>
+                    <span id="p1-progress-text" class="font-orbitron text-[10px] sm:text-xs text-slate-300">0/15</span>
                 </div>
-                <div class="font-orbitron text-xs sm:text-sm text-slate-300">
-                    SKOR: <span id="p1-live-score" class="font-bold text-white">0</span>
+                <!-- Progress Bar Track -->
+                <div class="w-full bg-slate-950 h-2.5 sm:h-3 rounded-full border border-redTeam/40 overflow-hidden">
+                    <div id="p1-progress-bar" class="bg-gradient-to-r from-red-600 to-redTeam h-full w-0 transition-all duration-300 rounded-full shadow-[0_0_8px_#ff0055]"></div>
                 </div>
             </div>
 
-            <!-- Question Box -->
-            <div class="my-auto py-4 px-3 bg-slate-950/80 border border-redTeam/50 rounded-xl text-center flex flex-col items-center justify-center min-h-[100px] shadow-inner">
-                <span class="font-orbitron text-[10px] text-slate-400 uppercase tracking-widest mb-1">SOAL KAMU:</span>
-                <div id="p1-question-text" class="font-orbitron font-black text-2xl sm:text-3xl lg:text-4xl text-white text-glow-red tracking-wide">
+            <div class="w-full h-[2px] bg-redTeam/30 flex-shrink-0 my-1"></div>
+
+            <!-- 2. MIDDLE SECTION: QUESTION BOX -->
+            <div class="flex-1 flex flex-col items-center justify-center bg-slate-950/90 border border-redTeam/50 rounded-lg p-2 text-center my-1 relative overflow-hidden shadow-inner">
+                <span class="font-orbitron text-[9px] sm:text-[11px] text-slate-400 uppercase tracking-widest mb-1">SOAL KAMU:</span>
+                <div id="p1-question-text" class="font-orbitron font-black text-xl sm:text-3xl lg:text-4xl text-white text-glow-red tracking-wide break-words px-2">
                     READY
                 </div>
             </div>
 
-            <!-- 4 Choice Options -->
-            <div id="p1-answers-grid" class="grid grid-cols-2 gap-2 mt-3">
-                <!-- Buttons injected via JS -->
+            <!-- 3. BOTTOM SECTION: 4 ANSWER BUTTONS GRID -->
+            <div id="p1-answers-grid" class="grid grid-cols-2 gap-1.5 sm:gap-2 flex-shrink-0 mt-1">
+                <!-- Answer Buttons injected dynamically via JS -->
             </div>
         </section>
 
-        <!-- Dynamic Divider Line for TV Screen -->
-        <div class="hidden md:flex items-center justify-center">
-            <div class="w-[2px] h-full bg-gradient-to-b from-redTeam via-neonYellow to-blueTeam opacity-50"></div>
-        </div>
+        <!-- Dynamic Middle Separator Line -->
+        <div class="w-[3px] h-full bg-gradient-to-b from-redTeam via-neonYellow to-blueTeam opacity-60 flex-shrink-0 rounded-full"></div>
 
-        <!-- ================= SISI TIM BIRU (P2 / BOT) ================= -->
-        <section id="side-p2" class="flex-1 flex flex-col justify-between bg-slate-900/70 border-2 border-blueTeam/40 rounded-2xl p-3 sm:p-4 border-glow-blue relative">
-            <div class="flex items-center justify-between pb-2 border-b border-blueTeam/30 mb-2">
-                <div class="flex items-center gap-2">
-                    <i id="p2-role-icon" class="fa-solid fa-bolt text-blueTeam text-base sm:text-lg"></i>
-                    <span id="p2-side-title" class="font-orbitron font-bold text-sm sm:text-base text-blueTeam tracking-wide">TIM BIRU (P2)</span>
+        <!-- ================= SISI KANAN: TIM BIRU (P2 / BOT) ================= -->
+        <section id="side-p2" class="flex-1 flex flex-col justify-between bg-slate-900/80 border-2 border-blueTeam/50 rounded-xl p-2.5 sm:p-3 border-glow-blue relative h-full overflow-hidden">
+            
+            <!-- 1. TOP ROW: PROGRESS BAR -->
+            <div class="w-full flex-shrink-0 mb-1">
+                <div class="flex justify-between items-center mb-1">
+                    <span id="p2-side-title" class="font-orbitron text-[10px] sm:text-xs text-blueTeam font-bold flex items-center gap-1">
+                        <i id="p2-role-icon" class="fa-solid fa-bolt"></i> TIM BIRU
+                    </span>
+                    <span id="p2-progress-text" class="font-orbitron text-[10px] sm:text-xs text-slate-300">0/15</span>
                 </div>
-                <div class="font-orbitron text-xs sm:text-sm text-slate-300">
-                    SKOR: <span id="p2-live-score" class="font-bold text-white">0</span>
+                <!-- Progress Bar Track -->
+                <div class="w-full bg-slate-950 h-2.5 sm:h-3 rounded-full border border-blueTeam/40 overflow-hidden">
+                    <div id="p2-progress-bar" class="bg-gradient-to-r from-blue-600 to-blueTeam h-full w-0 transition-all duration-300 rounded-full shadow-[0_0_8px_#00d2ff]"></div>
                 </div>
             </div>
 
-            <!-- Question Box -->
-            <div class="my-auto py-4 px-3 bg-slate-950/80 border border-blueTeam/50 rounded-xl text-center flex flex-col items-center justify-center min-h-[100px] shadow-inner">
-                <span class="font-orbitron text-[10px] text-slate-400 uppercase tracking-widest mb-1">SOAL KAMU:</span>
-                <div id="p2-question-text" class="font-orbitron font-black text-2xl sm:text-3xl lg:text-4xl text-white text-glow-blue tracking-wide">
+            <div class="w-full h-[2px] bg-blueTeam/30 flex-shrink-0 my-1"></div>
+
+            <!-- 2. MIDDLE SECTION: QUESTION BOX -->
+            <div class="flex-1 flex flex-col items-center justify-center bg-slate-950/90 border border-blueTeam/50 rounded-lg p-2 text-center my-1 relative overflow-hidden shadow-inner">
+                <span class="font-orbitron text-[9px] sm:text-[11px] text-slate-400 uppercase tracking-widest mb-1">SOAL KAMU:</span>
+                <div id="p2-question-text" class="font-orbitron font-black text-xl sm:text-3xl lg:text-4xl text-white text-glow-blue tracking-wide break-words px-2">
                     READY
                 </div>
             </div>
 
-            <!-- 4 Choice Options -->
-            <div id="p2-answers-grid" class="grid grid-cols-2 gap-2 mt-3">
-                <!-- Buttons injected via JS -->
+            <!-- 3. BOTTOM SECTION: 4 ANSWER BUTTONS GRID -->
+            <div id="p2-answers-grid" class="grid grid-cols-2 gap-1.5 sm:gap-2 flex-shrink-0 mt-1">
+                <!-- Answer Buttons injected dynamically via JS -->
             </div>
         </section>
 
     </main>
 
+    <!-- Main Menu Setup Modal -->
     <div id="modal-menu" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-        <div class="w-full max-w-3xl bg-slate-900 border-2 border-neonYellow/50 rounded-2xl p-4 sm:p-6 my-auto shadow-2xl flex flex-col gap-4">
+        <div class="w-full max-w-2xl bg-slate-900 border-2 border-neonYellow/50 rounded-2xl p-4 sm:p-6 my-auto shadow-2xl flex flex-col gap-3 sm:gap-4">
             
-            <!-- Menu Header -->
-            <div class="text-center pb-3 border-b border-slate-800">
-                <h1 class="font-orbitron text-2xl sm:text-4xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-redTeam via-white to-blueTeam">
+            <!-- Title Header -->
+            <div class="text-center pb-2 border-b border-slate-800">
+                <h1 class="font-orbitron text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-redTeam via-white to-blueTeam">
                     VOCABULARY BATTLE
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-400 font-rajdhani mt-1">
-                    Arena Duel Kosa Kata - Optimal untuk Smart TV, PC & Mobile Device
+                <p class="text-xs sm:text-sm text-slate-400 font-rajdhani mt-0.5">
+                    Arena Duel Split-Screen - Presisi Tinggi Untuk Semua Device
                 </p>
             </div>
 
-            <!-- Setup Options Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <!-- Menu Options Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 
                 <!-- Game Mode -->
-                <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
-                    <label class="block font-orbitron text-xs text-neonYellow font-bold mb-2">
+                <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                    <label class="block font-orbitron text-[11px] sm:text-xs text-neonYellow font-bold mb-1.5">
                         <i class="fa-solid fa-gamepad mr-1"></i> MODE PERMAINAN
                     </label>
-                    <div class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1">
                         <button onclick="selectMode('pvp')" id="mode-pvp" class="btn-mode p-2 bg-redTeam/20 border border-redTeam rounded-lg font-orbitron text-xs font-bold text-white flex items-center justify-between">
-                            <span>⚔️ 2 PLAYER (SPLIT SCREEN)</span>
+                            <span>⚔️ 2 PLAYER (SPLIT)</span>
                             <i class="fa-solid fa-check text-redTeam"></i>
                         </button>
                         <button onclick="selectMode('ai')" id="mode-ai" class="btn-mode p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400 flex items-center justify-between">
@@ -199,89 +217,93 @@
                     </div>
                 </div>
 
+                <!-- Question Type -->
+                <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                    <label class="block font-orbitron text-[11px] sm:text-xs text-neonYellow font-bold mb-1.5">
+                        <i class="fa-solid fa-font mr-1"></i> TIPE KOSAKATA
+                    </label>
+                    <div class="flex flex-col gap-1">
+                        <button onclick="selectDataset('text')" id="type-text" class="btn-type p-2 bg-blueTeam/20 border border-blueTeam rounded-lg font-orbitron text-xs font-bold text-blueTeam flex items-center justify-between">
+                            <span>🔤 EN - ID TEXT</span>
+                        </button>
+                        <button onclick="selectDataset('id_en')" id="type-id_en" class="btn-type p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400 flex items-center justify-between">
+                            <span>🇮🇩 ID - EN TEXT</span>
+                        </button>
+                        <button onclick="selectDataset('emoji')" id="type-emoji" class="btn-type p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400 flex items-center justify-between">
+                            <span>🎭 EMOJI QUIZ</span>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Difficulty Level -->
-                <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
-                    <label class="block font-orbitron text-xs text-neonYellow font-bold mb-2">
+                <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                    <label class="block font-orbitron text-[11px] sm:text-xs text-neonYellow font-bold mb-1.5">
                         <i class="fa-solid fa-layer-group mr-1"></i> TINGKAT KESULITAN
                     </label>
-                    <div class="grid grid-cols-2 gap-1.5">
-                        <button onclick="selectDifficulty('easy')" id="diff-easy" class="btn-diff p-2 bg-neonGreen/20 border border-neonGreen rounded-lg font-orbitron text-xs font-bold text-neonGreen">
+                    <div class="grid grid-cols-2 gap-1">
+                        <button onclick="selectDifficulty('easy')" id="diff-easy" class="btn-diff p-2 bg-neonGreen/20 border border-neonGreen rounded-lg font-orbitron text-[11px] font-bold text-neonGreen">
                             EASY (15)
                         </button>
-                        <button onclick="selectDifficulty('medium')" id="diff-medium" class="btn-diff p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400">
+                        <button onclick="selectDifficulty('medium')" id="diff-medium" class="btn-diff p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-[11px] font-bold text-slate-400">
                             MEDIUM (25)
                         </button>
-                        <button onclick="selectDifficulty('hard')" id="diff-hard" class="btn-diff p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400">
+                        <button onclick="selectDifficulty('hard')" id="diff-hard" class="btn-diff p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-[11px] font-bold text-slate-400">
                             HARD (30)
                         </button>
-                        <button onclick="selectDifficulty('extreme')" id="diff-extreme" class="btn-diff p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400">
+                        <button onclick="selectDifficulty('extreme')" id="diff-extreme" class="btn-diff p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-[11px] font-bold text-slate-400">
                             EXTREME (35)
                         </button>
                     </div>
                 </div>
 
-                <!-- Time Rules -->
-                <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
-                    <label class="block font-orbitron text-xs text-neonYellow font-bold mb-2">
-                        <i class="fa-solid fa-stopwatch mr-1"></i> WAKTU PER ROUND
+                <!-- Timer Settings -->
+                <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                    <label class="block font-orbitron text-[11px] sm:text-xs text-neonYellow font-bold mb-1.5">
+                        <i class="fa-solid fa-stopwatch mr-1"></i> WAKTU PER SOAL
                     </label>
-                    <div class="flex gap-2">
-                        <button onclick="selectTime('normal')" id="time-normal" class="btn-time flex-1 p-2 bg-neonYellow/20 border border-neonYellow rounded-lg font-orbitron text-xs font-bold text-neonYellow">
-                            10 DETIK
+                    <div class="flex gap-1.5 h-[calc(100%-1.75rem)]">
+                        <button onclick="selectTime('normal')" id="time-normal" class="btn-time flex-1 p-2 bg-neonYellow/20 border border-neonYellow rounded-lg font-orbitron text-xs font-bold text-neonYellow flex flex-col items-center justify-center">
+                            <span>10 DETIK</span>
                         </button>
-                        <button onclick="selectTime('timeless')" id="time-timeless" class="btn-time flex-1 p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400">
-                            TANPA WAKTU
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Quiz Category -->
-                <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700">
-                    <label class="block font-orbitron text-xs text-neonYellow font-bold mb-2">
-                        <i class="fa-solid fa-font mr-1"></i> TIPE KOSAKATA
-                    </label>
-                    <div class="flex gap-2">
-                        <button onclick="selectDataset('text')" id="type-text" class="btn-type flex-1 p-2 bg-blueTeam/20 border border-blueTeam rounded-lg font-orbitron text-xs font-bold text-blueTeam">
-                            🔤 EN - ID TEXT
-                        </button>
-                        <button onclick="selectDataset('emoji')" id="type-emoji" class="btn-type flex-1 p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400">
-                            🎭 EMOJI QUIZ
+                        <button onclick="selectTime('timeless')" id="time-timeless" class="btn-time flex-1 p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400 flex flex-col items-center justify-center">
+                            <span>TANPA WAKTU</span>
                         </button>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Start Game Launch Button -->
-            <button onclick="startGame()" class="btn-game w-full py-3.5 bg-gradient-to-r from-redTeam via-neonYellow to-blueTeam font-orbitron font-black text-base sm:text-lg text-black rounded-xl shadow-xl uppercase tracking-widest mt-2 hover:opacity-95">
-                <i class="fa-solid fa-play mr-2"></i> MULAI PERTANDINGAN
+            <!-- Start Button -->
+            <button onclick="startGame()" class="btn-game w-full py-3 bg-gradient-to-r from-redTeam via-neonYellow to-blueTeam font-orbitron font-black text-base text-black rounded-xl shadow-xl uppercase tracking-widest mt-1 hover:opacity-95">
+                <i class="fa-solid fa-play mr-1.5"></i> MULAI PERTANDINGAN
             </button>
 
         </div>
     </div>
 
+    <!-- Match Recap Scoreboard Modal -->
     <div id="modal-recap" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-        <div class="w-full max-w-3xl bg-slate-900 border-2 border-neonYellow/60 rounded-2xl p-4 sm:p-6 my-auto flex flex-col gap-4 shadow-2xl">
+        <div class="w-full max-w-2xl bg-slate-900 border-2 border-neonYellow/60 rounded-2xl p-4 sm:p-6 my-auto flex flex-col gap-3 shadow-2xl">
             
             <!-- Winner Title Banner -->
-            <div class="text-center pb-3 border-b border-slate-800">
-                <span class="font-orbitron text-xs text-slate-400 tracking-widest uppercase">HASIL AKHIR BATTLE</span>
-                <h2 id="recap-winner-title" class="font-orbitron font-black text-2xl sm:text-4xl text-neonYellow text-glow-yellow my-1">
+            <div class="text-center pb-2 border-b border-slate-800">
+                <span class="font-orbitron text-[10px] sm:text-xs text-slate-400 tracking-widest uppercase">HASIL REKAP BATTLE</span>
+                <h2 id="recap-winner-title" class="font-orbitron font-black text-2xl sm:text-3xl text-neonYellow text-glow-yellow my-0.5">
                     TIM MERAH MENANG!
                 </h2>
-                <p class="font-rajdhani text-xs sm:text-sm text-slate-300">Statistik Pertandingan Lengkap Kedua Tim</p>
+                <p class="font-rajdhani text-xs text-slate-300">Statistik Pertandingan Lengkap</p>
             </div>
 
-            <!-- Stats Comparison Grid -->
+            <!-- Stats Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 
-                <!-- Red Team Stats Card -->
-                <div class="bg-redDark/50 p-3.5 rounded-xl border border-redTeam/60">
-                    <div class="flex items-center justify-between border-b border-redTeam/40 pb-2 mb-2">
-                        <span class="font-orbitron font-bold text-sm text-redTeam"><i class="fa-solid fa-shield-halved mr-1.5"></i>TIM MERAH (P1)</span>
-                        <span id="recap-p1-final-score" class="font-orbitron font-black text-xl text-white">0 pts</span>
+                <!-- Red Stats Card -->
+                <div class="bg-redDark/60 p-3 rounded-xl border border-redTeam/60">
+                    <div class="flex items-center justify-between border-b border-redTeam/40 pb-1.5 mb-2">
+                        <span class="font-orbitron font-bold text-xs sm:text-sm text-redTeam"><i class="fa-solid fa-shield-halved mr-1"></i>TIM MERAH (P1)</span>
+                        <span id="recap-p1-final-score" class="font-orbitron font-black text-lg text-white">0 pts</span>
                     </div>
-                    <div class="space-y-1.5 font-rajdhani text-xs sm:text-sm">
+                    <div class="space-y-1 font-rajdhani text-xs">
                         <div class="flex justify-between text-slate-300"><span>Jawaban Benar:</span> <b id="recap-p1-correct" class="text-neonGreen">0</b></div>
                         <div class="flex justify-between text-slate-300"><span>Jawaban Salah:</span> <b id="recap-p1-wrong" class="text-redTeam">0</b></div>
                         <div class="flex justify-between text-slate-300"><span>Habis Waktu:</span> <b id="recap-p1-timeout" class="text-neonYellow">0</b></div>
@@ -290,13 +312,13 @@
                     </div>
                 </div>
 
-                <!-- Blue Team Stats Card -->
-                <div class="bg-blueDark/50 p-3.5 rounded-xl border border-blueTeam/60">
-                    <div class="flex items-center justify-between border-b border-blueTeam/40 pb-2 mb-2">
-                        <span id="recap-p2-title-label" class="font-orbitron font-bold text-sm text-blueTeam"><i class="fa-solid fa-shield-halved mr-1.5"></i>TIM BIRU (P2)</span>
-                        <span id="recap-p2-final-score" class="font-orbitron font-black text-xl text-white">0 pts</span>
+                <!-- Blue Stats Card -->
+                <div class="bg-blueDark/60 p-3 rounded-xl border border-blueTeam/60">
+                    <div class="flex items-center justify-between border-b border-blueTeam/40 pb-1.5 mb-2">
+                        <span id="recap-p2-title-label" class="font-orbitron font-bold text-xs sm:text-sm text-blueTeam"><i class="fa-solid fa-shield-halved mr-1"></i>TIM BIRU (P2)</span>
+                        <span id="recap-p2-final-score" class="font-orbitron font-black text-lg text-white">0 pts</span>
                     </div>
-                    <div class="space-y-1.5 font-rajdhani text-xs sm:text-sm">
+                    <div class="space-y-1 font-rajdhani text-xs">
                         <div class="flex justify-between text-slate-300"><span>Jawaban Benar:</span> <b id="recap-p2-correct" class="text-neonGreen">0</b></div>
                         <div class="flex justify-between text-slate-300"><span>Jawaban Salah:</span> <b id="recap-p2-wrong" class="text-redTeam">0</b></div>
                         <div class="flex justify-between text-slate-300"><span>Habis Waktu:</span> <b id="recap-p2-timeout" class="text-neonYellow">0</b></div>
@@ -308,11 +330,11 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex gap-2 sm:gap-3 mt-2">
-                <button onclick="restartMatch()" class="btn-game flex-1 py-3 bg-neonGreen text-black font-orbitron font-bold text-xs sm:text-sm rounded-xl uppercase tracking-wider">
+            <div class="flex gap-2 mt-1">
+                <button onclick="restartMatch()" class="btn-game flex-1 py-2.5 bg-neonGreen text-black font-orbitron font-bold text-xs rounded-xl uppercase tracking-wider">
                     <i class="fa-solid fa-rotate-right mr-1"></i> MAIN LAGI
                 </button>
-                <button onclick="returnToMenu()" class="btn-game flex-1 py-3 bg-slate-800 text-white border border-slate-600 font-orbitron font-bold text-xs sm:text-sm rounded-xl uppercase tracking-wider">
+                <button onclick="returnToMenu()" class="btn-game flex-1 py-2.5 bg-slate-800 text-white border border-slate-600 font-orbitron font-bold text-xs rounded-xl uppercase tracking-wider">
                     <i class="fa-solid fa-house mr-1"></i> MENU UTAMA
                 </button>
             </div>
@@ -321,7 +343,7 @@
     </div>
 
     <script>
-        // Web Audio API Sound Effects Engine
+        // Web Audio API Synth Engine
         class SoundEngine {
             constructor() {
                 this.ctx = null;
@@ -333,7 +355,7 @@
                     this.ctx = new AudioCtx();
                 }
             }
-            playTone(freq, type, duration, vol = 0.1) {
+            playTone(freq, type, duration, vol = 0.08) {
                 if (!this.enabled) return;
                 this.init();
                 try {
@@ -349,19 +371,19 @@
                     osc.stop(this.ctx.currentTime + duration);
                 } catch(e){}
             }
-            click() { this.playTone(700, 'sine', 0.05, 0.05); }
+            click() { this.playTone(700, 'sine', 0.05, 0.04); }
             correct() { 
-                this.playTone(523, 'triangle', 0.08, 0.1); 
-                setTimeout(() => this.playTone(659, 'triangle', 0.12, 0.1), 70);
+                this.playTone(523, 'triangle', 0.08, 0.08); 
+                setTimeout(() => this.playTone(659, 'triangle', 0.12, 0.08), 70);
             }
             wrong() { 
-                this.playTone(220, 'sawtooth', 0.15, 0.1); 
-                setTimeout(() => this.playTone(180, 'sawtooth', 0.2, 0.1), 80);
+                this.playTone(220, 'sawtooth', 0.15, 0.08); 
+                setTimeout(() => this.playTone(180, 'sawtooth', 0.2, 0.08), 80);
             }
-            timeout() { this.playTone(140, 'square', 0.25, 0.1); }
+            timeout() { this.playTone(140, 'square', 0.25, 0.08); }
             victory() {
                 [440, 554, 659, 880].forEach((f, i) => {
-                    setTimeout(() => this.playTone(f, 'triangle', 0.2, 0.1), i * 100);
+                    setTimeout(() => this.playTone(f, 'triangle', 0.2, 0.08), i * 100);
                 });
             }
         }
@@ -380,7 +402,7 @@
         }
 
         // Questions Datasets
-        const textDataset = [
+        const textDatasetEN = [
             { q: "AMBITIOUS", a: "Ambisius", options: ["Ambisius", "Cemas", "Ramah", "Pemalas"] },
             { q: "BRAVERY", a: "Keberanian", options: ["Keberanian", "Ketakutan", "Kejujuran", "Kelemahan"] },
             { q: "CHALLENGE", a: "Tantangan", options: ["Tantangan", "Kemenangan", "Bantuan", "Rintangan"] },
@@ -404,13 +426,31 @@
             { q: "VICTORY", a: "Kejayaan", options: ["Kejayaan", "Gagal", "Ragu", "Lawan"] },
             { q: "WISDOM", a: "Kebijaksanaan", options: ["Kebijaksanaan", "Kebodohan", "Emosi", "Kekuatan"] },
             { q: "ANCIENT", a: "Kuno", options: ["Kuno", "Modern", "Baru", "Canggih"] },
-            { q: "BRILLIANT", a: "Sangat Cerdas", options: ["Sangat Cerdas", "Biasa", "Bodoh", "Lambat"] },
+            { q: "BRILLIANT", a: "Cerdas", options: ["Cerdas", "Biasa", "Bodoh", "Lambat"] },
             { q: "CREATIVE", a: "Kreatif", options: ["Kreatif", "Meniru", "Kaku", "Membosankan"] },
             { q: "DANGEROUS", a: "Berbahaya", options: ["Berbahaya", "Aman", "Nyaman", "Mudah"] },
             { q: "ENORMOUS", a: "Sangat Besar", options: ["Sangat Besar", "Kecil", "Tipis", "Pendek"] },
             { q: "FRAGILE", a: "Rapuh", options: ["Rapuh", "Kuat", "Keras", "Lentur"] },
             { q: "GLORIOUS", a: "Megah", options: ["Megah", "Buruk", "Suram", "Kecil"] },
             { q: "HONESTY", a: "Kejujuran", options: ["Kejujuran", "Kebohongan", "Kecurangan", "Kecurigaan"] }
+        ];
+
+        const textDatasetID = [
+            { q: "PENGUMUMAN", a: "ANNOUNCEMENT", options: ["ANNOUNCEMENT", "AGREEMENT", "APPOINTMENT", "ARGUMENT"] },
+            { q: "TANTANGAN", a: "CHALLENGE", options: ["CHALLENGE", "CHANCE", "CHANGE", "CHOICE"] },
+            { q: "KEBERANIAN", a: "COURAGE", options: ["COURAGE", "COWARDICE", "CURRENCY", "CUSTOM"] },
+            { q: "KEBEBASAN", a: "FREEDOM", options: ["FREEDOM", "FRIENDSHIP", "FEAR", "FUTURE"] },
+            { q: "PENGETAHUAN", a: "KNOWLEDGE", options: ["KNOWLEDGE", "KINGDOM", "KINDNESS", "KEY"] },
+            { q: "PERJALANAN", a: "JOURNEY", options: ["JOURNEY", "JOURNAL", "JUSTICE", "JOY"] },
+            { q: "MIMPI", a: "DREAM", options: ["DREAM", "DRIVE", "DRINK", "DRAFT"] },
+            { q: "PENTING", a: "IMPORTANT", options: ["IMPORTANT", "IMPOSSIBLE", "IMPRESSIVE", "IMMEDIATE"] },
+            { q: "BERBAHAYA", a: "DANGEROUS", options: ["DANGEROUS", "DELICATE", "DELICIOUS", "DESPERATE"] },
+            { q: "KEMENANGAN", a: "VICTORY", options: ["VICTORY", "VALLEY", "VALUE", "VERSION"] },
+            { q: "KEJUJURAN", a: "HONESTY", options: ["HONESTY", "HONOR", "HOPE", "HUMOR"] },
+            { q: "RAHASIA", a: "SECRET", options: ["SECRET", "SECURITY", "SECTION", "SILENCE"] },
+            { q: "SOLUSI", a: "SOLUTION", options: ["SOLUTION", "SITUATION", "SYSTEM", "SCIENCE"] },
+            { q: "PETUALANGAN", a: "ADVENTURE", options: ["ADVENTURE", "ADVANTAGE", "ADVICE", "ACTION"] },
+            { q: "PERHATIAN", a: "ATTENTION", options: ["ATTENTION", "ATTITUDE", "ATTRACT", "AUTHOR"] }
         ];
 
         const emojiDataset = [
@@ -435,7 +475,7 @@
             mode: 'pvp', // pvp, ai, solo
             difficulty: 'easy', // easy(15), medium(25), hard(30), extreme(35)
             timeMode: 'normal', // normal, timeless
-            datasetType: 'text' // text, emoji
+            datasetType: 'text' // text, id_en, emoji
         };
 
         const diffCounts = { easy: 15, medium: 25, hard: 30, extreme: 35 };
@@ -451,7 +491,7 @@
             p1Questions: [],
             p2Questions: [],
             p1: { score: 0, correct: 0, wrong: 0, timeout: 0, timeTaken: 0, count: 0 },
-            p2: { score: 0, correct: 0, wrong: 0, timeout: 0, timeTaken: 0, count: 0, isAI: false },
+            p2: { score: 0, correct: 0, wrong: 0, timeout: 0, timeTaken: 0, count: 0 },
             qStartTime: 0
         };
 
@@ -472,37 +512,39 @@
             audio.click();
             settings.difficulty = d;
             document.querySelectorAll('.btn-diff').forEach(b => {
-                b.className = "btn-diff p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400";
+                b.className = "btn-diff p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-[11px] font-bold text-slate-400";
             });
             const sel = document.getElementById(`diff-${d}`);
-            sel.className = "btn-diff p-2 bg-neonGreen/20 border border-neonGreen rounded-lg font-orbitron text-xs font-bold text-neonGreen";
+            sel.className = "btn-diff p-2 bg-neonGreen/20 border border-neonGreen rounded-lg font-orbitron text-[11px] font-bold text-neonGreen";
         }
 
         function selectTime(t) {
             audio.click();
             settings.timeMode = t;
             document.querySelectorAll('.btn-time').forEach(b => {
-                b.className = "btn-time flex-1 p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400";
+                b.className = "btn-time flex-1 p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400 flex flex-col items-center justify-center";
             });
             const sel = document.getElementById(`time-${t}`);
-            sel.className = "btn-time flex-1 p-2 bg-neonYellow/20 border border-neonYellow rounded-lg font-orbitron text-xs font-bold text-neonYellow";
+            sel.className = "btn-time flex-1 p-2 bg-neonYellow/20 border border-neonYellow rounded-lg font-orbitron text-xs font-bold text-neonYellow flex flex-col items-center justify-center";
         }
 
         function selectDataset(ds) {
             audio.click();
             settings.datasetType = ds;
             document.querySelectorAll('.btn-type').forEach(b => {
-                b.className = "btn-type flex-1 p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400";
+                b.className = "btn-type p-2 bg-slate-700/50 border border-slate-600 rounded-lg font-orbitron text-xs font-bold text-slate-400 flex items-center justify-between";
             });
             const sel = document.getElementById(`type-${ds}`);
-            sel.className = "btn-type flex-1 p-2 bg-blueTeam/20 border border-blueTeam rounded-lg font-orbitron text-xs font-bold text-blueTeam";
+            sel.className = "btn-type p-2 bg-blueTeam/20 border border-blueTeam rounded-lg font-orbitron text-xs font-bold text-blueTeam flex items-center justify-between";
         }
 
         function startGame() {
             audio.click();
 
             const total = diffCounts[settings.difficulty];
-            let pool = (settings.datasetType === 'emoji') ? emojiDataset : textDataset;
+            let pool = textDatasetEN;
+            if (settings.datasetType === 'id_en') pool = textDatasetID;
+            if (settings.datasetType === 'emoji') pool = emojiDataset;
 
             let p1List = [], p2List = [];
             while (p1List.length < total) p1List = p1List.concat([...pool].sort(() => Math.random() - 0.5));
@@ -519,26 +561,24 @@
                 p1Questions: p1List.slice(0, total),
                 p2Questions: p2List.slice(0, total),
                 p1: { score: 0, correct: 0, wrong: 0, timeout: 0, timeTaken: 0, count: 0 },
-                p2: { score: 0, correct: 0, wrong: 0, timeout: 0, timeTaken: 0, count: 0, isAI: (settings.mode === 'ai') },
+                p2: { score: 0, correct: 0, wrong: 0, timeout: 0, timeTaken: 0, count: 0 },
                 qStartTime: Date.now()
             };
 
             document.getElementById('modal-menu').classList.add('hidden');
-            document.getElementById('hud-p1-name').innerText = "MERAH";
+            document.getElementById('hud-p1-name').innerText = "TIM MERAH";
 
             if (settings.mode === 'solo') {
-                document.getElementById('side-p2').classList.add('opacity-25', 'pointer-events-none');
+                document.getElementById('side-p2').classList.add('opacity-20', 'pointer-events-none');
                 document.getElementById('hud-p2-name').innerText = "TARGET";
             } else if (settings.mode === 'ai') {
-                document.getElementById('side-p2').classList.remove('opacity-25', 'pointer-events-none');
+                document.getElementById('side-p2').classList.remove('opacity-20', 'pointer-events-none');
                 document.getElementById('hud-p2-name').innerText = "BOT AI";
-                document.getElementById('p2-side-title').innerText = "BOT AI (P2)";
-                document.getElementById('p2-role-icon').className = "fa-solid fa-robot text-blueTeam text-base sm:text-lg";
+                document.getElementById('p2-side-title').innerHTML = '<i class="fa-solid fa-robot"></i> BOT AI';
             } else {
-                document.getElementById('side-p2').classList.remove('opacity-25', 'pointer-events-none');
-                document.getElementById('hud-p2-name').innerText = "BIRU";
-                document.getElementById('p2-side-title').innerText = "TIM BIRU (P2)";
-                document.getElementById('p2-role-icon').className = "fa-solid fa-bolt text-blueTeam text-base sm:text-lg";
+                document.getElementById('side-p2').classList.remove('opacity-20', 'pointer-events-none');
+                document.getElementById('hud-p2-name').innerText = "TIM BIRU";
+                document.getElementById('p2-side-title').innerHTML = '<i class="fa-solid fa-bolt"></i> TIM BIRU';
             }
 
             renderRound();
@@ -554,12 +594,20 @@
             match.p1Answered = false;
             match.p2Answered = false;
 
+            // HUD Stats Update
             document.getElementById('hud-q-count').innerText = `SOAL ${match.currentQIdx + 1}/${match.totalQuestions}`;
             document.getElementById('hud-p1-score').innerText = match.p1.score;
             document.getElementById('hud-p2-score').innerText = match.p2.score;
-            document.getElementById('p1-live-score').innerText = match.p1.score;
-            document.getElementById('p2-live-score').innerText = match.p2.score;
 
+            // Progress Bar Updates (Exact Match to sketch layout top row)
+            const p1Pct = (match.currentQIdx / match.totalQuestions) * 100;
+            const p2Pct = (match.currentQIdx / match.totalQuestions) * 100;
+            document.getElementById('p1-progress-bar').style.width = `${p1Pct}%`;
+            document.getElementById('p2-progress-bar').style.width = `${p2Pct}%`;
+            document.getElementById('p1-progress-text').innerText = `${match.currentQIdx}/${match.totalQuestions}`;
+            document.getElementById('p2-progress-text').innerText = `${match.currentQIdx}/${match.totalQuestions}`;
+
+            // Questions Update
             const q1 = match.p1Questions[match.currentQIdx];
             const q2 = match.p2Questions[match.currentQIdx];
 
@@ -571,17 +619,18 @@
 
             match.qStartTime = Date.now();
 
+            // Timer Execution
             if (settings.timeMode === 'normal') {
                 match.timer = 10;
                 document.getElementById('hud-timer').innerText = `${match.timer}s`;
-                document.getElementById('hud-timer').className = "font-orbitron font-black text-sm sm:text-base text-neonYellow bg-black px-2.5 py-0.5 rounded border border-neonYellow/60";
+                document.getElementById('hud-timer').className = "font-orbitron font-black text-xs sm:text-sm text-neonYellow bg-black px-2 py-0.5 rounded border border-neonYellow/60";
 
                 match.timerInterval = setInterval(() => {
                     match.timer--;
                     document.getElementById('hud-timer').innerText = `${match.timer}s`;
 
                     if (match.timer <= 3) {
-                        document.getElementById('hud-timer').className = "font-orbitron font-black text-sm sm:text-base text-redTeam bg-black px-2.5 py-0.5 rounded border border-redTeam animate-pulse";
+                        document.getElementById('hud-timer').className = "font-orbitron font-black text-xs sm:text-sm text-redTeam bg-black px-2 py-0.5 rounded border border-redTeam animate-pulse";
                     }
 
                     if (match.timer <= 0) {
@@ -609,7 +658,7 @@
                 const borderColor = (playerKey === 'p1') ? 'border-redTeam/40 hover:border-redTeam' : 'border-blueTeam/40 hover:border-blueTeam';
                 const bgGlow = (playerKey === 'p1') ? 'hover:bg-redTeam/20' : 'hover:bg-blueTeam/20';
 
-                btn.className = `btn-answer-${playerKey} btn-game w-full py-2.5 px-2 bg-slate-950 border ${borderColor} ${bgGlow} rounded-xl text-center font-rajdhani font-bold text-xs sm:text-sm lg:text-base text-white truncate`;
+                btn.className = `btn-answer-${playerKey} btn-game w-full py-2 px-1.5 bg-slate-950 border ${borderColor} ${bgGlow} rounded-lg text-center font-rajdhani font-bold text-xs sm:text-sm text-white truncate shadow`;
                 btn.innerText = opt;
                 btn.onclick = () => submitAnswer(playerKey, opt, btn, qData.a);
                 grid.appendChild(btn);
@@ -643,7 +692,6 @@
                 highlightCorrectAnswer(playerKey, correctAnswer);
             }
 
-            document.getElementById(`${playerKey}-live-score`).innerText = p.score;
             document.getElementById(`hud-${playerKey}-score`).innerText = p.score;
 
             if (settings.mode === 'solo' || (match.p1Answered && match.p2Answered)) {
@@ -651,7 +699,7 @@
                 setTimeout(() => {
                     match.currentQIdx++;
                     renderRound();
-                }, 800);
+                }, 700);
             }
         }
 
@@ -674,7 +722,7 @@
             setTimeout(() => {
                 match.currentQIdx++;
                 renderRound();
-            }, 900);
+            }, 850);
         }
 
         function highlightCorrectAnswer(playerKey, correctAnswer) {
@@ -690,10 +738,10 @@
             let delay = 2000;
             let accuracy = 0.7;
 
-            if (settings.difficulty === 'easy') { delay = 2500; accuracy = 0.5; }
-            else if (settings.difficulty === 'medium') { delay = 1900; accuracy = 0.7; }
-            else if (settings.difficulty === 'hard') { delay = 1300; accuracy = 0.85; }
-            else if (settings.difficulty === 'extreme') { delay = 800; accuracy = 0.95; }
+            if (settings.difficulty === 'easy') { delay = 2400; accuracy = 0.5; }
+            else if (settings.difficulty === 'medium') { delay = 1800; accuracy = 0.7; }
+            else if (settings.difficulty === 'hard') { delay = 1200; accuracy = 0.85; }
+            else if (settings.difficulty === 'extreme') { delay = 750; accuracy = 0.95; }
 
             setTimeout(() => {
                 if (!match.active || match.p2Answered) return;
@@ -720,6 +768,9 @@
             clearInterval(match.timerInterval);
             audio.victory();
 
+            document.getElementById('p1-progress-bar').style.width = `100%`;
+            document.getElementById('p2-progress-bar').style.width = `100%`;
+
             const p1Acc = match.p1.count > 0 ? Math.round((match.p1.correct / match.p1.count) * 100) : 0;
             const p1AvgSpeed = match.p1.count > 0 ? (match.p1.timeTaken / match.p1.count).toFixed(1) : "0.0";
 
@@ -729,17 +780,17 @@
             const winTitle = document.getElementById('recap-winner-title');
             if (settings.mode === 'solo') {
                 winTitle.innerText = "LATIHAN SELESAI!";
-                winTitle.className = "font-orbitron font-black text-2xl sm:text-4xl text-neonYellow my-1";
+                winTitle.className = "font-orbitron font-black text-2xl sm:text-3xl text-neonYellow my-0.5";
             } else if (match.p1.score > match.p2.score) {
                 winTitle.innerText = "🏆 TIM MERAH MENANG!";
-                winTitle.className = "font-orbitron font-black text-2xl sm:text-4xl text-redTeam text-glow-red my-1";
+                winTitle.className = "font-orbitron font-black text-2xl sm:text-3xl text-redTeam text-glow-red my-0.5";
             } else if (match.p2.score > match.p1.score) {
                 const name = (settings.mode === 'ai') ? "BOT AI" : "TIM BIRU";
                 winTitle.innerText = `🏆 ${name} MENANG!`;
-                winTitle.className = "font-orbitron font-black text-2xl sm:text-4xl text-blueTeam text-glow-blue my-1";
+                winTitle.className = "font-orbitron font-black text-2xl sm:text-3xl text-blueTeam text-glow-blue my-0.5";
             } else {
                 winTitle.innerText = "🤝 HASIL SERI (DRAW)!";
-                winTitle.className = "font-orbitron font-black text-2xl sm:text-4xl text-neonYellow text-glow-yellow my-1";
+                winTitle.className = "font-orbitron font-black text-2xl sm:text-3xl text-neonYellow text-glow-yellow my-0.5";
             }
 
             document.getElementById('recap-p1-final-score').innerText = `${match.p1.score} pts`;
