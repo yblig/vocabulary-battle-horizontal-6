@@ -2,664 +2,815 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Tebak Emoji Super Keren!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vocabulary Battle - Arena Edukasi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --accent: #ec4899;
-            --bg-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #d946ef 100%);
-            --card-bg: rgba(255, 255, 255, 0.96);
-            --success: #10b981;
-            --danger: #ef4444;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Fredoka:wght@400;600;700&display=swap');
+        
         * {
+            user-select: none;
+            -webkit-user-select: none;
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: var(--bg-gradient);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #1f2937;
-        }
-
-        .main-card {
-            background: var(--card-bg);
-            width: 100%;
-            max-width: 650px;
-            border-radius: 28px;
-            padding: 30px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-            position: relative;
+            font-family: 'Fredoka', sans-serif;
+            background-color: #0b0f19;
+            color: #ffffff;
             overflow: hidden;
-            backdrop-filter: blur(12px);
+            height: 100vh;
+            width: 100vw;
         }
 
-        .screen { display: none; text-align: center; }
-        .screen.active { display: block; animation: fadeIn 0.4s ease-out; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        .font-teko {
+            font-family: 'Teko', sans-serif;
         }
 
-        h1 {
-            color: var(--primary-dark);
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-            font-weight: 800;
+        /* Neon Glows */
+        .glow-red {
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+            border-color: #ef4444;
+        }
+        .glow-blue {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+            border-color: #3b82f6;
         }
 
-        p.desc {
-            color: #6b7280;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
+        /* Custom Scrollbar for Teacher Modal */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
         }
 
-        .section-title {
-            font-weight: 700;
-            color: #374151;
-            margin: 15px 0 8px 0;
-            text-align: left;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Group Buttons (Mode & Category) */
-        .option-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .btn-select {
-            background: #f3f4f6;
-            border: 2px solid #e5e7eb;
-            padding: 12px;
-            border-radius: 14px;
-            font-weight: 700;
-            color: #4b5563;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-select.active, .btn-select:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-action {
-            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
-            color: white;
-            border: none;
-            padding: 16px 40px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            border-radius: 50px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.4);
-            width: 100%;
-        }
-
-        .btn-action:hover {
-            transform: scale(1.03);
-            box-shadow: 0 15px 30px rgba(236, 72, 153, 0.6);
-        }
-
-        /* Countdown Overlay */
-        .countdown-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.96);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 50;
-        }
-
-        .countdown-number {
-            font-size: 7rem;
-            font-weight: 900;
-            color: var(--primary);
-            animation: popIn 0.7s infinite;
-        }
-
-        @keyframes popIn {
+        @keyframes countdownPulse {
             0% { transform: scale(0.3); opacity: 0; }
             50% { transform: scale(1.2); opacity: 1; }
             100% { transform: scale(1); opacity: 0; }
         }
 
-        /* Game Screen Elements */
-        .badge-team {
-            display: inline-block;
-            background: #e0e7ff;
-            color: var(--primary-dark);
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 800;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-        }
-
-        .emoji-display-box {
-            background: #f9fafb;
-            border: 3px dashed #d1d5db;
-            border-radius: 24px;
-            padding: 25px;
-            font-size: 4.5rem;
-            margin-bottom: 15px;
-            animation: floating 3s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        /* Real-time Timer bawah Soal */
-        .timer-box {
-            background: #f3f4f6;
-            padding: 12px 20px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-        }
-
-        .timer-number {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--accent);
-            margin-bottom: 6px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: #e5e7eb;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981, #ef4444);
-            width: 100%;
-            transition: width 1s linear;
-        }
-
-        /* Options Grid */
-        .answers-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .btn-answer {
-            background: white;
-            border: 2px solid #e5e7eb;
-            padding: 16px;
-            border-radius: 16px;
-            font-size: 1rem;
-            font-weight: 700;
-            color: #374151;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-answer:hover:not(:disabled) {
-            border-color: var(--primary);
-            background: #f5f3ff;
-            transform: translateY(-2px);
-        }
-
-        .btn-answer.correct {
-            background: var(--success) !important;
-            color: white !important;
-            border-color: var(--success) !important;
-        }
-
-        .btn-answer.wrong {
-            background: var(--danger) !important;
-            color: white !important;
-            border-color: var(--danger) !important;
-        }
-
-        /* Powerups */
-        .powerup-bar {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .btn-powerup {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1d4ed8;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .btn-powerup:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        #canvas-confetti {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 100;
+        .animate-cd {
+            animation: countdownPulse 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-white h-screen w-screen flex flex-col justify-between p-2 overflow-hidden select-none">
 
-    <div class="main-card">
-        <canvas id="canvas-confetti"></canvas>
-
-        <!-- SCREEN 1: PENGATURAN MODE & KATEGORI -->
-        <div id="screen-setup" class="screen active">
-            <h1>🧩 Tebak Emoji Party</h1>
-            <p class="desc">Atur mode permainan dan kategori emoji sebelum tanding!</p>
-
-            <div class="section-title">1. Pilih Kategori Emoji:</div>
-            <div class="option-group" id="category-group">
-                <button class="btn-select active" onclick="setCategory('film', this)">🎬 Film</button>
-                <button class="btn-select" onclick="setCategory('makanan', this)">🍔 Makanan</button>
-                <button class="btn-select" onclick="setCategory('olahraga', this)">⚽ Olahraga</button>
-                <button class="btn-select" onclick="setCategory('hewan', this)">🦁 Hewan</button>
+    <!-- ================= MENU UTAMA ================= -->
+    <div id="main-menu" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-4 overflow-y-auto">
+        <div class="max-w-xl w-full bg-slate-900 border-2 border-slate-700 rounded-2xl p-5 shadow-2xl space-y-4 my-auto">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-teko tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500">
+                    VOCABULARY BATTLE
+                </h1>
+                <p class="text-xs md:text-sm text-slate-400">Game Adu Kosa Kata Bahasa Inggris - Indonesia</p>
             </div>
 
-            <div class="section-title">2. Pilih Tingkat Kesulitan (Waktu):</div>
-            <div class="option-group" id="mode-group">
-                <button class="btn-select active" onclick="setDifficulty('easy', this)">Easy (20s)</button>
-                <button class="btn-select" onclick="setDifficulty('medium', this)">Medium (12s)</button>
-                <button class="btn-select" onclick="setDifficulty('hard', this)">Hard (6s)</button>
-            </div>
-
-            <button class="btn-action" onclick="prepareGame()">MULAI GAME 🚀</button>
-        </div>
-
-        <!-- COUNTDOWN OVERLAY -->
-        <div id="countdown-layer" class="countdown-overlay" style="display: none;">
-            <div id="countdown-val" class="countdown-number">3</div>
-        </div>
-
-        <!-- SCREEN 2: GAMEPLAY -->
-        <div id="screen-game" class="screen">
-            <div class="badge-team" id="display-team">Giliran: Tim A</div>
-            
-            <div class="emoji-display-box" id="display-emoji">🍿🎬</div>
-
-            <!-- Timer di Bawah Soal -->
-            <div class="timer-box">
-                <div class="timer-number" id="display-timer">⏱️ 20 DETIK</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="fill-timer"></div>
+            <!-- Mode Permainan -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1"><i class="fa-solid fa-gamepad mr-1"></i> Mode Permainan</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="selectGameMode('2p')" id="btn-mode-2p" class="mode-btn p-2.5 rounded-xl border-2 border-red-500 bg-red-950/40 text-red-400 font-bold text-sm flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-users text-lg"></i> 2 Player (1 vs 1)
+                    </button>
+                    <button onclick="selectGameMode('ai')" id="btn-mode-ai" class="mode-btn p-2.5 rounded-xl border-2 border-slate-700 bg-slate-800 text-slate-400 font-bold text-sm flex items-center justify-center gap-2 transition">
+                        <i class="fa-solid fa-robot text-lg"></i> Vs AI Bot
+                    </button>
                 </div>
             </div>
 
-            <div class="answers-grid" id="grid-answers"></div>
-
-            <div class="powerup-bar">
-                <button class="btn-powerup" id="pwr-5050" onclick="trigger5050()">⚡ Power 50:50</button>
-                <button class="btn-powerup" id="pwr-time" onclick="triggerExtraTime()">⌛ +10s Waktu</button>
-            </div>
-        </div>
-
-        <!-- SCREEN 3: HASIL AKHIR -->
-        <div id="screen-result" class="screen">
-            <h1>🏆 Hasil Pertandingan</h1>
-            <p class="desc" id="display-winner">Selamat untuk para pemenang!</p>
-
-            <div style="background: #f9fafb; padding: 20px; border-radius: 20px; margin: 20px 0; font-size: 1.2rem;">
-                <p style="margin-bottom: 10px;"><strong>Skor Tim A:</strong> <span id="score-a">0</span></p>
-                <p><strong>Skor Tim B:</strong> <span id="score-b">0</span></p>
+            <!-- Pilihan Tingkat / Paket Soal -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1"><i class="fa-solid fa-layer-group mr-1"></i> Pilih Level / Paket Soal</label>
+                <select id="level-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm font-semibold text-white focus:outline-none focus:border-indigo-500">
+                    <option value="easy">🟢 Easy (Rekomendasi Kelas 1-2 SD)</option>
+                    <option value="medium" selected>🟡 Medium (Rekomendasi Kelas 3-4 SD)</option>
+                    <option value="hard">🔴 Hard (Rekomendasi Kelas 5-6 SD)</option>
+                    <option value="extreme">🔥 Extreme (SMP / Lanjutan)</option>
+                </select>
             </div>
 
-            <button class="btn-action" onclick="restartSetup()">MAIN LAGI 🔄</button>
+            <!-- Mode Waktu -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1"><i class="fa-solid fa-clock mr-1"></i> Batas Waktu per Soal</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="selectTimer(10)" id="timer-10" class="timer-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold">10 Detik</button>
+                    <button onclick="selectTimer(15)" id="timer-15" class="timer-btn p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300 text-xs font-bold">15 Detik</button>
+                    <button onclick="selectTimer(0)" id="timer-0" class="timer-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold">Tanpa Waktu</button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pt-2 flex gap-2">
+                <button onclick="openTeacherModal()" class="w-1/3 bg-amber-600 hover:bg-amber-500 text-white font-bold p-3 rounded-xl text-xs md:text-sm flex items-center justify-center gap-1 transition">
+                    <i class="fa-solid fa-chalkboard-user"></i> Mode Guru
+                </button>
+                <button onclick="initiateGameSetup()" class="w-2/3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-bold p-3 rounded-xl text-sm md:text-base shadow-lg transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> Lanjut Ke Arena
+                </button>
+            </div>
         </div>
     </div>
 
-    <script>
-        // --- Synthesized Sound Effects (Audio Web API) ---
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    <!-- ================= ARENA PERMAINAN (SPLIT SCREEN FIT) ================= -->
+    <div class="flex-1 w-full grid grid-cols-2 gap-2 h-full overflow-hidden relative">
 
-        function playSFX(type) {
+        <!-- OVERLAY SIAP / START & COUNTDOWN -->
+        <div id="readiness-overlay" class="absolute inset-0 z-40 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
+            <div id="ready-card" class="text-center space-y-4 max-w-md w-full bg-slate-900 border-2 border-indigo-500 p-6 rounded-2xl shadow-2xl">
+                <h2 class="text-3xl font-teko tracking-wide text-indigo-400">PEMAIN SIAP?</h2>
+                <p class="text-xs text-slate-300">Posisi soal & jawaban siap! Tekan tombol di bawah untuk memulai hitung mundur.</p>
+                <button onclick="startCountdownSequence()" class="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 font-teko text-2xl tracking-wider text-white rounded-xl shadow-lg active:scale-95 transition">
+                    🚀 SIAP / MULAI PERTANDINGAN
+                </button>
+            </div>
+            <div id="countdown-display" class="hidden text-8xl font-teko font-bold text-yellow-400 drop-shadow-[0_0_25px_rgba(250,204,21,0.8)]">
+                3
+            </div>
+        </div>
+
+        <!-- TIM MERAH (P1) - LEFT SIDE -->
+        <div class="bg-slate-900/80 border-2 border-red-500/50 rounded-xl p-2 flex flex-col justify-between h-full relative overflow-hidden">
+            <!-- Header Info & Progress Bar -->
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-bold text-red-400 flex items-center gap-1">
+                        <i class="fa-solid fa-user"></i> <span id="p1-name-label">TIM MERAH</span>
+                    </span>
+                    <span id="p1-progress-text" class="text-xs font-mono font-bold text-red-400">Soal 1/15</span>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-red-900">
+                    <div id="p1-progress-bar" class="bg-red-500 h-full transition-all duration-300 w-0"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-red-950/30 border border-red-500/30 rounded-lg p-2 my-1 text-center flex-1 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] text-red-300 uppercase tracking-widest font-bold mb-0.5">Bahasa Inggris</span>
+                <div class="flex items-center gap-2">
+                    <h2 id="p1-question" class="text-xl md:text-3xl font-bold text-white tracking-wide">...</h2>
+                    <button onclick="speakWord('p1')" class="text-red-400 hover:text-red-300 text-xs p-1 bg-red-900/40 rounded-full border border-red-500/40">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+                <p id="p1-hint-text" class="text-[10px] text-amber-300 font-mono mt-0.5 hidden"></p>
+            </div>
+
+            <!-- Student Lifelines (50:50 & Hint) -->
+            <div class="flex gap-1 mb-1">
+                <button onclick="useFiftyFifty('p1')" id="p1-btn-5050" class="flex-1 py-0.5 bg-red-900/40 hover:bg-red-800/60 border border-red-500/40 rounded text-[10px] text-red-300 font-bold transition">
+                    ⚡ 50:50
+                </button>
+                <button onclick="useHint('p1')" id="p1-btn-hint" class="flex-1 py-0.5 bg-amber-900/40 hover:bg-amber-800/60 border border-amber-500/40 rounded text-[10px] text-amber-300 font-bold transition">
+                    💡 Hint
+                </button>
+            </div>
+
+            <!-- Answer Buttons Grid (2x2) -->
+            <div id="p1-options-grid" class="grid grid-cols-2 gap-1.5 h-1/2">
+                <!-- Buttons injected dynamically -->
+            </div>
+        </div>
+
+        <!-- TIM BIRU (P2 / AI) - RIGHT SIDE -->
+        <div class="bg-slate-900/80 border-2 border-blue-500/50 rounded-xl p-2 flex flex-col justify-between h-full relative overflow-hidden">
+            <!-- Header Info & Progress Bar -->
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-bold text-blue-400 flex items-center gap-1">
+                        <i id="p2-icon" class="fa-solid fa-user"></i> <span id="p2-name-label">TIM BIRU</span>
+                    </span>
+                    <span id="p2-progress-text" class="text-xs font-mono font-bold text-blue-400">Soal 1/15</span>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-blue-900">
+                    <div id="p2-progress-bar" class="bg-blue-500 h-full transition-all duration-300 w-0"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-blue-950/30 border border-blue-500/30 rounded-lg p-2 my-1 text-center flex-1 flex flex-col items-center justify-center relative">
+                <span class="text-[10px] text-blue-300 uppercase tracking-widest font-bold mb-0.5">Bahasa Inggris</span>
+                <div class="flex items-center gap-2">
+                    <h2 id="p2-question" class="text-xl md:text-3xl font-bold text-white tracking-wide">...</h2>
+                    <button onclick="speakWord('p2')" class="text-blue-400 hover:text-blue-300 text-xs p-1 bg-blue-900/40 rounded-full border border-blue-500/40">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+                <p id="p2-hint-text" class="text-[10px] text-amber-300 font-mono mt-0.5 hidden"></p>
+            </div>
+
+            <!-- Student Lifelines (50:50 & Hint) -->
+            <div class="flex gap-1 mb-1">
+                <button onclick="useFiftyFifty('p2')" id="p2-btn-5050" class="flex-1 py-0.5 bg-blue-900/40 hover:bg-blue-800/60 border border-blue-500/40 rounded text-[10px] text-blue-300 font-bold transition">
+                    ⚡ 50:50
+                </button>
+                <button onclick="useHint('p2')" id="p2-btn-hint" class="flex-1 py-0.5 bg-amber-900/40 hover:bg-amber-800/60 border border-amber-500/40 rounded text-[10px] text-amber-300 font-bold transition">
+                    💡 Hint
+                </button>
+            </div>
+
+            <!-- Answer Buttons Grid (2x2) -->
+            <div id="p2-options-grid" class="grid grid-cols-2 gap-1.5 h-1/2">
+                <!-- Buttons injected dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER STATUS & TIMER BAR -->
+    <div class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 mt-1 flex justify-between items-center text-xs font-mono">
+        <div class="text-red-400 font-bold">P1 Benar: <span id="p1-score-live">0</span></div>
+        <div id="timer-display-live" class="text-yellow-400 font-bold text-sm bg-slate-950 px-3 py-0.5 rounded border border-yellow-500/40">
+            ⏳ 15s
+        </div>
+        <div class="text-blue-400 font-bold">P2 Benar: <span id="p2-score-live">0</span></div>
+    </div>
+
+    <!-- ================= REKAP SCOREBOARD & STATISTIK ================= -->
+    <div id="recap-modal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md hidden flex flex-col items-center justify-center p-4 overflow-y-auto">
+        <div class="max-w-xl w-full bg-slate-900 border-2 border-indigo-500 rounded-2xl p-5 shadow-2xl space-y-4 my-auto">
+            <!-- Winner Banner -->
+            <div class="text-center">
+                <p class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Hasil Pertandingan</p>
+                <h1 id="winner-banner" class="text-4xl font-teko tracking-wider text-yellow-400">TIM MERAH MENANG!</h1>
+            </div>
+
+            <!-- Side by Side Stats -->
+            <div class="grid grid-cols-2 gap-3 text-xs">
+                <!-- P1 Stats -->
+                <div class="bg-red-950/30 border border-red-500/40 rounded-xl p-3 space-y-1.5">
+                    <p class="font-bold text-red-400 text-sm border-b border-red-800 pb-1" id="recap-p1-title">TIM MERAH</p>
+                    <div class="flex justify-between"><span>Jawaban Benar:</span><span id="recap-p1-correct" class="font-bold text-green-400">0</span></div>
+                    <div class="flex justify-between"><span>Jawaban Salah:</span><span id="recap-p1-wrong" class="font-bold text-red-400">0</span></div>
+                    <div class="flex justify-between"><span>Habis Waktu:</span><span id="recap-p1-timeout" class="font-bold text-amber-400">0</span></div>
+                    <div class="flex justify-between"><span>Akurasi:</span><span id="recap-p1-accuracy" class="font-bold text-indigo-300">0%</span></div>
+                    <div class="flex justify-between"><span>Rata-rata Waktu:</span><span id="recap-p1-avgtime" class="font-bold text-slate-300">0s</span></div>
+                </div>
+
+                <!-- P2 Stats -->
+                <div class="bg-blue-950/30 border border-blue-500/40 rounded-xl p-3 space-y-1.5">
+                    <p class="font-bold text-blue-400 text-sm border-b border-blue-800 pb-1" id="recap-p2-title">TIM BIRU</p>
+                    <div class="flex justify-between"><span>Jawaban Benar:</span><span id="recap-p2-correct" class="font-bold text-green-400">0</span></div>
+                    <div class="flex justify-between"><span>Jawaban Salah:</span><span id="recap-p2-wrong" class="font-bold text-red-400">0</span></div>
+                    <div class="flex justify-between"><span>Habis Waktu:</span><span id="recap-p2-timeout" class="font-bold text-amber-400">0</span></div>
+                    <div class="flex justify-between"><span>Akurasi:</span><span id="recap-p2-accuracy" class="font-bold text-indigo-300">0%</span></div>
+                    <div class="flex justify-between"><span>Rata-rata Waktu:</span><span id="recap-p2-avgtime" class="font-bold text-slate-300">0s</span></div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-2 pt-2">
+                <button onclick="downloadCSVReport()" class="w-1/2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-file-csv"></i> Download Laporan (CSV)
+                </button>
+                <button onclick="returnToMenu()" class="w-1/2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-house"></i> Kembali Ke Menu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODE GURU & EDITOR SOAL ================= -->
+    <div id="teacher-modal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md hidden flex flex-col items-center justify-center p-4 overflow-y-auto">
+        <div class="max-w-2xl w-full bg-slate-900 border-2 border-amber-500/60 rounded-2xl p-5 shadow-2xl space-y-4 my-auto max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h2 class="text-2xl font-teko text-amber-400 tracking-wide"><i class="fa-solid fa-chalkboard-user mr-2"></i>MODE GURU & KELOLA SOAL</h2>
+                <button onclick="closeTeacherModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="overflow-y-auto space-y-4 flex-1 pr-1">
+                <!-- Tambah Paket / Kategori Custom Baru -->
+                <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-xl space-y-2">
+                    <h3 class="text-xs font-bold text-amber-300 uppercase">Buat Paket Soal Custom Baru</h3>
+                    <div class="flex gap-2">
+                        <input id="custom-pack-name" type="text" placeholder="Nama Paket (Misal: Ulangan Bab 1)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+                        <button onclick="createCustomPack()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-2 rounded-lg text-xs">
+                            + Buat Paket
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Tambah Soal -->
+                <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-xl space-y-2">
+                    <h3 class="text-xs font-bold text-amber-300 uppercase">Tambah Soal ke Paket Terpilih</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] text-slate-400">Pilih Paket Target</label>
+                            <select id="teacher-target-pack" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white">
+                                <!-- Dynamic options -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400">Kata Bahasa Inggris (Soal)</label>
+                            <input id="teacher-word-en" type="text" placeholder="Contoh: Book" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] text-green-400 font-bold">Jawaban Benar (Indonesian)</label>
+                            <input id="teacher-ans-correct" type="text" placeholder="Contoh: Buku" class="w-full bg-slate-900 border border-green-600/50 rounded p-1.5 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-red-400 font-bold">Jawaban Pengecoh 1</label>
+                            <input id="teacher-ans-wrong1" type="text" placeholder="Contoh: Pensil" class="w-full bg-slate-900 border border-red-600/50 rounded p-1.5 text-xs text-white">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] text-red-400 font-bold">Jawaban Pengecoh 2</label>
+                            <input id="teacher-ans-wrong2" type="text" placeholder="Contoh: Meja" class="w-full bg-slate-900 border border-red-600/50 rounded p-1.5 text-xs text-white">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-red-400 font-bold">Jawaban Pengecoh 3</label>
+                            <input id="teacher-ans-wrong3" type="text" placeholder="Contoh: Kursi" class="w-full bg-slate-900 border border-red-600/50 rounded p-1.5 text-xs text-white">
+                        </div>
+                    </div>
+                    <button onclick="addQuestionFromTeacher()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold p-2 rounded-lg text-xs mt-1">
+                        <i class="fa-solid fa-plus mr-1"></i> Simpan Soal
+                    </button>
+                </div>
+
+                <!-- Printable Worksheet Generator -->
+                <div class="bg-indigo-950/40 border border-indigo-500/40 p-3 rounded-xl flex justify-between items-center">
+                    <div>
+                        <h4 class="text-xs font-bold text-indigo-300">Cetak Lembar Kerja Kertas (Worksheet PDF)</h4>
+                        <p class="text-[10px] text-slate-400">Hasilkan lembar latihan cetak untuk kelas secara langsung.</p>
+                    </div>
+                    <button onclick="printWorksheet()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-2 rounded-lg text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-print"></i> Cetak Soal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        /* WEB AUDIO API SOUND SYNTH */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            const now = audioCtx.currentTime;
 
             if (type === 'correct') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now);
-                osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now); osc.stop(now + 0.3);
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15); // E5
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
             } else if (type === 'wrong') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, now);
-                osc.frequency.exponentialRampToValueAtTime(110, now + 0.3);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now); osc.stop(now + 0.3);
-            } else if (type === 'tick') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(650, now);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                osc.start(now); osc.stop(now + 0.05);
-            } else if (type === 'timeout') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(140, now);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                osc.start(now); osc.stop(now + 0.4);
-            } else if (type === 'win') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(440, now);
-                osc.frequency.setValueAtTime(554.37, now + 0.1);
-                osc.frequency.setValueAtTime(659.25, now + 0.2);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-                osc.start(now); osc.stop(now + 0.6);
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(110, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'beep') {
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'go') {
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
             }
         }
 
-        // --- Master Data Bank Soal per Kategori ---
-        const questionDatabase = {
-            film: [
-                { emoji: "🍿🎬", options: ["Bioskop", "Restoran", "Konser Musik", "Taman Bermain"], answer: "Bioskop" },
-                { emoji: "🕷️🧍", options: ["Spider-Man", "Batman", "Superman", "Iron Man"], answer: "Spider-Man" },
-                { emoji: "🦁👑", options: ["The Lion King", "Madagascar", "Tarzan", "Zootopia"], answer: "The Lion King" }
+        /* DEFAULT QUESTION BANK */
+        const defaultQuestions = {
+            easy: [
+                { word: "Cat", correct: "Kucing", wrongs: ["Anjing", "Kelinci", "Burung"] },
+                { word: "Book", correct: "Buku", wrongs: ["Pensil", "Meja", "Tas"] },
+                { word: "Red", correct: "Merah", wrongs: ["Biru", "Hijau", "Kuning"] },
+                { word: "Mother", correct: "Ibu", wrongs: ["Ayah", "Kakak", "Nenek"] },
+                { word: "Water", correct: "Air", wrongs: ["Susu", "Jus", "Teh"] },
+                { word: "Sun", correct: "Matahari", wrongs: ["Bulan", "Bintang", "Awan"] },
+                { word: "Apple", correct: "Apel", wrongs: ["Pisang", "Jeruk", "Anggur"] },
+                { word: "Dog", correct: "Anjing", wrongs: ["Kucing", "Kuda", "Sapi"] }
             ],
-            makanan: [
-                { emoji: "🍔🍟🥤", options: ["Fast Food", "Sarapan", "Pesta Kue", "Barbeque"], answer: "Fast Food" },
-                { emoji: "🍕🇮🇹", options: ["Pizza Italy", "Roti Bakar", "Pasta Spaghetti", "Kebab"], answer: "Pizza Italy" },
-                { emoji: "🍣🇯🇵", options: ["Sushi Japan", "Ramen", "Dimsum", "Takoyaki"], answer: "Sushi Japan" }
+            medium: [
+                { word: "Teacher", correct: "Guru", wrongs: ["Dokter", "Polisi", "Petani"] },
+                { word: "Kitchen", correct: "Dapur", wrongs: ["Kamar Tidur", "Taman", "Garasi"] },
+                { word: "Always", correct: "Selalu", wrongs: ["Kadang-kadang", "Jarang", "Tidak Pernah"] },
+                { word: "Library", correct: "Perpustakaan", wrongs: ["Kantin", "Pasar", "Rumah Sakit"] },
+                { word: "Delicious", correct: "Lezat", wrongs: ["Pahit", "Asin", "Pedas"] },
+                { word: "Mountain", correct: "Gunung", wrongs: ["Pantai", "Danau", "Sungai"] }
             ],
-            olahraga: [
-                { emoji: "⚽🏆", options: ["Juara Sepak Bola", "Basket", "Lari Marathon", "Badminton"], answer: "Juara Sepak Bola" },
-                { emoji: "🥊🥇", options: ["Juara Tinju", "Karateman", "Taekwondo", "Silat"], answer: "Juara Tinju" },
-                { emoji: "🏊‍♂️🌊", options: ["Renang Laut", "Mancing", "Lancar Selancar", "Penyelam"], answer: "Renang Laut" }
+            hard: [
+                { word: "Knowledge", correct: "Pengetahuan", wrongs: ["Perasaan", "Mimpi", "Keberuntungan"] },
+                { word: "Environment", correct: "Lingkungan", wrongs: ["Pembangunan", "Pemerintahan", "Kebudayaan"] },
+                { word: "Dangerous", correct: "Berbahaya", wrongs: ["Aman", "Nyaman", "Mudah"] },
+                { word: "Improve", correct: "Meningkatkan", wrongs: ["Menurunkan", "Menghancurkan", "Mengabaikan"] }
             ],
-            hewan: [
-                { emoji: "🐱👓", options: ["Kucing Keren", "Anjing Pintar", "Monyet Lucu", "Kelinci Gemoy"], answer: "Kucing Keren" },
-                { emoji: "🐼🎋", options: ["Panda Makan Bambu", "Koala", "Beruang Kutub", "Kangguru"], answer: "Panda Makan Bambu" },
-                { emoji: "🦉🌙", options: ["Burung Hantu", "Elang", "Kelelawar", "Burung Cendrawasih"], answer: "Burung Hantu" }
+            extreme: [
+                { word: "Ambiguous", correct: "Bermakna Ganda", wrongs: ["Jelas", "Singkat", "Tegas"] },
+                { word: "Benevolent", correct: "Penuh Kebajikan", wrongs: ["Kejam", "Sombong", "Egois"] }
             ]
         };
 
-        // State Management
-        let selectedCategory = 'film';
-        let selectedDifficulty = 'easy';
-        const difficultyTimes = { easy: 20, medium: 12, hard: 6 };
+        let activeQuestionPacks = JSON.parse(localStorage.getItem('vocab_custom_packs')) || defaultQuestions;
 
-        let currentQuestions = [];
-        let questionIndex = 0;
-        let activeTeam = 'A';
-        let teamScores = { A: 0, B: 0 };
-        let powerupState = { A: { f50: false, time: false }, B: { f50: false, time: false } };
+        /* GAME CONFIG & STATE */
+        let gameConfig = { mode: '2p', packKey: 'medium', timerLimit: 15 };
+        let matchState = {
+            p1: { score: 0, wrong: 0, timeout: 0, times: [], used5050: false, usedHint: false, index: 0 },
+            p2: { score: 0, wrong: 0, timeout: 0, times: [], used5050: false, usedHint: false, index: 0 },
+            questions: [],
+            activeTimer: null,
+            timerLeft: 15,
+            questionStartTime: 0
+        };
 
-        let timerRef = null;
-        let secondsLeft = 0;
-        let maxTime = 20;
-
-        function setCategory(cat, btn) {
-            selectedCategory = cat;
-            document.querySelectorAll('#category-group .btn-select').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            playSFX('tick');
-        }
-
-        function setDifficulty(diff, btn) {
-            selectedDifficulty = diff;
-            document.querySelectorAll('#mode-group .btn-select').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            playSFX('tick');
-        }
-
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function prepareGame() {
-            teamScores = { A: 0, B: 0 };
-            questionIndex = 0;
-            activeTeam = 'A';
-            powerupState = { A: { f50: false, time: false }, B: { f50: false, time: false } };
-            
-            currentQuestions = questionDatabase[selectedCategory];
-            maxTime = difficultyTimes[selectedDifficulty];
-
-            startCountdown(() => {
-                showScreen('screen-game');
-                renderQuestion();
+        function selectGameMode(mode) {
+            gameConfig.mode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('border-red-500', 'bg-red-950/40', 'text-red-400');
+                btn.classList.add('border-slate-700', 'bg-slate-800', 'text-slate-400');
             });
+            const activeBtn = document.getElementById(`btn-mode-${mode}`);
+            activeBtn.classList.remove('border-slate-700', 'bg-slate-800', 'text-slate-400');
+            activeBtn.classList.add('border-red-500', 'bg-red-950/40', 'text-red-400');
         }
 
-        // --- Countdown Fix (3, 2, 1 lengkap) ---
-        function startCountdown(onComplete) {
-            const overlay = document.getElementById('countdown-layer');
-            const numDisplay = document.getElementById('countdown-val');
-            overlay.style.display = 'flex';
+        function selectTimer(sec) {
+            gameConfig.timerLimit = sec;
+            document.querySelectorAll('.timer-btn').forEach(btn => {
+                btn.classList.remove('border-2', 'border-indigo-500', 'bg-indigo-950/50', 'text-indigo-300');
+                btn.classList.add('border', 'border-slate-700', 'bg-slate-800', 'text-slate-300');
+            });
+            const activeBtn = document.getElementById(`timer-${sec}`);
+            activeBtn.classList.remove('border-slate-700', 'bg-slate-800', 'text-slate-300');
+            activeBtn.classList.add('border-2', 'border-indigo-500', 'bg-indigo-950/50', 'text-indigo-300');
+        }
+
+        function initiateGameSetup() {
+            gameConfig.packKey = document.getElementById('level-select').value;
+            let qPool = activeQuestionPacks[gameConfig.packKey] || defaultQuestions.medium;
+            
+            // Shuffle question order
+            matchState.questions = [...qPool].sort(() => Math.random() - 0.5);
+            matchState.p1 = { score: 0, wrong: 0, timeout: 0, times: [], used5050: false, usedHint: false, index: 0 };
+            matchState.p2 = { score: 0, wrong: 0, timeout: 0, times: [], used5050: false, usedHint: false, index: 0 };
+
+            document.getElementById('p1-name-label').innerText = "TIM MERAH";
+            document.getElementById('p2-name-label').innerText = gameConfig.mode === 'ai' ? "BOT AI" : "TIM BIRU";
+            document.getElementById('p2-icon').className = gameConfig.mode === 'ai' ? "fa-solid fa-robot" : "fa-solid fa-user";
+
+            document.getElementById('main-menu').classList.add('hidden');
+            document.getElementById('readiness-overlay').classList.remove('hidden');
+            document.getElementById('ready-card').classList.remove('hidden');
+            document.getElementById('countdown-display').classList.add('hidden');
+
+            renderCurrentQuestions();
+            setButtonsDisabled(true); // Lock buttons before countdown
+        }
+
+        function startCountdownSequence() {
+            document.getElementById('ready-card').classList.add('hidden');
+            const cdDisplay = document.getElementById('countdown-display');
+            cdDisplay.classList.remove('hidden');
 
             let count = 3;
-            numDisplay.innerText = count;
-            playSFX('tick');
+            cdDisplay.innerText = count;
+            cdDisplay.className = "text-8xl font-teko font-bold text-yellow-400 animate-cd";
+            playSound('beep');
 
-            const interval = setInterval(() => {
+            const cdInterval = setInterval(() => {
                 count--;
                 if (count > 0) {
-                    numDisplay.innerText = count;
-                    playSFX('tick');
+                    cdDisplay.innerText = count;
+                    cdDisplay.className = "text-8xl font-teko font-bold text-yellow-400 animate-cd";
+                    playSound('beep');
                 } else if (count === 0) {
-                    numDisplay.innerText = "START!";
-                    playSFX('tick');
+                    cdDisplay.innerText = "GO!";
+                    cdDisplay.className = "text-8xl font-teko font-bold text-green-400 animate-cd";
+                    playSound('go');
                 } else {
-                    clearInterval(interval);
-                    overlay.style.display = 'none';
-                    onComplete();
+                    clearInterval(cdInterval);
+                    document.getElementById('readiness-overlay').classList.add('hidden');
+                    setButtonsDisabled(false); // Unlock buttons!
+                    startTimer();
                 }
-            }, 800);
+            }, 850);
         }
 
-        function renderQuestion() {
-            clearInterval(timerRef);
-            const q = currentQuestions[questionIndex];
+        function renderCurrentQuestions() {
+            const total = matchState.questions.length;
+            
+            // Render P1
+            if (matchState.p1.index < total) {
+                const q1 = matchState.questions[matchState.p1.index];
+                document.getElementById('p1-question').innerText = q1.word;
+                document.getElementById('p1-progress-text').innerText = `Soal ${matchState.p1.index + 1}/${total}`;
+                document.getElementById('p1-progress-bar').style.width = `${((matchState.p1.index) / total) * 100}%`;
+                document.getElementById('p1-hint-text').classList.add('hidden');
+                renderOptions('p1', q1);
+            } else {
+                document.getElementById('p1-question').innerText = "SELESAI!";
+                document.getElementById('p1-options-grid').innerHTML = `<div class="col-span-2 flex items-center justify-center text-green-400 font-bold">Menunggu P2...</div>`;
+            }
 
-            document.getElementById('display-team').innerText = `Giliran: Tim ${activeTeam}`;
-            document.getElementById('display-emoji').innerText = q.emoji;
+            // Render P2
+            if (matchState.p2.index < total) {
+                const q2 = matchState.questions[matchState.p2.index];
+                document.getElementById('p2-question').innerText = q2.word;
+                document.getElementById('p2-progress-text').innerText = `Soal ${matchState.p2.index + 1}/${total}`;
+                document.getElementById('p2-progress-bar').style.width = `${((matchState.p2.index) / total) * 100}%`;
+                document.getElementById('p2-hint-text').classList.add('hidden');
+                renderOptions('p2', q2);
+            } else {
+                document.getElementById('p2-question').innerText = "SELESAI!";
+                document.getElementById('p2-options-grid').innerHTML = `<div class="col-span-2 flex items-center justify-center text-green-400 font-bold">Menunggu P1...</div>`;
+            }
 
-            // Power-up button states
-            document.getElementById('pwr-5050').disabled = powerupState[activeTeam].f50;
-            document.getElementById('pwr-time').disabled = powerupState[activeTeam].time;
+            document.getElementById('p1-score-live').innerText = matchState.p1.score;
+            document.getElementById('p2-score-live').innerText = matchState.p2.score;
 
-            // Render opsi jawaban (TIDAK DIACAK agar konsisten)
-            const grid = document.getElementById('grid-answers');
+            if (matchState.p1.index >= total && matchState.p2.index >= total) {
+                endMatch();
+            }
+        }
+
+        function renderOptions(player, q) {
+            const grid = document.getElementById(`${player}-options-grid`);
             grid.innerHTML = '';
+            
+            // Shuffle options automatically!
+            let options = [q.correct, ...q.wrongs].sort(() => Math.random() - 0.5);
 
-            q.options.forEach(opt => {
+            options.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = 'btn-answer';
+                btn.className = `opt-btn ${player}-opt w-full h-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-xs md:text-sm rounded-lg p-1 transition flex items-center justify-center text-center`;
                 btn.innerText = opt;
-                btn.onclick = () => selectAnswer(opt, btn);
+                btn.onclick = () => handleAnswer(player, opt, q.correct);
                 grid.appendChild(btn);
             });
-
-            beginTimer();
         }
 
-        function beginTimer() {
-            secondsLeft = maxTime;
-            updateTimerDisplay();
+        function handleAnswer(player, selected, correct) {
+            const timeTaken = (Date.now() - matchState.questionStartTime) / 1000;
+            matchState[player].times.push(timeTaken);
 
-            timerRef = setInterval(() => {
-                secondsLeft--;
-                updateTimerDisplay();
+            if (selected === correct) {
+                matchState[player].score++;
+                playSound('correct');
+            } else {
+                matchState[player].wrong++;
+                playSound('wrong');
+            }
 
-                if (secondsLeft <= 3 && secondsLeft > 0) playSFX('tick');
+            matchState[player].index++;
+            
+            if (gameConfig.mode === 'ai' && player === 'p1' && matchState.p2.index < matchState.questions.length) {
+                setTimeout(triggerAITurn, 400);
+            }
 
-                if (secondsLeft <= 0) {
-                    clearInterval(timerRef);
-                    playSFX('timeout');
-                    revealCorrect();
-                    setTimeout(switchTurn, 1500);
+            renderCurrentQuestions();
+        }
+
+        function triggerAITurn() {
+            if (matchState.p2.index >= matchState.questions.length) return;
+            const q = matchState.questions[matchState.p2.index];
+            const isCorrect = Math.random() < 0.7; // AI 70% accuracy
+            const chosen = isCorrect ? q.correct : q.wrongs[Math.floor(Math.random() * q.wrongs.length)];
+            
+            matchState.p2.times.push(1.5);
+            if (chosen === q.correct) matchState.p2.score++; else matchState.p2.wrong++;
+            matchState.p2.index++;
+            renderCurrentQuestions();
+        }
+
+        function startTimer() {
+            if (matchState.activeTimer) clearInterval(matchState.activeTimer);
+            if (gameConfig.timerLimit === 0) {
+                document.getElementById('timer-display-live').innerText = "⏳ ∞";
+                return;
+            }
+
+            matchState.timerLeft = gameConfig.timerLimit;
+            matchState.questionStartTime = Date.now();
+            document.getElementById('timer-display-live').innerText = `⏳ ${matchState.timerLeft}s`;
+
+            matchState.activeTimer = setInterval(() => {
+                matchState.timerLeft--;
+                document.getElementById('timer-display-live').innerText = `⏳ ${matchState.timerLeft}s`;
+
+                if (matchState.timerLeft <= 0) {
+                    // Handle Timeout
+                    if (matchState.p1.index < matchState.questions.length) {
+                        matchState.p1.timeout++;
+                        matchState.p1.index++;
+                    }
+                    if (matchState.p2.index < matchState.questions.length) {
+                        matchState.p2.timeout++;
+                        matchState.p2.index++;
+                    }
+                    matchState.timerLeft = gameConfig.timerLimit;
+                    renderCurrentQuestions();
                 }
             }, 1000);
         }
 
-        function updateTimerDisplay() {
-            document.getElementById('display-timer').innerText = `⏱️ ${secondsLeft} DETIK`;
-            const pct = (secondsLeft / maxTime) * 100;
-            document.getElementById('fill-timer').style.width = `${Math.max(0, pct)}%`;
+        function setButtonsDisabled(disabled) {
+            document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = disabled);
         }
 
-        function selectAnswer(chosen, btn) {
-            clearInterval(timerRef);
-            const q = currentQuestions[questionIndex];
-            document.querySelectorAll('.btn-answer').forEach(b => b.disabled = true);
-
-            if (chosen === q.answer) {
-                btn.classList.add('correct');
-                playSFX('correct');
-                teamScores[activeTeam] += 10;
-            } else {
-                btn.classList.add('wrong');
-                playSFX('wrong');
-                revealCorrect();
-            }
-
-            setTimeout(switchTurn, 1500);
-        }
-
-        function revealCorrect() {
-            const q = currentQuestions[questionIndex];
-            document.querySelectorAll('.btn-answer').forEach(b => {
-                if (b.innerText === q.answer) b.classList.add('correct');
-            });
-        }
-
-        function switchTurn() {
-            if (activeTeam === 'A') {
-                activeTeam = 'B';
-            } else {
-                activeTeam = 'A';
-                questionIndex++;
-            }
-
-            if (questionIndex < currentQuestions.length) {
-                renderQuestion();
-            } else {
-                finishGame();
+        /* STUDENT HELPER FEATURES */
+        function speakWord(player) {
+            const idx = matchState[player].index;
+            if (idx < matchState.questions.length) {
+                const word = matchState[player].questions ? matchState[player].questions[idx].word : matchState.questions[idx].word;
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
             }
         }
 
-        // --- Powerups ---
-        function trigger5050() {
-            powerupState[activeTeam].f50 = true;
-            document.getElementById('pwr-5050').disabled = true;
-            playSFX('tick');
+        function useFiftyFifty(player) {
+            if (matchState[player].used5050) return;
+            matchState[player].used5050 = true;
+            document.getElementById(`${player}-btn-5050`).classList.add('opacity-40', 'cursor-not-allowed');
 
-            const q = currentQuestions[questionIndex];
-            const buttons = Array.from(document.querySelectorAll('.btn-answer'));
-            let removedCount = 0;
-
-            buttons.forEach(btn => {
-                if (btn.innerText !== q.answer && removedCount < 2) {
+            const idx = matchState[player].index;
+            const q = matchState.questions[idx];
+            const btns = Array.from(document.querySelectorAll(`.${player}-opt`));
+            
+            let removed = 0;
+            btns.forEach(btn => {
+                if (btn.innerText !== q.correct && removed < 2) {
                     btn.style.visibility = 'hidden';
-                    removedCount++;
+                    removed++;
                 }
             });
         }
 
-        function triggerExtraTime() {
-            powerupState[activeTeam].time = true;
-            document.getElementById('pwr-time').disabled = true;
-            playSFX('tick');
-            secondsLeft += 10;
-            maxTime += 10;
-            updateTimerDisplay();
+        function useHint(player) {
+            if (matchState[player].usedHint) return;
+            matchState[player].usedHint = true;
+            document.getElementById(`${player}-btn-hint`).classList.add('opacity-40', 'cursor-not-allowed');
+
+            const idx = matchState[player].index;
+            const q = matchState.questions[idx];
+            const hintElem = document.getElementById(`${player}-hint-text`);
+            hintElem.innerText = `Hint: Awal '${q.correct[0]}', ${q.correct.length} Huruf`;
+            hintElem.classList.remove('hidden');
         }
 
-        function finishGame() {
-            showScreen('screen-result');
-            playSFX('win');
-            launchConfetti();
+        /* RECAP & SCOREBOARD */
+        function endMatch() {
+            if (matchState.activeTimer) clearInterval(matchState.activeTimer);
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 
-            document.getElementById('score-a').innerText = teamScores.A;
-            document.getElementById('score-b').innerText = teamScores.B;
+            const p1 = matchState.p1;
+            const p2 = matchState.p2;
+            const total = matchState.questions.length;
 
-            const winBox = document.getElementById('display-winner');
-            if (teamScores.A > teamScores.B) {
-                winBox.innerText = "🎉 Tim A Menang!";
-            } else if (teamScores.B > teamScores.A) {
-                winBox.innerText = "🎉 Tim B Menang!";
-            } else {
-                winBox.innerText = "🤝 Hasil Seri!";
+            let winnerText = "PERTANDINGAN SERI!";
+            if (p1.score > p2.score) winnerText = "TIM MERAH MENANG! 🏆";
+            else if (p2.score > p1.score) winnerText = gameConfig.mode === 'ai' ? "BOT AI MENANG! 🤖" : "TIM BIRU MENANG! 🏆";
+
+            document.getElementById('winner-banner').innerText = winnerText;
+
+            // Stats calculation
+            document.getElementById('recap-p1-correct').innerText = p1.score;
+            document.getElementById('recap-p1-wrong').innerText = p1.wrong;
+            document.getElementById('recap-p1-timeout').innerText = p1.timeout;
+            document.getElementById('recap-p1-accuracy').innerText = `${Math.round((p1.score / total) * 100)}%`;
+            const p1Avg = p1.times.length ? (p1.times.reduce((a,b)=>a+b,0)/p1.times.length).toFixed(1) : 0;
+            document.getElementById('recap-p1-avgtime').innerText = `${p1Avg}s`;
+
+            document.getElementById('recap-p2-correct').innerText = p2.score;
+            document.getElementById('recap-p2-wrong').innerText = p2.wrong;
+            document.getElementById('recap-p2-timeout').innerText = p2.timeout;
+            document.getElementById('recap-p2-accuracy').innerText = `${Math.round((p2.score / total) * 100)}%`;
+            const p2Avg = p2.times.length ? (p2.times.reduce((a,b)=>a+b,0)/p2.times.length).toFixed(1) : 0;
+            document.getElementById('recap-p2-avgtime').innerText = `${p2Avg}s`;
+
+            document.getElementById('recap-modal').classList.remove('hidden');
+        }
+
+        function downloadCSVReport() {
+            let csv = "Pemain,Benar,Salah,Timeout,Akurasi(%)\n";
+            csv += `Tim Merah,${matchState.p1.score},${matchState.p1.wrong},${matchState.p1.timeout},${Math.round((matchState.p1.score/matchState.questions.length)*100)}\n`;
+            csv += `Tim Biru,${matchState.p2.score},${matchState.p2.wrong},${matchState.p2.timeout},${Math.round((matchState.p2.score/matchState.questions.length)*100)}\n`;
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `Laporan_VocabBattle_${Date.now()}.csv`);
+            a.click();
+        }
+
+        function returnToMenu() {
+            document.getElementById('recap-modal').classList.add('hidden');
+            document.getElementById('main-menu').classList.remove('hidden');
+        }
+
+        /* TEACHER MODAL & CUSTOM PACK LOGIC */
+        function openTeacherModal() {
+            updateTeacherPackDropdown();
+            document.getElementById('teacher-modal').classList.remove('hidden');
+        }
+
+        function closeTeacherModal() {
+            document.getElementById('teacher-modal').classList.add('hidden');
+        }
+
+        function updateTeacherPackDropdown() {
+            const targetSelect = document.getElementById('teacher-target-pack');
+            const levelSelect = document.getElementById('level-select');
+            targetSelect.innerHTML = '';
+            
+            Object.keys(activeQuestionPacks).forEach(key => {
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.innerText = key.toUpperCase();
+                targetSelect.appendChild(opt);
+
+                if (!Array.from(levelSelect.options).some(o => o.value === key)) {
+                    const lOpt = document.createElement('option');
+                    lOpt.value = key;
+                    lOpt.innerText = `⭐ Custom: ${key}`;
+                    levelSelect.appendChild(lOpt);
+                }
+            });
+        }
+
+        function createCustomPack() {
+            const name = document.getElementById('custom-pack-name').value.trim().toLowerCase().replace(/\s+/g, '_');
+            if (!name) return alert("Masukkan nama paket!");
+            if (!activeQuestionPacks[name]) {
+                activeQuestionPacks[name] = [];
+                localStorage.setItem('vocab_custom_packs', JSON.stringify(activeQuestionPacks));
+                updateTeacherPackDropdown();
+                alert(`Paket '${name}' berhasil dibuat!`);
             }
         }
 
-        function restartSetup() {
-            showScreen('screen-setup');
+        function addQuestionFromTeacher() {
+            const target = document.getElementById('teacher-target-pack').value;
+            const word = document.getElementById('teacher-word-en').value.trim();
+            const correct = document.getElementById('teacher-ans-correct').value.trim();
+            const w1 = document.getElementById('teacher-ans-wrong1').value.trim();
+            const w2 = document.getElementById('teacher-ans-wrong2').value.trim();
+            const w3 = document.getElementById('teacher-ans-wrong3').value.trim();
+
+            if (!word || !correct || !w1 || !w2 || !w3) return alert("Lengkapi semua field soal!");
+
+            activeQuestionPacks[target].push({
+                word: word,
+                correct: correct,
+                wrongs: [w1, w2, w3]
+            });
+
+            localStorage.setItem('vocab_custom_packs', JSON.stringify(activeQuestionPacks));
+            alert("Soal berhasil ditambahkan ke paket!");
+            document.getElementById('teacher-word-en').value = '';
+            document.getElementById('teacher-ans-correct').value = '';
+            document.getElementById('teacher-ans-wrong1').value = '';
+            document.getElementById('teacher-ans-wrong2').value = '';
+            document.getElementById('teacher-ans-wrong3').value = '';
         }
 
-        // --- Confetti ---
-        function launchConfetti() {
-            const cvs = document.getElementById('canvas-confetti');
-            const ctx = cvs.getContext('2d');
-            cvs.width = cvs.parentElement.clientWidth;
-            cvs.height = cvs.parentElement.clientHeight;
-
-            const items = [];
-            const palette = ['#ec4899', '#8b5cf6', '#10b981', '#f59e0b', '#3b82f6'];
-
-            for (let i = 0; i < 70; i++) {
-                items.push({
-                    x: Math.random() * cvs.width,
-                    y: Math.random() * cvs.height - cvs.height,
-                    sz: Math.random() * 8 + 4,
-                    color: palette[Math.floor(Math.random() * palette.length)],
-                    sp: Math.random() * 3 + 2
+        function printWorksheet() {
+            const target = document.getElementById('teacher-target-pack').value;
+            const qList = activeQuestionPacks[target] || [];
+            
+            let win = window.open('', '', 'width=800,height=600');
+            win.document.write(`<html><head><title>Lembar Kerja - ${target}</title>`);
+            win.document.write(`<style>body{font-family:sans-serif;padding:20px;} .q{margin-bottom:15px;}</style></head><body>`);
+            win.document.write(`<h2>Lembar Kerja Kosa Kata: ${target.toUpperCase()}</h2><hr><br>`);
+            
+            qList.forEach((q, i) => {
+                win.document.write(`<div class="q"><strong>${i+1}. Apa arti dari kata "${q.word}"?</strong><br>`);
+                let opts = [q.correct, ...q.wrongs].sort(() => Math.random() - 0.5);
+                opts.forEach((o, j) => {
+                    win.document.write(` &nbsp;&nbsp; [ &nbsp; ] ${String.fromCharCode(65+j)}. ${o}<br>`);
                 });
-            }
+                win.document.write(`</div>`);
+            });
 
-            function animate() {
-                ctx.clearRect(0, 0, cvs.width, cvs.height);
-                items.forEach(p => {
-                    ctx.fillStyle = p.color;
-                    ctx.fillRect(p.x, p.y, p.sz, p.sz);
-                    p.y += p.sp;
-                    if (p.y > cvs.height) p.y = -10;
-                });
-                requestAnimationFrame(animate);
-            }
-            animate();
+            win.document.write(`</body></html>`);
+            win.document.close();
+            win.print();
         }
     </script>
 </body>
