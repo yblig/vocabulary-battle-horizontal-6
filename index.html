@@ -431,6 +431,7 @@
             }
         }
 
+        // DATABASE SOAL LENGKAP (MINIMAL 25 SOAL PER KATEGORI)
         const defaultQuestions = {
             easy: [
                 { word: "Cat", correct: "Kucing", wrongs: ["Anjing", "Kelinci", "Burung"] },
@@ -440,7 +441,24 @@
                 { word: "Water", correct: "Air", wrongs: ["Susu", "Jus", "Teh"] },
                 { word: "Sun", correct: "Matahari", wrongs: ["Bulan", "Bintang", "Awan"] },
                 { word: "Apple", correct: "Apel", wrongs: ["Pisang", "Jeruk", "Anggur"] },
-                { word: "Dog", correct: "Anjing", wrongs: ["Kucing", "Kuda", "Sapi"] }
+                { word: "Dog", correct: "Anjing", wrongs: ["Kucing", "Kuda", "Sapi"] },
+                { word: "Milk", correct: "Susu", wrongs: ["Air", "Kopi", "Teh"] },
+                { word: "Chair", correct: "Kursi", wrongs: ["Meja", "Pintu", "Jendela"] },
+                { word: "Door", correct: "Pintu", wrongs: ["Jendela", "Atap", "Dinding"] },
+                { word: "Fish", correct: "Ikan", wrongs: ["Ayam", "Bebek", "Kelinci"] },
+                { word: "Bird", correct: "Burung", wrongs: ["Ikan", "Kucing", "Kuda"] },
+                { word: "Pen", correct: "Pulpen", wrongs: ["Pensil", "Buku", "Penggaris"] },
+                { word: "Bag", correct: "Tas", wrongs: ["Buku", "Sepatu", "Baju"] },
+                { word: "Shoe", correct: "Sepatu", wrongs: ["Sandal", "Kaos Kaki", "Topi"] },
+                { word: "Hat", correct: "Topi", wrongs: ["Baju", "Celana", "Sepatu"] },
+                { word: "Father", correct: "Ayah", wrongs: ["Ibu", "Paman", "Kakek"] },
+                { word: "Blue", correct: "Biru", wrongs: ["Merah", "Hijau", "Kuning"] },
+                { word: "Green", correct: "Hijau", wrongs: ["Kuning", "Hitam", "Putih"] },
+                { word: "Yellow", correct: "Kuning", wrongs: ["Merah", "Ungu", "Cokelat"] },
+                { word: "Black", correct: "Hitam", wrongs: ["Putih", "Abu-abu", "Cokelat"] },
+                { word: "White", correct: "Putih", wrongs: ["Hitam", "Merah", "Kuning"] },
+                { word: "House", correct: "Rumah", wrongs: ["Sekolah", "Taman", "Toko"] },
+                { word: "Car", correct: "Mobil", wrongs: ["Motor", "Sepeda", "Bus"] }
             ],
             medium: [
                 { word: "Teacher", correct: "Guru", wrongs: ["Dokter", "Polisi", "Petani"] },
@@ -448,17 +466,80 @@
                 { word: "Always", correct: "Selalu", wrongs: ["Kadang-kadang", "Jarang", "Tidak Pernah"] },
                 { word: "Library", correct: "Perpustakaan", wrongs: ["Kantin", "Pasar", "Rumah Sakit"] },
                 { word: "Delicious", correct: "Lezat", wrongs: ["Pahit", "Asin", "Pedas"] },
-                { word: "Mountain", correct: "Gunung", wrongs: ["Pantai", "Danau", "Sungai"] }
+                { word: "Mountain", correct: "Gunung", wrongs: ["Pantai", "Danau", "Sungai"] },
+                { word: "Doctor", correct: "Dokter", wrongs: ["Guru", "Perawat", "Pilot"] },
+                { word: "Hospital", correct: "Rumah Sakit", wrongs: ["Sekolah", "Pasar", "Bank"] },
+                { word: "Market", correct: "Pasar", wrongs: ["Toko", "Kantin", "Mall"] },
+                { word: "Window", correct: "Jendela", wrongs: ["Pintu", "Dinding", "Atap"] },
+                { word: "Garden", correct: "Taman", wrongs: ["Hutan", "Sawah", "Dapur"] },
+                { word: "Breakfast", correct: "Sarapan", wrongs: ["Makan Siang", "Makan Malam", "Camilan"] },
+                { word: "Bicycle", correct: "Sepeda", wrongs: ["Motor", "Mobil", "Kereta"] },
+                { word: "River", correct: "Sungai", wrongs: ["Laut", "Danau", "Kolam"] },
+                { word: "Friend", correct: "Teman", wrongs: ["Musuh", "Tetangga", "Guru"] },
+                { word: "Pencil", correct: "Pensil", wrongs: ["Pulpen", "Spidol", "Kapur"] },
+                { word: "Student", correct: "Murid", wrongs: ["Guru", "Kepala Sekolah", "Satpam"] },
+                { word: "Village", correct: "Desa", wrongs: ["Kota", "Negara", "Hutan"] },
+                { word: "Weather", correct: "Cuaca", wrongs: ["Iklim", "Musim", "Suhu"] },
+                { word: "Summer", correct: "Musim Panas", wrongs: ["Musim Hujan", "Musim Dingin", "Musim Gugur"] },
+                { word: "Island", correct: "Pulau", wrongs: ["Laut", "Gunung", "Pantai"] },
+                { word: "Clock", correct: "Jam", wrongs: ["Kalender", "Kaca", "Kamera"] },
+                { word: "Mirror", correct: "Cermin", wrongs: ["Jendela", "Jam", "Lampu"] },
+                { word: "Umbrella", correct: "Payung", wrongs: ["Jas Hujan", "Topi", "Handuk"] },
+                { word: "Bridge", correct: "Jembatan", wrongs: ["Jalan", "Gedung", "Stasiun"] }
             ],
             hard: [
                 { word: "Knowledge", correct: "Pengetahuan", wrongs: ["Perasaan", "Mimpi", "Keberuntungan"] },
                 { word: "Environment", correct: "Lingkungan", wrongs: ["Pembangunan", "Pemerintahan", "Kebudayaan"] },
                 { word: "Dangerous", correct: "Berbahaya", wrongs: ["Aman", "Nyaman", "Mudah"] },
-                { word: "Improve", correct: "Meningkatkan", wrongs: ["Menurunkan", "Menghancurkan", "Mengabaikan"] }
+                { word: "Improve", correct: "Meningkatkan", wrongs: ["Menurunkan", "Menghancurkan", "Mengabaikan"] },
+                { word: "Government", correct: "Pemerintah", wrongs: ["Masyarakat", "Perusahaan", "Yayasan"] },
+                { word: "Century", correct: "Abad", wrongs: ["Tahun", "Bulan", "Dekade"] },
+                { word: "Challenge", correct: "Tantangan", wrongs: ["Bantuan", "Kemudahan", "Hadiah"] },
+                { word: "Opportunity", correct: "Kesempatan", wrongs: ["Hambatan", "Kegagalan", "Ancaman"] },
+                { word: "Behavior", correct: "Tingkah Laku", wrongs: ["Pikiran", "Perasaan", "Penampilan"] },
+                { word: "Education", correct: "Pendidikan", wrongs: ["Pekerjaan", "Olahraga", "Hiburan"] },
+                { word: "Protect", correct: "Melindungi", wrongs: ["Menyerang", "Merusak", "Meninggalkan"] },
+                { word: "Discover", correct: "Menemukan", wrongs: ["Sembunyi", "Kehilangan", "Menciptakan"] },
+                { word: "Population", correct: "Populasi", wrongs: ["Luas Wilayah", "Pendapatan", "Kendaraan"] },
+                { word: "Structure", correct: "Struktur", wrongs: ["Fungsi", "Bahan", "Tujuan"] },
+                { word: "Technology", correct: "Teknologi", wrongs: ["Tradisi", "Sejarah", "Seni"] },
+                { word: "Advantage", correct: "Keuntungan", wrongs: ["Kerugian", "Bahaya", "Resiko"] },
+                { word: "Disadvantage", correct: "Kerugian", wrongs: ["Keuntungan", "Hasil", "Manfaat"] },
+                { word: "Experience", correct: "Pengalaman", wrongs: ["Pendidikan", "Rencana", "Harapan"] },
+                { word: "Decision", correct: "Keputusan", wrongs: ["Pertanyaan", "Raguan", "Nasihat"] },
+                { word: "Solution", correct: "Solusi", wrongs: ["Masalah", "Sebab", "Alasan"] },
+                { word: "Patience", correct: "Kesabaran", wrongs: ["Kemarahan", "Keberanian", "Kejujuran"] },
+                { word: "Honesty", correct: "Kejujuran", wrongs: ["Kebohongan", "Kecurangan", "Kebaikan"] },
+                { word: "Invention", correct: "Penemuan", wrongs: ["Pencurian", "Pembelian", "Penjualan"] },
+                { word: "Musician", correct: "Musisi", wrongs: ["Pelukis", "Penulis", "Aktor"] },
+                { word: "Journey", correct: "Perjalanan", wrongs: ["Tujuan", "Pemberhentian", "Peta"] }
             ],
             extreme: [
                 { word: "Ambiguous", correct: "Bermakna Ganda", wrongs: ["Jelas", "Singkat", "Tegas"] },
-                { word: "Benevolent", correct: "Penuh Kebajikan", wrongs: ["Kejam", "Sombong", "Egois"] }
+                { word: "Benevolent", correct: "Penuh Kebajikan", wrongs: ["Kejam", "Sombong", "Egois"] },
+                { word: "Meticulous", correct: "Sangat Teliti", wrongs: ["Ceroboh", "Cepat", "Ragu-ragu"] },
+                { word: "Pragmatic", correct: "Praktis", wrongs: ["Teoretis", "Imajinatif", "Emosional"] },
+                { word: "Ubiquitous", correct: "Ada Di Mana-mana", wrongs: ["Langka", "Tersembunyi", "Unik"] },
+                { word: "Ephemeral", correct: "Pasti Berlalu / Sesaat", wrongs: ["Abadi", "Kuat", "Tua"] },
+                { word: "Resilient", correct: "Tahan Banting", wrongs: ["Rapuh", "Lemah", "Mudah Menyerah"] },
+                { word: "Superfluous", correct: "Berlebihan / Tak Perlu", wrongs: ["Sangat Penting", "Kurang", "Tepat"] },
+                { word: "Candid", correct: "Jujur Apa Adanya", wrongs: ["Pura-pura", "Rahasia", "Sopan"] },
+                { word: "Aesthetic", correct: "Keindahan", wrongs: ["Kekuatan", "Kecepatan", "Kebersihan"] },
+                { word: "Elusive", correct: "Sulit Ditangkap", wrongs: ["Mudah Ditemukan", "Jelas", "Dekat"] },
+                { word: "Ineffable", correct: "Tak Terkatakan", wrongs: ["Biasa Saja", "Jelas", "Mudah Dipahami"] },
+                { word: "Nostalgia", correct: "Kerinduan Masa Lalu", wrongs: ["Takut Masa Depan", "Marah", "Bosan"] },
+                { word: "Scrutinize", correct: "Memeriksa Cermat", wrongs: ["Mengabaikan", "Melihat Sekilas", "Lupa"] },
+                { word: "Tenacious", correct: "Gigih", wrongs: ["Penakut", "Pesimis", "Pemalas"] },
+                { word: "Vindicate", correct: "Membuktikan Benar", wrongs: ["Menyalahkan", "Menghukum", "Tuduh"] },
+                { word: "Anachronism", correct: "Ketidaksesuaian Zaman", wrongs: ["Kesesuaian", "Sejarah", "Masa Depan"] },
+                { word: "Capricious", correct: "Suka Berubah-ubah", wrongs: ["Consisten", "Tenang", "Setia"] },
+                { word: "Exacerbate", correct: "Memperburuk", wrongs: ["Memperbaiki", "Meredakan", "Membantu"] },
+                { word: "Fastidious", correct: "Sangat Pemilih", wrongs: ["Sembarangan", "Santai", "Ramah"] },
+                { word: "Gregarious", correct: "Suka Bersosialisasi", wrongs: ["Penyendiri", "Pemalu", "Pendiam"] },
+                { word: "Infallible", correct: "Tidak Pernah Salah", wrongs: ["Sering Serta", "Cacat", "Lemah"] },
+                { word: "Lucid", correct: "Mudah Dipahami", wrongs: ["Rumit", "Gelap", "Membingungkan"] },
+                { word: "Nonchalant", correct: "Acuh Tak Acuh", wrongs: ["Peduli", "Panik", "Semangat"] },
+                { word: "Ostentatious", correct: "Pamer", wrongs: ["Sederhana", "Rendah Hati", "Pendiam"] }
             ],
             emoji: [
                 { word: "🐶", listenWord: "Dog", correct: "Anjing", wrongs: ["Kucing", "Burung", "Singa"] },
@@ -470,7 +551,22 @@
                 { word: "⚽", listenWord: "Soccer Ball", correct: "Bola Sepak", wrongs: ["Basket", "Voli", "Tenis"] },
                 { word: "📚", listenWord: "Books", correct: "Buku", wrongs: ["Pensil", "Tas", "Penggaris"] },
                 { word: "🌧️", listenWord: "Rain", correct: "Hujan", wrongs: ["Matahari", "Awan", "Angin"] },
-                { word: "🔥", listenWord: "Fire", correct: "Api", wrongs: ["Air", "Es", "Tanah"] }
+                { word: "🔥", listenWord: "Fire", correct: "Api", wrongs: ["Air", "Es", "Tanah"] },
+                { word: "🍌", listenWord: "Banana", correct: "Pisang", wrongs: ["Apel", "Jeruk", "Nanas"] },
+                { word: "🐸", listenWord: "Frog", correct: "Katak", wrongs: ["Ular", "Ikan", "Kura-kura"] },
+                { word: "🦁", listenWord: "Lion", correct: "Singa", wrongs: ["Harimau", "Serigala", "Beruang"] },
+                { word: "✈️", listenWord: "Airplane", correct: "Pesawat", wrongs: ["Helikopter", "Kapal", "Mobil"] },
+                { word: "🚲", listenWord: "Bicycle", correct: "Sepeda", wrongs: ["Motor", "Mobil", "Kereta"] },
+                { word: "🍦", listenWord: "Ice Cream", correct: "Es Krim", wrongs: ["Cokelat", "Permen", "Kue"] },
+                { word: "🎸", listenWord: "Guitar", correct: "Gitar", wrongs: ["Drum", "Piano", "Biola"] },
+                { word: "☀️", listenWord: "Sun", correct: "Matahari", wrongs: ["Bulan", "Bintang", "Awan"] },
+                { word: "🌙", listenWord: "Moon", correct: "Bulan", wrongs: ["Matahari", "Bintang", "Awan"] },
+                { word: "🍔", listenWord: "Burger", correct: "Burger", wrongs: ["Piza", "Roti", "Kentang"] },
+                { word: "🏀", listenWord: "Basketball", correct: "Basket", wrongs: ["Bola Sepak", "Voli", "Tenis"] },
+                { word: "🎈", listenWord: "Balloon", correct: "Balon", wrongs: ["Bola", "Lampu", "Mainan"] },
+                { word: "🔑", listenWord: "Key", correct: "Kunci", wrongs: ["Pintu", "Gembok", "Rumah"] },
+                { word: "⏰", listenWord: "Alarm Clock", correct: "Jam Weker", wrongs: ["Jam Tangan", "HP", "Kalender"] },
+                { word: "🎁", listenWord: "Gift", correct: "Hadiah / Kado", wrongs: ["Uang", "Surat", "Tas"] }
             ]
         };
 
@@ -524,15 +620,15 @@
             gameConfig.packKey = document.getElementById('level-select').value;
             let qPool = activeQuestionPacks[gameConfig.packKey] || defaultQuestions.medium;
             
-            // 1. Acak urutan soal
+            // 1. Acak urutan seluruh bank soal
             let shuffled = [...qPool].sort(() => Math.random() - 0.5);
 
-            // 2. Potong sesuai JUMLAH SOAL yang dipilih
-            if (gameConfig.questionCount > 0 && gameConfig.questionCount < shuffled.length) {
+            // 2. Potong tepat sesuai JUMLAH SOAL yang dipilih
+            if (gameConfig.questionCount > 0 && gameConfig.questionCount <= shuffled.length) {
                 shuffled = shuffled.slice(0, gameConfig.questionCount);
             }
 
-            // 3. ACAK OPSI SEKALIKAN DI SINI AGAR TIDAK BERUBAH SAAT MAIN (PERBAIKAN BUG UTAMA)
+            // 3. ACAK OPSI SEKALIKAN DI AWAL BIAR GAK BERUBAH-UBAH
             matchState.questions = shuffled.map(q => {
                 return {
                     ...q,
@@ -631,7 +727,6 @@
             const grid = document.getElementById(`${player}-options-grid`);
             grid.innerHTML = '';
             
-            // Pakai opsi yang SUDAH DIAK DI AWAL agar posisinya KONSISTEN & KONTINU
             q.shuffledOptions.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = `opt-btn ${player}-opt w-full h-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-xs md:text-sm rounded-lg p-1 transition flex items-center justify-center text-center`;
