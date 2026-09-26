@@ -2,514 +2,1039 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Vocabulary Battle - Ultimate Arena</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Battle - Ultra Cyber Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
-    <!-- Canvas Confetti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                    },
+                    colors: {
+                        neonCyan: '#00f3ff',
+                        neonPink: '#ff007f',
+                        neonPurple: '#9d00ff',
+                        neonGreen: '#00ff66',
+                        neonYellow: '#ffea00',
+                        darkBg: '#090a10',
+                        cardBg: '#121420',
+                    },
+                    boxShadow: {
+                        cyanGlow: '0 0 25px rgba(0, 243, 255, 0.5)',
+                        pinkGlow: '0 0 25px rgba(255, 0, 127, 0.5)',
+                        purpleGlow: '0 0 25px rgba(157, 0, 255, 0.5)',
+                        greenGlow: '0 0 25px rgba(0, 255, 102, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        * {
-            user-select: none;
-            -webkit-user-select: none;
-            box-sizing: border-box;
-            touch-action: manipulation;
-        }
-
-        html, body {
-            height: 100dvh;
-            width: 100vw;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #030712;
+        body {
+            background-color: #090a10;
             color: #ffffff;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+            transition: all 0.3s ease;
         }
 
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .theme-matrix { background-color: #021109; }
+        .theme-matrix .text-neonCyan { color: #00ff66 !important; }
+        .theme-synthwave { background-color: #1a092b; }
 
-        /* Responsive Mobile Layout Fix */
-        .app-container {
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: clamp(0.5rem, 2vw, 1rem);
+        .cyber-grid {
+            background-image: 
+                linear-gradient(to right, rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
         .glass-panel {
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(18, 20, 32, 0.85);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
-        /* Animated RGB Glow (Feature #9) */
-        .rgb-border {
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        .btn-cyber {
             position: relative;
+            transition: all 0.2s ease;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
         }
-        .rgb-border::after {
-            content: '';
-            position: absolute;
-            inset: -2px;
-            background: linear-gradient(45deg, #ef4444, #3b82f6, #10b981, #f59e0b);
-            border-radius: 1.5rem;
-            z-index: -1;
-            filter: blur(8px);
-            opacity: 0.6;
-            animation: rgbShift 6s linear infinite;
+        .btn-cyber:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.25);
         }
-        @keyframes rgbShift {
-            0% { filter: hue-rotate(0deg) blur(8px); }
-            100% { filter: hue-rotate(360deg) blur(8px); }
+        .btn-cyber:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
 
-        /* Floating Combo Animation (Feature #1) */
-        @keyframes floatCombo {
-            0% { transform: scale(0.5) translateY(0); opacity: 0; }
-            50% { transform: scale(1.3) translateY(-15px); opacity: 1; }
-            100% { transform: scale(1) translateY(-30px); opacity: 0; }
-        }
-        .combo-popup {
-            animation: floatCombo 0.8s ease-out forwards;
+        #confetti-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 100;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.4); border-radius: 3px; }
     </style>
 </head>
-<body class="bg-slate-950 text-white">
+<body id="game-body" class="cyber-grid min-h-screen flex flex-col justify-between items-center p-2 sm:p-4 md:p-6 lg:p-8">
 
-    <div class="app-container max-w-7xl mx-auto w-full">
+    <canvas id="confetti-canvas"></canvas>
 
-        <!-- ================= TOP HEADER BAR ================= -->
-        <header class="flex justify-between items-center glass-panel p-2 md:p-3 rounded-2xl mb-1 md:mb-2">
-            <div class="flex items-center gap-2">
-                <span class="text-lg md:text-2xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-400 to-cyan-400">
-                    VOCAB ARENA
-                </span>
-                <span id="current-theme-badge" class="text-[10px] bg-indigo-900/60 border border-indigo-500/40 text-indigo-300 font-bold px-2 py-0.5 rounded-lg hidden sm:inline">
-                    Cyber Mode
-                </span>
+    <!-- Header Header/Title -->
+    <header class="w-full max-w-7xl flex flex-wrap justify-between items-center py-3 px-4 sm:px-6 glass-panel rounded-2xl mb-4 border-b-2 border-neonCyan/40 shadow-cyanGlow gap-2">
+        <div class="flex items-center space-x-3">
+            <div class="p-2.5 bg-gradient-to-tr from-neonCyan to-neonPurple rounded-xl shadow-cyanGlow">
+                <i class="fa-solid fa-bolt text-black text-xl sm:text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="font-orbitron font-black text-xl sm:text-2xl md:text-3xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-neonCyan via-white to-neonPink">
+                    VOCAB<span class="text-neonPink">BATTLE</span> <span class="text-xs text-neonYellow font-normal border border-neonYellow/50 px-2 py-0.5 rounded-full ml-1">v3.5 PRO</span>
+                </h1>
+                <p class="text-[11px] sm:text-xs text-gray-400 font-rajdhani hidden sm:block">ULTRA CYBERPUNK VOCABULARY ARENA • MULTI-PLATFORM</p>
+            </div>
+        </div>
+
+        <!-- Level Player HUD -->
+        <div class="flex items-center gap-3 bg-black/40 px-3 py-1.5 rounded-xl border border-neonCyan/30">
+            <div class="text-right">
+                <div class="text-[10px] text-gray-400 font-orbitron">PLAYER XP</div>
+                <div id="player-level" class="text-xs sm:text-sm font-bold text-neonGreen font-orbitron">LVL 1 (0 XP)</div>
+            </div>
+            <div class="w-12 sm:w-20 bg-gray-800 h-2 rounded-full overflow-hidden">
+                <div id="xp-bar" class="bg-neonGreen h-full w-0 transition-all duration-300"></div>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+            <button onclick="toggleTheme()" class="p-2 sm:px-3 sm:py-1.5 rounded-lg glass-panel text-neonYellow hover:bg-neonYellow/20 transition flex items-center gap-1.5 text-xs sm:text-sm font-orbitron">
+                <i class="fa-solid fa-palette"></i>
+            </button>
+            <button onclick="toggleAudio()" class="p-2 sm:px-3 sm:py-1.5 rounded-lg glass-panel text-neonCyan hover:bg-neonCyan/20 transition flex items-center gap-1.5 text-xs sm:text-sm font-orbitron">
+                <i id="sound-icon" class="fa-solid fa-volume-high"></i>
+            </button>
+            <button onclick="toggleModal('modal-leaderboard', true); updateLeaderboardUI();" class="p-2 sm:px-3 sm:py-1.5 rounded-lg glass-panel text-neonGreen hover:bg-neonGreen/20 transition flex items-center gap-1.5 text-xs sm:text-sm font-orbitron">
+                <i class="fa-solid fa-trophy"></i>
+            </button>
+            <button onclick="toggleModal('modal-custom-words', true)" class="p-2 sm:px-3 sm:py-1.5 rounded-lg glass-panel text-neonPurple hover:bg-neonPurple/20 transition flex items-center gap-1.5 text-xs sm:text-sm font-orbitron">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+            <button onclick="toggleModal('modal-rules', true)" class="p-2 sm:px-3 sm:py-1.5 rounded-lg glass-panel text-neonPink hover:bg-neonPink/20 transition flex items-center gap-1.5 text-xs sm:text-sm font-orbitron">
+                <i class="fa-solid fa-circle-question"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="w-full max-w-7xl flex-grow flex flex-col justify-center items-center relative">
+
+        <!-- ==================== SCREEN 1: MENU SETUP ==================== -->
+        <section id="screen-menu" class="w-full glass-panel rounded-3xl p-4 sm:p-6 md:p-8 max-w-4xl border border-neonCyan/40 shadow-cyanGlow">
+            <div class="text-center mb-6">
+                <h2 class="font-orbitron text-2xl sm:text-3xl md:text-4xl font-black text-neonCyan mb-1">ARENA CONFIGURATION</h2>
+                <p class="text-gray-400 text-xs sm:text-sm">Kustomisasi Mode, Nyawa, Avatar, dan Kategori Soal Pertempuran</p>
             </div>
 
-            <!-- Header Tools (Sound, Theme, Taunt) -->
-            <div class="flex items-center gap-2">
-                <!-- Theme Selector (Feature #11) -->
-                <select id="theme-select" onchange="changeArenaTheme(this.value)" class="bg-slate-900 border border-slate-700 text-xs font-bold p-1.5 rounded-xl text-slate-300">
-                    <option value="cyber">🎨 Cyber</option>
-                    <option value="lava">🔥 Lava Red</option>
-                    <option value="ocean">🌊 Ocean</option>
-                    <option value="matrix">🟢 Matrix</option>
-                </select>
-
-                <!-- Sound Control (Feature #2) -->
-                <button onclick="toggleAudioMute()" id="btn-audio-mute" class="bg-slate-800 border border-slate-700 p-2 rounded-xl text-xs text-amber-400 hover:bg-slate-700">
-                    <i class="fa-solid fa-volume-high"></i>
-                </button>
-
-                <!-- Menu Button -->
-                <button onclick="openMainMenu()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                    <i class="fa-solid fa-gear"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- ================= ARENA PERMAINAN (FIT HP LANDSCAPE/PORTRAIT) ================= -->
-        <main id="game-arena" class="flex-1 grid grid-cols-2 gap-2 md:gap-4 overflow-hidden relative my-auto">
-
-            <!-- TIM MERAH (P1) -->
-            <div id="p1-card" class="glass-panel border-2 border-red-500/40 rounded-2xl p-2 md:p-4 flex flex-col justify-between relative overflow-hidden">
-                <!-- Combo Overlay Popup -->
-                <div id="p1-combo-box" class="absolute top-10 left-1/2 -translate-x-1/2 z-20 pointer-events-none hidden">
-                    <span id="p1-combo-text" class="font-orbitron font-black text-2xl text-amber-400 drop-shadow-[0_0_10px_#f59e0b]">2x COMBO!</span>
+            <div class="space-y-5 font-rajdhani">
+                <!-- Mode Permainan -->
+                <div>
+                    <label class="block text-neonCyan font-orbitron text-xs sm:text-sm font-bold mb-2">
+                        <i class="fa-solid fa-gamepad mr-2"></i>MODE PERMAINAN
+                    </label>
+                    <div class="grid grid-cols-3 gap-2 sm:gap-4">
+                        <button onclick="selectGameMode('solo')" id="mode-solo" class="mode-btn btn-cyber p-2.5 sm:p-4 bg-cardBg border border-neonCyan/40 rounded-xl text-center hover:border-neonCyan">
+                            <i class="fa-solid fa-user text-xl sm:text-2xl text-neonCyan mb-1 block"></i>
+                            <span class="font-orbitron font-bold text-xs sm:text-base block">SOLO</span>
+                            <span class="text-[10px] sm:text-xs text-gray-400 hidden sm:block">Latihan Sendiri</span>
+                        </button>
+                        <button onclick="selectGameMode('ai')" id="mode-ai" class="mode-btn btn-cyber p-2.5 sm:p-4 bg-cardBg border border-neonCyan/40 rounded-xl text-center hover:border-neonCyan">
+                            <i class="fa-solid fa-robot text-xl sm:text-2xl text-neonYellow mb-1 block"></i>
+                            <span class="font-orbitron font-bold text-xs sm:text-base block">VS AI</span>
+                            <span class="text-[10px] sm:text-xs text-gray-400 hidden sm:block">Lawan Bot Pintar</span>
+                        </button>
+                        <button onclick="selectGameMode('pvp')" id="mode-pvp" class="mode-btn btn-cyber p-2.5 sm:p-4 bg-cardBg border border-neonPink/40 rounded-xl text-center hover:border-neonPink border-2 border-neonPink">
+                            <i class="fa-solid fa-user-ninja text-xl sm:text-2xl text-neonPink mb-1 block"></i>
+                            <span class="font-orbitron font-bold text-xs sm:text-base block">2 PLAYER</span>
+                            <span class="text-[10px] sm:text-xs text-gray-400 hidden sm:block">P1 vs P2 (1 Layar)</span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Header P1 -->
-                <div class="flex justify-between items-center gap-1 border-b border-red-900/40 pb-1">
-                    <div class="flex items-center gap-1.5">
-                        <span id="p1-avatar" class="text-lg md:text-2xl">🥷</span>
-                        <div>
-                            <p class="text-[10px] md:text-xs font-orbitron font-bold text-red-400" id="p1-label">P1 MERAH</p>
-                            <p class="text-[9px] text-slate-400">Acc: <span id="p1-acc-live" class="text-emerald-400 font-bold">100%</span></p>
+                <!-- Level Kesulitan & Kategori -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-neonCyan font-orbitron text-xs sm:text-sm font-bold mb-2">
+                            <i class="fa-solid fa-layer-group mr-2"></i>TINGKAT KESULITAN
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="selectDifficulty('easy')" id="diff-easy" class="diff-btn p-2 bg-cardBg border border-gray-700 rounded-lg text-center">
+                                <div class="font-orbitron font-bold text-neonGreen text-xs sm:text-sm">EASY (15)</div>
+                            </button>
+                            <button onclick="selectDifficulty('medium')" id="diff-medium" class="diff-btn p-2 bg-cardBg border border-neonCyan rounded-lg text-center border-2">
+                                <div class="font-orbitron font-bold text-neonCyan text-xs sm:text-sm">MEDIUM (25)</div>
+                            </button>
+                            <button onclick="selectDifficulty('hard')" id="diff-hard" class="diff-btn p-2 bg-cardBg border border-gray-700 rounded-lg text-center">
+                                <div class="font-orbitron font-bold text-neonYellow text-xs sm:text-sm">HARD (30)</div>
+                            </button>
+                            <button onclick="selectDifficulty('extreme')" id="diff-extreme" class="diff-btn p-2 bg-cardBg border border-gray-700 rounded-lg text-center">
+                                <div class="font-orbitron font-bold text-neonPink text-xs sm:text-sm">EXTREME (35)</div>
+                            </button>
                         </div>
                     </div>
-                    <span id="p1-score-display" class="font-orbitron font-black text-lg md:text-2xl text-amber-400 bg-red-950/80 px-2 py-0.5 rounded-xl border border-red-500/40">0</span>
-                </div>
 
-                <!-- Question Area -->
-                <div class="my-1 md:my-2 bg-slate-900/80 border border-red-500/20 rounded-xl p-2 text-center flex-1 flex flex-col items-center justify-center relative">
-                    <span class="text-[9px] font-bold text-red-400/80 uppercase tracking-widest">KATA BAHASA INGGRIS</span>
-                    <div class="flex items-center justify-center gap-2 w-full">
-                        <h2 id="p1-question" class="text-lg md:text-3xl font-orbitron font-black text-white truncate">Ready?</h2>
-                        <button onclick="speakWord('p1')" class="text-red-400 text-xs p-1.5 bg-red-900/40 rounded-lg"><i class="fa-solid fa-volume-high"></i></button>
+                    <div>
+                        <label class="block text-neonCyan font-orbitron text-xs sm:text-sm font-bold mb-2">
+                            <i class="fa-solid fa-folder-open mr-2"></i>KATAGORI TOPIK
+                        </label>
+                        <select id="category-select" class="w-full p-2.5 bg-cardBg border border-neonCyan/50 rounded-xl font-orbitron text-xs sm:text-sm text-neonCyan focus:outline-none">
+                            <option value="all">🌐 SEMUA KATAGORI (MIXED)</option>
+                            <option value="general">📚 KOSAKATA UMUM</option>
+                            <option value="tech">💻 TEKNOLOGI & CYBER</option>
+                            <option value="nature">🌿 ALAM & LINGKUNGAN</option>
+                        </select>
                     </div>
-                    <p id="p1-hint-text" class="text-[10px] text-amber-300 font-mono mt-1 hidden"></p>
                 </div>
 
-                <!-- Lifelines (50:50, Hint, Freeze Time) (Feature #5) -->
-                <div class="grid grid-cols-3 gap-1 mb-1">
-                    <button onclick="useFiftyFifty('p1')" id="p1-btn-5050" class="bg-red-950/60 border border-red-500/40 text-red-300 text-[10px] font-bold py-1 rounded-lg">⚡50:50</button>
-                    <button onclick="useHint('p1')" id="p1-btn-hint" class="bg-amber-950/60 border border-amber-500/40 text-amber-300 text-[10px] font-bold py-1 rounded-lg">💡Hint</button>
-                    <button onclick="useFreezeTime('p1')" id="p1-btn-freeze" class="bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-[10px] font-bold py-1 rounded-lg">❄️Freeze</button>
-                </div>
-
-                <!-- Answer Grid -->
-                <div id="p1-options" class="grid grid-cols-2 gap-1.5 h-2/5">
-                    <!-- Dynamic Options -->
-                </div>
-            </div>
-
-            <!-- TIM BIRU / AI (P2) -->
-            <div id="p2-card" class="glass-panel border-2 border-cyan-500/40 rounded-2xl p-2 md:p-4 flex flex-col justify-between relative overflow-hidden">
-                <!-- Combo Overlay Popup -->
-                <div id="p2-combo-box" class="absolute top-10 left-1/2 -translate-x-1/2 z-20 pointer-events-none hidden">
-                    <span id="p2-combo-text" class="font-orbitron font-black text-2xl text-amber-400 drop-shadow-[0_0_10px_#f59e0b]">2x COMBO!</span>
-                </div>
-
-                <!-- Header P2 -->
-                <div class="flex justify-between items-center gap-1 border-b border-cyan-900/40 pb-1">
-                    <div class="flex items-center gap-1.5">
-                        <span id="p2-avatar" class="text-lg md:text-2xl">🤖</span>
-                        <div>
-                            <p class="text-[10px] md:text-xs font-orbitron font-bold text-cyan-400" id="p2-label">P2 BIRU</p>
-                            <p class="text-[9px] text-slate-400">Acc: <span id="p2-acc-live" class="text-emerald-400 font-bold">100%</span></p>
+                <!-- Game Rules & Health Option -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-neonCyan font-orbitron text-xs font-bold mb-1">MODE WAKTU</label>
+                        <div class="flex gap-1">
+                            <button onclick="selectTimeMode('normal')" id="time-normal" class="time-btn flex-1 p-2 bg-cardBg border border-neonCyan rounded-lg text-center font-orbitron text-xs font-bold text-neonCyan">10S TIMER</button>
+                            <button onclick="selectTimeMode('timeless')" id="time-timeless" class="time-btn flex-1 p-2 bg-cardBg border border-gray-700 rounded-lg text-center font-orbitron text-xs font-bold text-gray-400">NO LIMIT</button>
                         </div>
                     </div>
-                    <span id="p2-score-display" class="font-orbitron font-black text-lg md:text-2xl text-amber-400 bg-cyan-950/80 px-2 py-0.5 rounded-xl border border-cyan-500/40">0</span>
-                </div>
-
-                <!-- Question Area -->
-                <div class="my-1 md:my-2 bg-slate-900/80 border border-cyan-500/20 rounded-xl p-2 text-center flex-1 flex flex-col items-center justify-center relative">
-                    <span class="text-[9px] font-bold text-cyan-400/80 uppercase tracking-widest">KATA BAHASA INGGRIS</span>
-                    <div class="flex items-center justify-center gap-2 w-full">
-                        <h2 id="p2-question" class="text-lg md:text-3xl font-orbitron font-black text-white truncate">Ready?</h2>
-                        <button onclick="speakWord('p2')" class="text-cyan-400 text-xs p-1.5 bg-cyan-900/40 rounded-lg"><i class="fa-solid fa-volume-high"></i></button>
+                    <div>
+                        <label class="block text-neonCyan font-orbitron text-xs font-bold mb-1">TIPE SOAL</label>
+                        <div class="flex gap-1">
+                            <button onclick="selectQuestionType('text')" id="type-text" class="type-btn flex-1 p-2 bg-cardBg border border-neonCyan rounded-lg text-center font-orbitron text-xs font-bold text-neonCyan">🔤 TEXT</button>
+                            <button onclick="selectQuestionType('emoji')" id="type-emoji" class="type-btn flex-1 p-2 bg-cardBg border border-gray-700 rounded-lg text-center font-orbitron text-xs font-bold text-gray-400">🎭 EMOJI</button>
+                        </div>
                     </div>
-                    <p id="p2-hint-text" class="text-[10px] text-amber-300 font-mono mt-1 hidden"></p>
+                    <div>
+                        <label class="block text-neonCyan font-orbitron text-xs font-bold mb-1">SISTEM NYAWA (HP)</label>
+                        <div class="flex gap-1">
+                            <button onclick="toggleHPMode(true)" id="hp-on" class="hp-btn flex-1 p-2 bg-cardBg border border-gray-700 rounded-lg text-center font-orbitron text-xs font-bold text-gray-400">❤️ 3 HP</button>
+                            <button onclick="toggleHPMode(false)" id="hp-off" class="hp-btn flex-1 p-2 bg-cardBg border border-neonCyan rounded-lg text-center font-orbitron text-xs font-bold text-neonCyan">♾️ UNLIMITED</button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Lifelines -->
-                <div class="grid grid-cols-3 gap-1 mb-1">
-                    <button onclick="useFiftyFifty('p2')" id="p2-btn-5050" class="bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-[10px] font-bold py-1 rounded-lg">⚡50:50</button>
-                    <button onclick="useHint('p2')" id="p2-btn-hint" class="bg-amber-950/60 border border-amber-500/40 text-amber-300 text-[10px] font-bold py-1 rounded-lg">💡Hint</button>
-                    <button onclick="useFreezeTime('p2')" id="p2-btn-freeze" class="bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-[10px] font-bold py-1 rounded-lg">❄️Freeze</button>
-                </div>
-
-                <!-- Answer Grid -->
-                <div id="p2-options" class="grid grid-cols-2 gap-1.5 h-2/5">
-                    <!-- Dynamic Options -->
+                <!-- Start Button -->
+                <div class="pt-2 text-center">
+                    <button onclick="startGame()" class="btn-cyber w-full py-4 bg-gradient-to-r from-neonCyan via-blue-600 to-neonPink font-orbitron font-black text-lg sm:text-2xl text-black tracking-widest shadow-cyanGlow rounded-2xl uppercase">
+                        <i class="fa-solid fa-play mr-2"></i> MULAI PERTANDINGAN
+                    </button>
                 </div>
             </div>
+        </section>
 
-        </main>
+        <!-- ==================== SCREEN 2: BATTLE ARENA ==================== -->
+        <section id="screen-arena" class="w-full hidden flex-col gap-3 sm:gap-5">
+            
+            <!-- Top HUD Bar -->
+            <div class="grid grid-cols-12 gap-2 sm:gap-4 items-center">
+                
+                <!-- Player 1 Status -->
+                <div id="p1-card" class="col-span-5 sm:col-span-4 glass-panel p-2 sm:p-4 rounded-2xl border-l-4 border-neonCyan flex items-center gap-2 sm:gap-4">
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-neonCyan/20 flex items-center justify-center text-neonCyan text-xl sm:text-3xl font-black font-orbitron shadow-cyanGlow">
+                        <i id="p1-icon" class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="flex-grow min-w-0">
+                        <div class="flex justify-between items-center">
+                            <span id="p1-name" class="font-orbitron font-bold text-xs sm:text-base text-neonCyan truncate">PLAYER 1</span>
+                            <span id="p1-score" class="font-orbitron font-black text-base sm:text-3xl text-white">0</span>
+                        </div>
+                        <div id="p1-hp-bar" class="text-neonPink text-xs mt-0.5 hidden">❤️❤️❤️</div>
+                        <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden mt-1">
+                            <div id="p1-progress" class="bg-neonCyan h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- ================= LIVE BOTTOM STATUS & TAUNT BAR ================= -->
-        <footer class="glass-panel p-2 rounded-2xl flex justify-between items-center text-xs font-orbitron mt-1">
-            <!-- Taunt Emoji Bar (Feature #8) -->
-            <div class="flex gap-1">
-                <button onclick="sendTaunt('🔥')" class="hover:scale-125 transition">🔥</button>
-                <button onclick="sendTaunt('😂')" class="hover:scale-125 transition">😂</button>
-                <button onclick="sendTaunt('👻')" class="hover:scale-125 transition">👻</button>
-                <button onclick="sendTaunt('👑')" class="hover:scale-125 transition">👑</button>
+                <!-- Timer / Match Info Center -->
+                <div class="col-span-2 sm:col-span-4 glass-panel p-2 rounded-2xl text-center flex flex-col items-center justify-center border border-gray-700">
+                    <span id="question-tracker" class="font-orbitron text-[9px] sm:text-xs text-gray-400">SOAL 1/15</span>
+                    <div id="timer-display" class="font-orbitron font-black text-xl sm:text-4xl text-neonYellow my-0">10</div>
+                    <div id="combo-display" class="text-[10px] sm:text-xs font-orbitron font-extrabold text-neonGreen hidden">COMBO x2!</div>
+                    <span id="turn-indicator" class="font-orbitron text-[9px] sm:text-xs text-neonCyan font-bold tracking-wider">GILIRAN: P1</span>
+                </div>
+
+                <!-- Player 2 / AI Status -->
+                <div id="p2-card" class="col-span-5 sm:col-span-4 glass-panel p-2 sm:p-4 rounded-2xl border-r-4 border-neonPink flex items-center gap-2 sm:gap-4">
+                    <div class="flex-grow min-w-0 text-right">
+                        <div class="flex justify-between items-center flex-row-reverse">
+                            <span id="p2-name" class="font-orbitron font-bold text-xs sm:text-base text-neonPink truncate">PLAYER 2</span>
+                            <span id="p2-score" class="font-orbitron font-black text-base sm:text-3xl text-white">0</span>
+                        </div>
+                        <div id="p2-hp-bar" class="text-neonPink text-xs mt-0.5 hidden">❤️❤️❤️</div>
+                        <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden mt-1">
+                            <div id="p2-progress" class="bg-neonPink h-full w-0 transition-all duration-300 float-right"></div>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-neonPink/20 flex items-center justify-center text-neonPink text-xl sm:text-3xl font-black font-orbitron shadow-pinkGlow">
+                        <i id="p2-icon" class="fa-solid fa-user-ninja"></i>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Live Timer -->
-            <div id="live-timer-badge" class="font-black text-amber-400 bg-slate-950 px-3 py-1 rounded-xl border border-amber-500/40 text-sm">
-                ⏳ 15s
+            <!-- Lifelines / Power-ups Bar -->
+            <div id="lifelines-bar" class="flex justify-center gap-2 sm:gap-4 my-1">
+                <button onclick="useLifeline('5050')" id="life-5050" class="btn-cyber px-3 py-1.5 bg-cardBg border border-neonCyan rounded-xl font-orbitron text-xs font-bold text-neonCyan flex items-center gap-1">
+                    <i class="fa-solid fa-scissors"></i> 50:50
+                </button>
+                <button onclick="useLifeline('freeze')" id="life-freeze" class="btn-cyber px-3 py-1.5 bg-cardBg border border-neonCyan rounded-xl font-orbitron text-xs font-bold text-neonCyan flex items-center gap-1">
+                    <i class="fa-solid fa-snowflake"></i> FREEZE
+                </button>
+                <button onclick="useLifeline('double')" id="life-double" class="btn-cyber px-3 py-1.5 bg-cardBg border border-neonYellow rounded-xl font-orbitron text-xs font-bold text-neonYellow flex items-center gap-1">
+                    <i class="fa-solid fa-angles-up"></i> 2X PTS
+                </button>
+                <button onclick="useLifeline('skip')" id="life-skip" class="btn-cyber px-3 py-1.5 bg-cardBg border border-neonPink rounded-xl font-orbitron text-xs font-bold text-neonPink flex items-center gap-1">
+                    <i class="fa-solid fa-forward"></i> SKIP
+                </button>
             </div>
 
-            <!-- Match Info -->
-            <div class="text-[10px] text-slate-400 hidden sm:block">
-                Mode: <span id="info-mode-label" class="text-indigo-400 font-bold">1 vs 1</span>
-            </div>
-        </footer>
+            <!-- Question Card Section -->
+            <div id="question-card" class="glass-panel p-4 sm:p-8 lg:p-12 rounded-3xl border border-neonCyan/40 shadow-cyanGlow text-center flex flex-col items-center justify-center relative overflow-hidden min-h-[180px] sm:min-h-[260px]">
+                
+                <div class="absolute top-3 right-4">
+                    <button onclick="speakCurrentWord()" class="p-2 bg-neonCyan/20 text-neonCyan rounded-full hover:bg-neonCyan/40 transition">
+                        <i class="fa-solid fa-volume-high text-lg"></i>
+                    </button>
+                </div>
 
+                <div class="text-xs sm:text-base font-orbitron text-gray-400 tracking-widest uppercase mb-2" id="question-hint">
+                    APA ARTI KATA INI?
+                </div>
+
+                <div id="question-text" class="font-orbitron font-black text-3xl sm:text-6xl lg:text-7xl text-white tracking-wide my-2 drop-shadow-[0_0_20px_rgba(255,255,255,0.6)]">
+                    LOADING...
+                </div>
+
+                <div id="question-subtext" class="text-xs sm:text-base text-neonCyan font-bold tracking-wider mt-1">
+                    Pilih jawaban yang paling tepat!
+                </div>
+            </div>
+
+            <!-- Answers Grid -->
+            <div id="answers-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <!-- Option Buttons Generated Dynamically -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="w-full max-w-7xl text-center py-3 text-xs text-gray-500 font-rajdhani mt-4">
+        VOCABULARY BATTLE ULTRA EDITION &copy; 2026 • POWERED BY CYBER ENGINE
+    </footer>
+
+    <!-- ==================== MODAL 1: CARA MAIN ==================== -->
+    <div id="modal-rules" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-2xl p-6 border border-neonCyan/50 shadow-cyanGlow space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-3">
+                <h3 class="font-orbitron font-bold text-xl text-neonCyan flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info"></i> CARA BERMAIN
+                </h3>
+                <button onclick="toggleModal('modal-rules', false)" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="text-sm text-gray-300 space-y-3 font-rajdhani text-left">
+                <p>⚡ <b class="text-white">Streak Combo:</b> Jawab benar berturut-turut untuk melipatgandakan skor!</p>
+                <p>🛠️ <b class="text-white">Lifelines:</b> Gunakan bantuan 50:50, Freeze, Double Points, atau Skip saat terdesak.</p>
+                <p>❤️ <b class="text-white">Mode HP:</b> Dalam Mode HP, salah menjawab mengurangi nyawa. Habis nyawa = Game Over!</p>
+                <p>🗣️ <b class="text-white">Pengucapan Audio:</b> Klik ikon speaker di kartu soal untuk mendengarkan pengucapan kata.</p>
+            </div>
+            <button onclick="toggleModal('modal-rules', false)" class="w-full py-2 bg-neonCyan text-black font-orbitron font-bold rounded-xl">
+                MENGERTI
+            </button>
+        </div>
     </div>
 
-    <!-- ================= MENU UTAMA & PENGATURAN (MODAL) ================= -->
-    <div id="main-menu-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
-        <div class="max-w-md w-full bg-slate-900 border-2 border-indigo-500/50 rounded-3xl p-5 space-y-4 shadow-2xl">
-            <div class="text-center">
-                <h1 class="text-3xl font-orbitron font-black text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-cyan-400">VOCAB ARENA</h1>
-                <p class="text-xs text-slate-400">Pengaturan Game & Avatar</p>
+    <!-- ==================== MODAL 2: SCOREBOARD RECAP ==================== -->
+    <div id="modal-scoreboard" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+        <div class="glass-panel max-w-3xl w-full rounded-3xl p-4 sm:p-6 border-2 border-neonCyan shadow-cyanGlow my-auto text-center space-y-4 sm:space-y-6">
+            
+            <div id="recap-header" class="relative py-4 px-2 rounded-2xl bg-gradient-to-r from-neonCyan/20 via-neonPurple/30 to-neonPink/20 border border-neonCyan/40">
+                <div class="text-xs font-orbitron text-gray-300 uppercase tracking-widest">PERTANDINGAN SELESAI</div>
+                <h2 id="recap-winner-text" class="font-orbitron font-black text-2xl sm:text-4xl text-neonYellow drop-shadow-[0_0_15px_rgba(255,234,0,0.6)] my-1">
+                    PLAYER 1 MENANG!
+                </h2>
+                <p id="recap-subtitle" class="text-xs sm:text-sm text-gray-300 font-rajdhani">Performa luar biasa di Arena Vocabulary!</p>
             </div>
 
-            <!-- Avatar Selection (Feature #3) -->
-            <div>
-                <label class="text-xs font-bold text-slate-300 block mb-1">Pilih Avatar Pemain</label>
-                <div class="grid grid-cols-4 gap-2 text-center text-xl">
-                    <button onclick="selectAvatar('🥷')" class="bg-slate-800 p-2 rounded-xl border border-slate-700 hover:border-indigo-500">🥷</button>
-                    <button onclick="selectAvatar('🤖')" class="bg-slate-800 p-2 rounded-xl border border-slate-700 hover:border-indigo-500">🤖</button>
-                    <button onclick="selectAvatar('🧙‍♂️')" class="bg-slate-800 p-2 rounded-xl border border-slate-700 hover:border-indigo-500">🧙‍♂️</button>
-                    <button onclick="selectAvatar('🐱')" class="bg-slate-800 p-2 rounded-xl border border-slate-700 hover:border-indigo-500">🐱</button>
+            <div id="recap-stats-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                <div class="glass-panel p-4 rounded-2xl border-l-4 border-neonCyan bg-darkBg/60">
+                    <div class="flex items-center justify-between border-b border-gray-700 pb-2 mb-3">
+                        <span id="recap-p1-title" class="font-orbitron font-bold text-neonCyan flex items-center gap-2">
+                            <i id="recap-p1-icon" class="fa-solid fa-user"></i> PLAYER 1
+                        </span>
+                        <span id="recap-p1-score" class="font-orbitron font-black text-2xl text-white">120 pts</span>
+                    </div>
+                    <div class="space-y-1.5 text-xs sm:text-sm">
+                        <div class="flex justify-between"><span class="text-gray-400">Jawaban Benar:</span><span id="recap-p1-correct" class="font-bold text-neonGreen">0</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Jawaban Salah:</span><span id="recap-p1-wrong" class="font-bold text-neonPink">0</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Habis Waktu (Timeout):</span><span id="recap-p1-timeout" class="font-bold text-neonYellow">0</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Tingkat Akurasi:</span><span id="recap-p1-accuracy" class="font-bold text-neonCyan">0%</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Rata-rata Waktu Jawab:</span><span id="recap-p1-avgtime" class="font-bold text-white">0s</span></div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Game Mode -->
-            <div>
-                <label class="text-xs font-bold text-slate-300 block mb-1">Mode Permainan</label>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="setMode('2p')" id="mode-btn-2p" class="p-2.5 rounded-xl border-2 border-indigo-500 bg-indigo-950 text-xs font-bold">2 Player (1 vs 1)</button>
-                    <button onclick="setMode('ai')" id="mode-btn-ai" class="p-2.5 rounded-xl border border-slate-700 bg-slate-800 text-xs font-bold text-slate-400">Vs Bot AI</button>
+                <div id="recap-p2-card" class="glass-panel p-4 rounded-2xl border-r-4 border-neonPink bg-darkBg/60">
+                    <div class="flex items-center justify-between border-b border-gray-700 pb-2 mb-3">
+                        <span id="recap-p2-title" class="font-orbitron font-bold text-neonPink flex items-center gap-2">
+                            <i id="recap-p2-icon" class="fa-solid fa-user-ninja"></i> PLAYER 2
+                        </span>
+                        <span id="recap-p2-score" class="font-orbitron font-black text-2xl text-white">90 pts</span>
+                    </div>
+                    <div class="space-y-1.5 text-xs sm:text-sm">
+                        <div class="flex justify-between"><span class="text-gray-400">Jawaban Benar:</span><span id="recap-p2-correct" class="font-bold text-neonGreen">0</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Jawaban Salah:</span><span id="recap-p2-wrong" class="font-bold text-neonPink">0</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Habis Waktu (Timeout):</span><span id="recap-p2-timeout" class="font-bold text-neonYellow">0</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Tingkat Akurasi:</span><span id="recap-p2-accuracy" class="font-bold text-neonPink">0%</span></div>
+                        <div class="flex justify-between"><span class="text-gray-400">Rata-rata Waktu Jawab:</span><span id="recap-p2-avgtime" class="font-bold text-white">0s</span></div>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Target Score / Win Condition (Feature #6) -->
-            <div>
-                <label class="text-xs font-bold text-slate-300 block mb-1">Target Kemenangan</label>
-                <select id="win-condition-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white">
-                    <option value="10">First to 10 Points</option>
-                    <option value="15" selected>Selesaikan 15 Soal</option>
-                    <option value="20">Selesaikan 20 Soal</option>
-                </select>
             </div>
 
             <!-- Action Buttons -->
-            <button onclick="startMatchWithConfig()" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-orbitron font-black p-3 rounded-xl text-base shadow-lg">
-                🚀 MULAI MATCH
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <button onclick="toggleModal('modal-review', true); generateReviewUI();" class="btn-cyber py-3 px-4 bg-neonPurple text-white font-orbitron font-bold rounded-xl tracking-wider">
+                    <i class="fa-solid fa-magnifying-glass mr-2"></i> REVIEW EVALUASI SOAL
+                </button>
+                <button onclick="restartGame()" class="btn-cyber flex-1 py-3 bg-neonCyan text-black font-orbitron font-bold rounded-xl tracking-wider">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> MAIN LAGI
+                </button>
+                <button onclick="backToMenu()" class="btn-cyber flex-1 py-3 bg-gray-800 text-white border border-gray-600 font-orbitron font-bold rounded-xl tracking-wider">
+                    <i class="fa-solid fa-house mr-2"></i> MENU UTAMA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL 3: REVIEW EVALUATION ==================== -->
+    <div id="modal-review" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-2xl w-full rounded-2xl p-6 border border-neonPurple/50 shadow-purpleGlow space-y-4 max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-3">
+                <h3 class="font-orbitron font-bold text-xl text-neonPurple flex items-center gap-2">
+                    <i class="fa-solid fa-book-open"></i> EVALUASI JAWABAN
+                </h3>
+                <button onclick="toggleModal('modal-review', false)" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="review-list" class="space-y-3 overflow-y-auto flex-grow text-left pr-2">
+                <!-- Dynamic Review List -->
+            </div>
+            <button onclick="toggleModal('modal-review', false)" class="w-full py-2 bg-neonPurple text-white font-orbitron font-bold rounded-xl">
+                TUTUP EVALUASI
             </button>
         </div>
     </div>
 
-    <!-- ================= REKAP & REVIEW JAWABAN SALAH (MODAL) ================= -->
-    <div id="recap-modal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="max-w-lg w-full bg-slate-900 border-2 border-amber-500 rounded-3xl p-5 space-y-4 shadow-2xl my-auto">
-            <div class="text-center">
-                <p class="text-xs text-amber-400 font-bold uppercase">MATCH OVER</p>
-                <h1 id="winner-title" class="text-3xl font-orbitron font-black text-amber-400">PEMAIN 1 MENANG!</h1>
+    <!-- ==================== MODAL 4: LEADERBOARD ==================== -->
+    <div id="modal-leaderboard" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-2xl p-6 border border-neonGreen/50 shadow-greenGlow space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-3">
+                <h3 class="font-orbitron font-bold text-xl text-neonGreen flex items-center gap-2">
+                    <i class="fa-solid fa-trophy"></i> LEADERBOARD HIGH SCORES
+                </h3>
+                <button onclick="toggleModal('modal-leaderboard', false)" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-
-            <!-- Badges Unlocked (Feature #12) -->
-            <div id="unlocked-badges" class="flex justify-center gap-2">
-                <!-- Injected Badges -->
+            <div id="leaderboard-list" class="space-y-2 text-sm text-left">
+                <!-- Leaderboard Dynamic Data -->
             </div>
-
-            <!-- Wrong Answer Review List (Feature #10) -->
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 max-h-40 overflow-y-auto">
-                <h3 class="text-xs font-bold text-amber-300 mb-2">📝 Evaluasi Kata Yang Salah Dijawab:</h3>
-                <ul id="wrong-words-list" class="text-xs space-y-1 text-slate-300">
-                    <!-- Injected Wrong Words -->
-                </ul>
-            </div>
-
-            <button onclick="openMainMenu()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold p-3 rounded-xl text-xs">
-                Kembali Ke Menu Utama
+            <button onclick="toggleModal('modal-leaderboard', false)" class="w-full py-2 bg-neonGreen text-black font-orbitron font-bold rounded-xl">
+                TUTUP
             </button>
         </div>
     </div>
 
-    <!-- ================= JAVASCRIPT GAME LOGIC ================= -->
+    <!-- ==================== MODAL 5: CUSTOM WORD CREATOR ==================== -->
+    <div id="modal-custom-words" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel max-w-md w-full rounded-2xl p-6 border border-neonPurple/50 shadow-purpleGlow space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-700 pb-3">
+                <h3 class="font-orbitron font-bold text-xl text-neonPurple flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i> TAMBAH SOAL CUSTOM
+                </h3>
+                <button onclick="toggleModal('modal-custom-words', false)" class="text-gray-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="space-y-3 text-left">
+                <div>
+                    <label class="text-xs font-orbitron text-gray-300">Pertanyaan (Kata / Emoji):</label>
+                    <input id="custom-q" type="text" class="w-full p-2 bg-cardBg border border-neonPurple/40 rounded-lg text-white font-rajdhani focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-xs font-orbitron text-gray-300">Jawaban Benar:</label>
+                    <input id="custom-a" type="text" class="w-full p-2 bg-cardBg border border-neonGreen/40 rounded-lg text-white font-rajdhani focus:outline-none">
+                </div>
+                <div>
+                    <label class="text-xs font-orbitron text-gray-300">3 Pilihan Salah (Pisahkan dengan koma):</label>
+                    <input id="custom-wrongs" type="text" placeholder="Salah1, Salah2, Salah3" class="w-full p-2 bg-cardBg border border-neonPink/40 rounded-lg text-white font-rajdhani focus:outline-none">
+                </div>
+            </div>
+            <button onclick="addCustomWord()" class="w-full py-2 bg-neonPurple text-white font-orbitron font-bold rounded-xl">
+                SIMPAN KOSAKATA BARU
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
     <script>
-        /* SOUND SYNTHESIZER (Feature #2) */
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let isMuted = false;
-
-        function toggleAudioMute() {
-            isMuted = !isMuted;
-            document.getElementById('btn-audio-mute').innerHTML = isMuted ? `<i class="fa-solid fa-volume-xmark"></i>` : `<i class="fa-solid fa-volume-high"></i>`;
-        }
-
-        function playSoundEffect(type) {
-            if (isMuted) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-
-            if (type === 'correct') {
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-            } else if (type === 'wrong') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+        // --- AUDIO SYNTHESIS & SFX ENGINE ---
+        class SoundEffects {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+            }
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+            }
+            playTone(freq, type, duration, startVol = 0.1, endVol = 0) {
+                if (!this.enabled) return;
+                this.init();
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(startVol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(Math.max(endVol, 0.0001), this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch (e) { console.log(e); }
+            }
+            click() { this.playTone(800, 'sine', 0.05, 0.05); }
+            correct() { 
+                this.playTone(523.25, 'triangle', 0.1, 0.1);
+                setTimeout(() => this.playTone(659.25, 'triangle', 0.15, 0.1), 80);
+                setTimeout(() => this.playTone(783.99, 'triangle', 0.2, 0.1), 160);
+            }
+            wrong() {
+                this.playTone(220, 'sawtooth', 0.15, 0.15);
+                setTimeout(() => this.playTone(185, 'sawtooth', 0.25, 0.15), 100);
+            }
+            timeout() { this.playTone(150, 'square', 0.3, 0.2); }
+            victory() {
+                const notes = [440, 554.37, 659.25, 880];
+                notes.forEach((n, idx) => setTimeout(() => this.playTone(n, 'triangle', 0.25, 0.15), idx * 120));
             }
         }
 
-        /* QUESTION DATABASE */
-        const questionsDB = [
-            { word: "Cat", correct: "Kucing", wrongs: ["Anjing", "Burung", "Kelinci"] },
-            { word: "Book", correct: "Buku", wrongs: ["Pensil", "Meja", "Tas"] },
-            { word: "Teacher", correct: "Guru", wrongs: ["Dokter", "Polisi", "Petani"] },
-            { word: "Library", correct: "Perpustakaan", wrongs: ["Kantin", "Pasar", "Taman"] },
-            { word: "Knowledge", correct: "Pengetahuan", wrongs: ["Mimpi", "Perasaan", "Harapan"] },
-            { word: "Environment", correct: "Lingkungan", wrongs: ["Pembangunan", "Kebudayaan", "Ekonomi"] }
+        const sfx = new SoundEffects();
+
+        function toggleAudio() {
+            sfx.enabled = !sfx.enabled;
+            const icon = document.getElementById('sound-icon');
+            icon.className = sfx.enabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-xmark";
+            if (sfx.enabled) sfx.click();
+        }
+
+        function speakCurrentWord() {
+            const word = document.getElementById('question-text').innerText;
+            if ('speechSynthesis' in window && config.questionType === 'text') {
+                const utterance = new SpeechSynthesisUtterance(word);
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- DATASET & CATEGORIES ---
+        const textDataset = [
+            { q: "AMBITIOUS", a: "Ambisius", options: ["Ambisius", "Cemas", "Ramah", "Pemalas"], cat: "general" },
+            { q: "BRAVERY", a: "Keberanian", options: ["Keberanian", "Ketakutan", "Kejujuran", "Kelemahan"], cat: "general" },
+            { q: "CHALLENGE", a: "Tantangan", options: ["Tantangan", "Kemenangan", "Bantuan", "Rintangan"], cat: "general" },
+            { q: "CYBERNETIC", a: "Siber/Kecerdasan Mesin", options: ["Siber/Kecerdasan Mesin", "Tradisional", "Manual", "Alami"], cat: "tech" },
+            { q: "ALGORITHM", a: "Algoritma/Langkah Kerja", options: ["Algoritma/Langkah Kerja", "Acak", "Batu", "Desain"], cat: "tech" },
+            { q: "ECOSYSTEM", a: "Ekosistem Lingkungan", options: ["Ekosistem Lingkungan", "Bangunan", "Mesin", "Sintetis"], cat: "nature" },
+            { q: "ATMOSPHERE", a: "Atmosfer/Lapisan Udara", options: ["Atmosfer/Lapisan Udara", "Inti Bumi", "Samudra", "Batuan"], cat: "nature" },
+            { q: "INNOVATION", a: "Inovasi Baru", options: ["Inovasi Baru", "Tradisi Kuno", "Kemunduran", "Kebiasaan"], cat: "tech" }
         ];
 
-        /* STATE GAME */
-        let gameMode = '2p';
-        let matchState = {
-            p1: { score: 0, combo: 0, totalAns: 0, correctAns: 0, frozen: false },
-            p2: { score: 0, combo: 0, totalAns: 0, correctAns: 0, frozen: false },
-            questions: [],
-            wrongReview: [],
-            timer: 15,
-            interval: null
+        const emojiDataset = [
+            { q: "🚀", a: "ROCKET", options: ["ROCKET", "AIRPLANE", "UFO", "HELICOPTER"], cat: "general" },
+            { q: "🔥", a: "FIRE", options: ["FIRE", "WATER", "SUN", "SPARK"], cat: "general" },
+            { q: "🤖", a: "ROBOT", options: ["ROBOT", "CYBORG", "ALIEN", "MONSTER"], cat: "tech" },
+            { q: "💻", a: "LAPTOP", options: ["LAPTOP", "PHONE", "TV", "RADIO"], cat: "tech" },
+            { q: "🌋", a: "VOLCANO", options: ["VOLCANO", "MOUNTAIN", "ISLAND", "EARTHQUAKE"], cat: "nature" }
+        ];
+
+        let customDataset = [];
+
+        // --- GAME CONFIG & STATE ---
+        let config = {
+            mode: 'pvp',
+            difficulty: 'medium',
+            timeMode: 'normal',
+            questionType: 'text',
+            useHP: false,
+            category: 'all'
         };
 
-        function setMode(m) {
-            gameMode = m;
-            document.getElementById('info-mode-label').innerText = m === 'ai' ? 'Vs Bot AI' : '1 vs 1';
+        const difficultyQuestionCounts = { easy: 15, medium: 25, hard: 30, extreme: 35 };
+
+        let gameState = {
+            active: false,
+            currentQuestionIdx: 0,
+            totalQuestions: 25,
+            currentTurn: 'p1',
+            questions: [],
+            timer: 10,
+            timerInterval: null,
+            matchStartTime: null,
+            matchEndTime: null,
+            comboStreak: 0,
+            doublePoints: false,
+            reviewData: [],
+            p1: { name: "PLAYER 1", score: 0, hp: 3, correct: 0, wrong: 0, timeout: 0, totalResponseTime: 0, answersCount: 0 },
+            p2: { name: "PLAYER 2", score: 0, hp: 3, correct: 0, wrong: 0, timeout: 0, totalResponseTime: 0, answersCount: 0, isAI: false },
+            lifelines: { '5050': true, 'freeze': true, 'double': true, 'skip': true }
+        };
+
+        let playerXP = parseInt(localStorage.getItem('vocab_xp') || '0');
+
+        // --- MENU SELECTION HANDLERS ---
+        function selectGameMode(mode) {
+            sfx.click();
+            config.mode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('border-neonCyan', 'border-neonPink', 'border-2'));
+            const selectedBtn = document.getElementById(`mode-${mode}`);
+            selectedBtn.classList.add('border-2', mode === 'pvp' ? 'border-neonPink' : 'border-neonCyan');
         }
 
-        function openMainMenu() {
-            document.getElementById('recap-modal').classList.add('hidden');
-            document.getElementById('main-menu-modal').classList.remove('hidden');
+        function selectDifficulty(diff) {
+            sfx.click();
+            config.difficulty = diff;
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('border-neonCyan', 'border-2'));
+            document.getElementById(`diff-${diff}`).classList.add('border-2', 'border-neonCyan');
         }
 
-        function selectAvatar(emoji) {
-            document.getElementById('p1-avatar').innerText = emoji;
-        }
-
-        function changeArenaTheme(theme) {
-            document.getElementById('current-theme-badge').innerText = theme.toUpperCase() + " Mode";
-            // Feature #11: Multi-theme styling handler
-        }
-
-        function startMatchWithConfig() {
-            document.getElementById('main-menu-modal').classList.add('hidden');
-            matchState.questions = [...questionsDB].sort(() => Math.random() - 0.5);
-            matchState.p1 = { score: 0, combo: 0, totalAns: 0, correctAns: 0, frozen: false };
-            matchState.p2 = { score: 0, combo: 0, totalAns: 0, correctAns: 0, frozen: false };
-            matchState.wrongReview = [];
-            
-            renderNextQuestion('p1', 0);
-            renderNextQuestion('p2', 0);
-            startMatchTimer();
-        }
-
-        function renderNextQuestion(player, qIdx) {
-            if (qIdx >= matchState.questions.length) return endMatch();
-
-            const q = matchState.questions[qIdx];
-            document.getElementById(`${player}-question`).innerText = q.word;
-
-            const grid = document.getElementById(`${player}-options`);
-            grid.innerHTML = '';
-
-            let opts = [q.correct, ...q.wrongs].sort(() => Math.random() - 0.5);
-            opts.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = "bg-slate-900 border border-slate-700 hover:border-indigo-500 text-white font-bold text-xs rounded-xl p-2 transition active:scale-95";
-                btn.innerText = opt;
-                btn.onclick = () => handleAnswer(player, opt, q.correct, qIdx);
-                grid.appendChild(btn);
+        function selectTimeMode(tMode) {
+            sfx.click();
+            config.timeMode = tMode;
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.classList.remove('border-neonCyan', 'text-neonCyan');
+                btn.classList.add('border-gray-700', 'text-gray-400');
             });
+            const btn = document.getElementById(`time-${tMode}`);
+            btn.classList.remove('border-gray-700', 'text-gray-400');
+            btn.classList.add('border-neonCyan', 'text-neonCyan');
         }
 
-        function handleAnswer(player, selected, correct, qIdx) {
-            matchState[player].totalAns++;
+        function selectQuestionType(qType) {
+            sfx.click();
+            config.questionType = qType;
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.remove('border-neonCyan', 'text-neonCyan');
+                btn.classList.add('border-gray-700', 'text-gray-400');
+            });
+            const btn = document.getElementById(`type-${qType}`);
+            btn.classList.remove('border-gray-700', 'text-gray-400');
+            btn.classList.add('border-neonCyan', 'text-neonCyan');
+        }
 
-            if (selected === correct) {
-                // Feature #1: Combo Multiplier
-                matchState[player].combo++;
-                const comboBonus = matchState[player].combo > 1 ? matchState[player].combo : 1;
-                matchState[player].score += (1 * comboBonus);
-                matchState[player].correctAns++;
-                
-                playSoundEffect('correct');
-                showComboPopup(player, matchState[player].combo);
+        function toggleHPMode(enable) {
+            sfx.click();
+            config.useHP = enable;
+            document.getElementById('hp-on').className = enable ? "hp-btn flex-1 p-2 bg-cardBg border border-neonCyan rounded-lg text-center font-orbitron text-xs font-bold text-neonCyan" : "hp-btn flex-1 p-2 bg-cardBg border border-gray-700 rounded-lg text-center font-orbitron text-xs font-bold text-gray-400";
+            document.getElementById('hp-off').className = !enable ? "hp-btn flex-1 p-2 bg-cardBg border border-neonCyan rounded-lg text-center font-orbitron text-xs font-bold text-neonCyan" : "hp-btn flex-1 p-2 bg-cardBg border border-gray-700 rounded-lg text-center font-orbitron text-xs font-bold text-gray-400";
+        }
+
+        function toggleTheme() {
+            sfx.click();
+            const body = document.getElementById('game-body');
+            if (body.classList.contains('theme-matrix')) {
+                body.classList.remove('theme-matrix');
+                body.classList.add('theme-synthwave');
+            } else if (body.classList.contains('theme-synthwave')) {
+                body.classList.remove('theme-synthwave');
             } else {
-                matchState[player].combo = 0;
-                playSoundEffect('wrong');
-                // Feature #10: Track wrong answers for review
-                matchState.wrongReview.push({ word: matchState.questions[qIdx].word, correct: correct, userAns: selected });
+                body.classList.add('theme-matrix');
+            }
+        }
+
+        function toggleModal(id, show) {
+            sfx.click();
+            document.getElementById(id).classList.toggle('hidden', !show);
+        }
+
+        // --- GAME CORE ENGINE ---
+        function startGame() {
+            sfx.click();
+            config.category = document.getElementById('category-select').value;
+            
+            let source = (config.questionType === 'emoji') ? [...emojiDataset] : [...textDataset, ...customDataset];
+            if (config.category !== 'all') {
+                source = source.filter(item => item.cat === config.category || !item.cat);
+            }
+            if (source.length === 0) source = [...textDataset];
+
+            let shuffled = [...source].sort(() => 0.5 - Math.random());
+            const totalQ = difficultyQuestionCounts[config.difficulty];
+            let selectedQ = [];
+            while (selectedQ.length < totalQ) selectedQ = selectedQ.concat(shuffled);
+            selectedQ = selectedQ.slice(0, totalQ);
+
+            gameState = {
+                active: true,
+                currentQuestionIdx: 0,
+                totalQuestions: totalQ,
+                currentTurn: 'p1',
+                questions: selectedQ,
+                timer: 10,
+                timerInterval: null,
+                matchStartTime: Date.now(),
+                matchEndTime: null,
+                comboStreak: 0,
+                doublePoints: false,
+                reviewData: [],
+                p1: { name: "PLAYER 1", score: 0, hp: 3, correct: 0, wrong: 0, timeout: 0, totalResponseTime: 0, answersCount: 0 },
+                p2: { name: (config.mode === 'ai') ? "CYBER BOT" : (config.mode === 'solo' ? "TARGET" : "PLAYER 2"), score: 0, hp: 3, correct: 0, wrong: 0, timeout: 0, totalResponseTime: 0, answersCount: 0, isAI: (config.mode === 'ai') },
+                lifelines: { '5050': true, 'freeze': true, 'double': true, 'skip': true }
+            };
+
+            document.getElementById('screen-menu').classList.add('hidden');
+            document.getElementById('screen-arena').classList.remove('hidden');
+            document.getElementById('screen-arena').classList.add('flex');
+
+            resetLifelineUI();
+            updateHUD();
+            loadNextQuestion();
+        }
+
+        function updateHUD() {
+            document.getElementById('p1-score').innerText = gameState.p1.score;
+            document.getElementById('p2-score').innerText = gameState.p2.score;
+
+            if (config.useHP) {
+                document.getElementById('p1-hp-bar').classList.remove('hidden');
+                document.getElementById('p2-hp-bar').classList.remove('hidden');
+                document.getElementById('p1-hp-bar').innerText = '❤️'.repeat(Math.max(0, gameState.p1.hp));
+                document.getElementById('p2-hp-bar').innerText = '❤️'.repeat(Math.max(0, gameState.p2.hp));
+            } else {
+                document.getElementById('p1-hp-bar').classList.add('hidden');
+                document.getElementById('p2-hp-bar').classList.add('hidden');
             }
 
-            // Feature #7: Real-time accuracy updates
-            const acc = Math.round((matchState[player].correctAns / matchState[player].totalAns) * 100);
-            document.getElementById(`${player}-acc-live`).innerText = `${acc}%`;
-            document.getElementById(`${player}-score-display`).innerText = matchState[player].score;
+            const progressP1 = (gameState.p1.score / (gameState.totalQuestions * 10)) * 100;
+            const progressP2 = (gameState.p2.score / (gameState.totalQuestions * 10)) * 100;
 
-            renderNextQuestion(player, qIdx + 1);
+            document.getElementById('p1-progress').style.width = `${Math.min(progressP1, 100)}%`;
+            document.getElementById('p2-progress').style.width = `${Math.min(progressP2, 100)}%`;
+
+            document.getElementById('question-tracker').innerText = `SOAL ${gameState.currentQuestionIdx + 1}/${gameState.totalQuestions}`;
+
+            const comboDisp = document.getElementById('combo-display');
+            if (gameState.comboStreak > 1) {
+                comboDisp.innerText = `COMBO x${gameState.comboStreak}!`;
+                comboDisp.classList.remove('hidden');
+            } else {
+                comboDisp.classList.add('hidden');
+            }
+
+            const turnInd = document.getElementById('turn-indicator');
+            if (config.mode === 'solo') turnInd.innerText = "MODE: SOLO PRACTICE";
+            else turnInd.innerText = "GILIRAN: " + (gameState.currentTurn === 'p1' ? gameState.p1.name : gameState.p2.name);
         }
 
-        function showComboPopup(player, combo) {
-            if (combo < 2) return;
-            const box = document.getElementById(`${player}-combo-box`);
-            const text = document.getElementById(`${player}-combo-text`);
-            text.innerText = `${combo}x COMBO! 🔥`;
-            box.classList.remove('hidden');
-            setTimeout(() => box.classList.add('hidden'), 800);
-        }
+        function loadNextQuestion() {
+            if (gameState.currentQuestionIdx >= gameState.totalQuestions || (config.useHP && (gameState.p1.hp <= 0 || gameState.p2.hp <= 0))) {
+                endGame();
+                return;
+            }
 
-        /* Feature #5: Freeze Time Lifeline */
-        function useFreezeTime(player) {
-            if (matchState[player].frozen) return;
-            matchState[player].frozen = true;
-            document.getElementById(`${player}-btn-freeze`).classList.add('opacity-30');
-            // Freeze logic...
-        }
+            clearInterval(gameState.timerInterval);
+            const qData = gameState.questions[gameState.currentQuestionIdx];
 
-        /* Feature #8: Send Taunt Emoji */
-        function sendTaunt(emoji) {
-            confetti({ particleCount: 15, scalar: 1.2, shapes: ['square'] });
-        }
+            document.getElementById('question-text').innerText = qData.q;
+            
+            let options = [...qData.options].sort(() => 0.5 - Math.random());
+            const answersGrid = document.getElementById('answers-grid');
+            answersGrid.innerHTML = '';
 
-        function startMatchTimer() {
-            if (matchState.interval) clearInterval(matchState.interval);
-            matchState.timer = 15;
-            matchState.interval = setInterval(() => {
-                matchState.timer--;
-                document.getElementById('live-timer-badge').innerText = `⏳ ${matchState.timer}s`;
-                if (matchState.timer <= 0) {
-                    endMatch();
-                }
-            }, 1000);
-        }
-
-        function endMatch() {
-            clearInterval(matchState.interval);
-            confetti({ particleCount: 100, spread: 70 });
-
-            document.getElementById('winner-title').innerText = matchState.p1.score >= matchState.p2.score ? "PEMAIN 1 MENANG! 🏆" : "PEMAIN 2 MENANG! 🏆";
-
-            // Feature #10: Render wrong answer review
-            const wrongList = document.getElementById('wrong-words-list');
-            wrongList.innerHTML = matchState.wrongReview.length ? '' : '<li>Sempurna! Tidak ada jawaban salah. 🎉</li>';
-            matchState.wrongReview.forEach(item => {
-                wrongList.innerHTML += `<li>• <strong class="text-white">${item.word}</strong>: Jawaban Benar = <span class="text-emerald-400">${item.correct}</span></li>`;
+            options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `btn-answer btn-cyber p-3 sm:p-5 glass-panel border border-neonCyan/40 rounded-2xl text-left hover:border-neonCyan transition flex items-center justify-between group`;
+                btn.onclick = () => handleAnswer(opt, btn);
+                btn.innerHTML = `
+                    <span class="font-orbitron font-bold text-gray-400 group-hover:text-neonCyan mr-2 text-sm sm:text-base">${String.fromCharCode(65 + idx)}.</span>
+                    <span class="font-rajdhani font-bold text-base sm:text-2xl text-white flex-grow">${opt}</span>
+                    <i class="fa-solid fa-chevron-right text-gray-600 group-hover:text-neonCyan"></i>
+                `;
+                answersGrid.appendChild(btn);
             });
 
-            // Feature #12: Render Badges
-            document.getElementById('unlocked-badges').innerHTML = `
-                <span class="bg-amber-950 border border-amber-500/40 text-amber-300 text-[10px] font-bold px-2 py-1 rounded-lg">⚡ Speed Demon</span>
-                <span class="bg-indigo-950 border border-indigo-500/40 text-indigo-300 text-[10px] font-bold px-2 py-1 rounded-lg">🎯 Sharpshooter</span>
-            `;
+            gameState.questionStartTime = Date.now();
+            updateHUD();
 
-            document.getElementById('recap-modal').classList.remove('hidden');
+            if (config.timeMode === 'normal') {
+                gameState.timer = 10;
+                document.getElementById('timer-display').innerText = gameState.timer;
+                gameState.timerInterval = setInterval(() => {
+                    gameState.timer--;
+                    document.getElementById('timer-display').innerText = gameState.timer;
+                    if (gameState.timer <= 0) {
+                        clearInterval(gameState.timerInterval);
+                        handleTimeout();
+                    }
+                }, 1000);
+            } else {
+                document.getElementById('timer-display').innerText = "∞";
+            }
+
+            if (config.mode === 'ai' && gameState.currentTurn === 'p2') {
+                disableAnswerButtons(true);
+                triggerAITurn(qData);
+            } else {
+                disableAnswerButtons(false);
+            }
         }
 
-        function speakWord(player) {
-            const word = document.getElementById(`${player}-question`).innerText;
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
-            window.speechSynthesis.speak(utterance);
+        function handleAnswer(selectedOpt, btnElement = null) {
+            if (!gameState.active) return;
+            clearInterval(gameState.timerInterval);
+
+            const activePlayer = gameState[gameState.currentTurn];
+            const qData = gameState.questions[gameState.currentQuestionIdx];
+            const isCorrect = (selectedOpt === qData.a);
+
+            gameState.reviewData.push({ q: qData.q, correct: qData.a, chosen: selectedOpt, isCorrect: isCorrect });
+
+            if (isCorrect) {
+                sfx.correct();
+                gameState.comboStreak++;
+                let gain = 10 * (gameState.doublePoints ? 2 : 1) * (gameState.comboStreak > 2 ? 1.5 : 1);
+                activePlayer.score += Math.round(gain);
+                activePlayer.correct++;
+                if (btnElement) btnElement.classList.add('bg-neonGreen/30', 'border-neonGreen');
+            } else {
+                sfx.wrong();
+                gameState.comboStreak = 0;
+                activePlayer.wrong++;
+                if (config.useHP) activePlayer.hp--;
+                if (btnElement) btnElement.classList.add('bg-neonPink/30', 'border-neonPink');
+                document.getElementById('question-card').classList.add('shake');
+                setTimeout(() => document.getElementById('question-card').classList.remove('shake'), 400);
+            }
+
+            gameState.doublePoints = false;
+            disableAnswerButtons(true);
+
+            setTimeout(() => {
+                gameState.currentQuestionIdx++;
+                if (config.mode === 'pvp' || config.mode === 'ai') gameState.currentTurn = (gameState.currentTurn === 'p1') ? 'p2' : 'p1';
+                loadNextQuestion();
+            }, 1200);
         }
 
-        function useFiftyFifty(player) {
-            document.getElementById(`${player}-btn-5050`).classList.add('opacity-30');
+        function handleTimeout() {
+            const activePlayer = gameState[gameState.currentTurn];
+            const qData = gameState.questions[gameState.currentQuestionIdx];
+            activePlayer.timeout++;
+            if (config.useHP) activePlayer.hp--;
+            gameState.comboStreak = 0;
+            gameState.reviewData.push({ q: qData.q, correct: qData.a, chosen: "Waktu Habis", isCorrect: false });
+
+            disableAnswerButtons(true);
+            setTimeout(() => {
+                gameState.currentQuestionIdx++;
+                if (config.mode === 'pvp' || config.mode === 'ai') gameState.currentTurn = (gameState.currentTurn === 'p1') ? 'p2' : 'p1';
+                loadNextQuestion();
+            }, 1200);
         }
 
-        function useHint(player) {
-            document.getElementById(`${player}-btn-hint`).classList.add('opacity-30');
-            document.getElementById(`${player}-hint-text`).classList.remove('hidden');
-            document.getElementById(`${player}-hint-text`).innerText = "Hint: Pahami konteks kata!";
+        function disableAnswerButtons(disabled) {
+            document.querySelectorAll('.btn-answer').forEach(b => b.disabled = disabled);
         }
+
+        // --- LIFELINES SYSTEM ---
+        function useLifeline(type) {
+            if (!gameState.lifelines[type]) return;
+            sfx.click();
+            gameState.lifelines[type] = false;
+            document.getElementById(`life-${type}`).disabled = true;
+
+            const qData = gameState.questions[gameState.currentQuestionIdx];
+
+            if (type === '5050') {
+                const btns = Array.from(document.querySelectorAll('.btn-answer'));
+                let removed = 0;
+                btns.forEach(b => {
+                    if (!b.innerText.includes(qData.a) && removed < 2) {
+                        b.style.visibility = 'hidden';
+                        removed++;
+                    }
+                });
+            } else if (type === 'freeze') {
+                clearInterval(gameState.timerInterval);
+                document.getElementById('timer-display').innerText = "FROZEN";
+            } else if (type === 'double') {
+                gameState.doublePoints = true;
+            } else if (type === 'skip') {
+                clearInterval(gameState.timerInterval);
+                gameState.currentQuestionIdx++;
+                loadNextQuestion();
+            }
+        }
+
+        function resetLifelineUI() {
+            ['5050', 'freeze', 'double', 'skip'].forEach(t => {
+                const b = document.getElementById(`life-${t}`);
+                if (b) b.disabled = false;
+            });
+        }
+
+        function triggerAITurn(qData) {
+            setTimeout(() => {
+                if (!gameState.active) return;
+                const isAccurate = Math.random() < 0.75;
+                const chosen = isAccurate ? qData.a : qData.options.find(o => o !== qData.a);
+                let targetBtn = Array.from(document.querySelectorAll('.btn-answer')).find(b => b.innerText.includes(chosen));
+                handleAnswer(chosen, targetBtn);
+            }, 1800);
+        }
+
+        // --- RECAP & REVIEW ---
+        function endGame() {
+            gameState.active = false;
+            clearInterval(gameState.timerInterval);
+            sfx.victory();
+            triggerConfetti();
+
+            // Gain XP
+            playerXP += gameState.p1.score;
+            localStorage.setItem('vocab_xp', playerXP);
+            updateXPUI();
+
+            saveLeaderboard(gameState.p1.score);
+
+            document.getElementById('recap-winner-text').innerText = gameState.p1.score >= gameState.p2.score ? "PERTANDINGAN SELESAI!" : "GAME OVER!";
+            toggleModal('modal-scoreboard', true);
+        }
+
+        function generateReviewUI() {
+            const list = document.getElementById('review-list');
+            list.innerHTML = '';
+            gameState.reviewData.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = `p-3 rounded-xl border ${item.isCorrect ? 'border-neonGreen/40 bg-neonGreen/10' : 'border-neonPink/40 bg-neonPink/10'}`;
+                div.innerHTML = `
+                    <div class="font-orbitron font-bold text-xs text-gray-300">#${idx+1} Soal: <span class="text-white">${item.q}</span></div>
+                    <div class="text-xs text-gray-400">Jawaban Kamu: <span class="${item.isCorrect?'text-neonGreen':'text-neonPink'}">${item.chosen}</span></div>
+                    <div class="text-xs text-neonCyan">Jawaban Benar: ${item.correct}</div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        // --- LEADERBOARD & CUSTOM WORDS ---
+        function saveLeaderboard(score) {
+            let board = JSON.parse(localStorage.getItem('vocab_board') || '[]');
+            board.push({ score: score, date: new Date().toLocaleDateString() });
+            board.sort((a,b) => b.score - a.score);
+            localStorage.setItem('vocab_board', JSON.stringify(board.slice(0, 5)));
+        }
+
+        function updateLeaderboardUI() {
+            const list = document.getElementById('leaderboard-list');
+            let board = JSON.parse(localStorage.getItem('vocab_board') || '[]');
+            list.innerHTML = board.length === 0 ? '<p class="text-gray-400">Belum ada skor tersimpan.</p>' : '';
+            board.forEach((item, i) => {
+                list.innerHTML += `<div class="flex justify-between p-2 bg-cardBg rounded-lg border border-gray-800">
+                    <span class="text-neonCyan font-bold">#${i+1} Player</span>
+                    <span class="text-neonGreen font-orbitron font-bold">${item.score} PTS</span>
+                </div>`;
+            });
+        }
+
+        function addCustomWord() {
+            const q = document.getElementById('custom-q').value;
+            const a = document.getElementById('custom-a').value;
+            const wrongs = document.getElementById('custom-wrongs').value.split(',');
+
+            if (q && a && wrongs.length >= 3) {
+                customDataset.push({ q: q, a: a, options: [a, ...wrongs.slice(0,3)].sort(() => 0.5 - Math.random()) });
+                alert("Kata Custom Berhasil Ditambahkan!");
+                toggleModal('modal-custom-words', false);
+            }
+        }
+
+        function updateXPUI() {
+            const lvl = Math.floor(playerXP / 100) + 1;
+            document.getElementById('player-level').innerText = `LVL ${lvl} (${playerXP} XP)`;
+            document.getElementById('xp-bar').style.width = `${playerXP % 100}%`;
+        }
+
+        function restartGame() {
+            toggleModal('modal-scoreboard', false);
+            startGame();
+        }
+
+        function backToMenu() {
+            toggleModal('modal-scoreboard', false);
+            document.getElementById('screen-arena').classList.remove('flex');
+            document.getElementById('screen-arena').classList.add('hidden');
+            document.getElementById('screen-menu').classList.remove('hidden');
+        }
+
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const pieces = [];
+            for (let i = 0; i < 80; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4, color: ['#00f3ff', '#ff007f', '#00ff66'][Math.floor(Math.random() * 3)],
+                    speedY: Math.random() * 3 + 2
+                });
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    p.y += p.speedY;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                });
+                if (pieces.some(p => p.y < canvas.height)) requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        updateXPUI();
     </script>
 </body>
 </html>
