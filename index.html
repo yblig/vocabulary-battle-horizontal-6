@@ -69,6 +69,62 @@
         .streak-glow-p2 {
             box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.5), 0 0 15px rgba(59, 130, 246, 0.4);
         }
+
+        /* ANIMASI BARU: BENAR, SALAH, DAN WAKTU HABIS */
+        @keyframes animCorrect {
+            0% { transform: scale(0.95); box-shadow: 0 0 0px rgba(34, 197, 94, 0); }
+            50% { transform: scale(1.02); box-shadow: 0 0 25px rgba(34, 197, 94, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 0px rgba(34, 197, 94, 0); }
+        }
+
+        @keyframes animWrong {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes animTimeout {
+            0% { opacity: 0.3; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes floatUpFade {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.3); }
+        }
+
+        .card-correct {
+            animation: animCorrect 0.4s ease-out forwards;
+            border-color: #22c55e !important;
+        }
+
+        .card-wrong {
+            animation: animWrong 0.4s ease-in-out forwards;
+            border-color: #ef4444 !important;
+        }
+
+        .card-timeout {
+            animation: animTimeout 0.5s ease-out forwards;
+            border-color: #f59e0b !important;
+        }
+
+        .feedback-text {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Teko', sans-serif;
+            font-size: 3rem;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 30;
+            animation: floatUpFade 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-white h-screen w-screen flex flex-col justify-between p-2 overflow-hidden select-none">
@@ -388,38 +444,92 @@
         function playSound(type) {
             if (isMuted) return;
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
 
             if (type === 'correct') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.12);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+                // Sound Audio 1: High Level-Up / Ding Effect
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc1.type = 'sine';
+                osc2.type = 'triangle';
+
+                osc1.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc1.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.15); // C6
+
+                osc2.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
+                osc2.frequency.exponentialRampToValueAtTime(1318.51, audioCtx.currentTime + 0.15); // E6
+
+                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc1.start(); osc2.start();
+                osc1.stop(audioCtx.currentTime + 0.35);
+                osc2.stop(audioCtx.currentTime + 0.35);
             } else if (type === 'wrong') {
+                // Sound Audio 2: Harsh Buzzer / Tet-tet
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-                osc.frequency.setValueAtTime(110, audioCtx.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(100, audioCtx.currentTime + 0.12);
+
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'timeout') {
+                // Sound Audio 3: Ringing Bell / Alarm Waktu Habis
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        if (isMuted) return;
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
+
+                        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.15);
+                    }, i * 120);
+                }
             } else if (type === 'beep') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(440, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.connect(gain); gain.connect(audioCtx.destination);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.1);
             } else if (type === 'go') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(880, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.connect(gain); gain.connect(audioCtx.destination);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.3);
             } else if (type === 'fanfare') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
                 osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
@@ -427,11 +537,12 @@
                 osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.3);
                 gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+                osc.connect(gain); gain.connect(audioCtx.destination);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.6);
             }
         }
 
-        // DATABASE SOAL LENGKAP (MINIMAL 25 SOAL PER KATEGORI)
+        // DATABASE SOAL LENGKAP
         const defaultQuestions = {
             easy: [
                 { word: "Cat", correct: "Kucing", wrongs: ["Anjing", "Kelinci", "Burung"] },
@@ -620,15 +731,12 @@
             gameConfig.packKey = document.getElementById('level-select').value;
             let qPool = activeQuestionPacks[gameConfig.packKey] || defaultQuestions.medium;
             
-            // 1. Acak urutan seluruh bank soal
             let shuffled = [...qPool].sort(() => Math.random() - 0.5);
 
-            // 2. Potong tepat sesuai JUMLAH SOAL yang dipilih
             if (gameConfig.questionCount > 0 && gameConfig.questionCount <= shuffled.length) {
                 shuffled = shuffled.slice(0, gameConfig.questionCount);
             }
 
-            // 3. ACAK OPSI SEKALIKAN DI AWAL BIAR GAK BERUBAH-UBAH
             matchState.questions = shuffled.map(q => {
                 return {
                     ...q,
@@ -683,6 +791,40 @@
                     startTimer();
                 }
             }, 850);
+        }
+
+        function triggerVisualFeedback(player, type) {
+            const container = document.getElementById(`${player}-card-container`);
+            
+            // Hapus kelas animasi lama
+            container.classList.remove('card-correct', 'card-wrong', 'card-timeout');
+            void container.offsetWidth; // Force Reflow untuk reset animasi
+
+            // Buat elemen teks pop-up
+            const popup = document.createElement('div');
+            popup.className = 'feedback-text';
+
+            if (type === 'correct') {
+                container.classList.add('card-correct');
+                popup.innerText = '+1 BENAR!';
+                popup.classList.add('text-green-400');
+            } else if (type === 'wrong') {
+                container.classList.add('card-wrong');
+                popup.innerText = 'SALAH!';
+                popup.classList.add('text-red-500');
+            } else if (type === 'timeout') {
+                container.classList.add('card-timeout');
+                popup.innerText = 'HABIS WAKTU!';
+                popup.classList.add('text-amber-400');
+            }
+
+            container.appendChild(popup);
+
+            // Bersihkan efek setelah selesai
+            setTimeout(() => {
+                container.classList.remove('card-correct', 'card-wrong', 'card-timeout');
+                if (popup.parentNode) popup.parentNode.removeChild(popup);
+            }, 600);
         }
 
         function renderCurrentQuestions() {
@@ -749,11 +891,13 @@
                     matchState[player].maxStreak = matchState[player].streak;
                 }
                 playSound('correct');
+                triggerVisualFeedback(player, 'correct');
             } else {
                 matchState[player].wrong++;
                 matchState[player].streak = 0;
                 matchState[player].wrongWords.push(currentQ.listenWord || currentQ.word);
                 playSound('wrong');
+                triggerVisualFeedback(player, 'wrong');
             }
 
             matchState[player].index++;
@@ -791,10 +935,12 @@
                 matchState.p2.score++;
                 matchState.p2.streak++;
                 if (matchState.p2.streak > matchState.p2.maxStreak) matchState.p2.maxStreak = matchState.p2.streak;
+                triggerVisualFeedback('p2', 'correct');
             } else {
                 matchState.p2.wrong++;
                 matchState.p2.streak = 0;
                 matchState.p2.wrongWords.push(q.listenWord || q.word);
+                triggerVisualFeedback('p2', 'wrong');
             }
             matchState.p2.index++;
             renderCurrentQuestions();
@@ -816,12 +962,15 @@
                 document.getElementById('timer-display-live').innerText = `⏳ ${matchState.timerLeft}s`;
 
                 if (matchState.timerLeft <= 0) {
+                    playSound('timeout');
+
                     if (matchState.p1.index < matchState.questions.length) {
                         const q1 = matchState.questions[matchState.p1.index];
                         matchState.p1.timeout++;
                         matchState.p1.streak = 0;
                         matchState.p1.wrongWords.push(q1.listenWord || q1.word);
                         matchState.p1.index++;
+                        triggerVisualFeedback('p1', 'timeout');
                     }
                     if (matchState.p2.index < matchState.questions.length) {
                         const q2 = matchState.questions[matchState.p2.index];
@@ -829,6 +978,7 @@
                         matchState.p2.streak = 0;
                         matchState.p2.wrongWords.push(q2.listenWord || q2.word);
                         matchState.p2.index++;
+                        triggerVisualFeedback('p2', 'timeout');
                     }
                     matchState.timerLeft = gameConfig.timerLimit;
                     renderCurrentQuestions();
