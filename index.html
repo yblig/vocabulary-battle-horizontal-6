@@ -2,937 +2,635 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vocabulary Battle - Arena Edukasi</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Canvas Confetti -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tebak Emoji Super Fun!</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Fredoka:wght@400;600;700&display=swap');
-        
+        :root {
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --primary: #4f46e5;
+            --accent: #ff007f;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
         * {
-            user-select: none;
-            -webkit-user-select: none;
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: 'Fredoka', sans-serif;
-            background-color: #0b0f19;
-            color: #ffffff;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
             overflow: hidden;
-            height: 100vh;
-            width: 100vw;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.5s ease-out;
         }
 
-        .font-teko {
-            font-family: 'Teko', sans-serif;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #111827;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 4px;
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
-        @keyframes countdownPulse {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.2); opacity: 1; }
+        .subtitle {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        /* Mode Selection */
+        .mode-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .btn-mode {
+            padding: 12px 20px;
+            border: 2px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-mode.selected, .btn-mode:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Primary Button */
+        .btn-main {
+            background: linear-gradient(45deg, #ff007f, #7928ca);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 0, 127, 0.4);
+        }
+
+        .btn-main:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 25px rgba(255, 0, 127, 0.6);
+        }
+
+        /* Countdown Overlay */
+        .countdown-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .countdown-number {
+            font-size: 6rem;
+            font-weight: 900;
+            color: var(--primary);
+            animation: popScale 0.8s ease-in-out infinite;
+        }
+
+        @keyframes popScale {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.3); opacity: 1; }
             100% { transform: scale(1); opacity: 0; }
         }
 
-        .animate-cd {
-            animation: countdownPulse 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        /* Game Elements */
+        .team-badge {
+            display: inline-block;
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
 
-        @keyframes comboPop {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.3); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .animate-combo {
-            animation: comboPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        .emoji-box {
+            font-size: 4.5rem;
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 15px 0;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            animation: bounce 2s infinite;
         }
 
-        .streak-glow-p1 {
-            box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.5), 0 0 15px rgba(239, 68, 68, 0.4);
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
-        .streak-glow-p2 {
-            box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.5), 0 0 15px rgba(59, 130, 246, 0.4);
+
+        /* Timer Section */
+        .timer-container {
+            margin: 15px 0;
+        }
+
+        .timer-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .progress-bar-bg {
+            background: #e5e7eb;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, #10b981, #ef4444);
+            height: 100%;
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-option {
+            background: white;
+            border: 2px solid #e5e7eb;
+            padding: 15px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-option:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: #f4f5ff;
+            transform: translateY(-2px);
+        }
+
+        .btn-option.correct {
+            background: var(--success) !important;
+            color: white !important;
+            border-color: var(--success) !important;
+            animation: pulse 0.5s;
+        }
+
+        .btn-option.wrong {
+            background: var(--danger) !important;
+            color: white !important;
+            border-color: var(--danger) !important;
+        }
+
+        /* Power-ups */
+        .powerups {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-powerup {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-powerup:hover:not(:disabled) {
+            background: #e5e7eb;
+        }
+
+        .btn-powerup:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Confetti Overlay */
+        #confetti-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 100;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-white h-screen w-screen flex flex-col justify-between p-2 overflow-hidden select-none">
+<body>
 
-    <!-- ================= MENU UTAMA ================= -->
-    <div id="main-menu" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-4 overflow-y-auto">
-        <div class="max-w-xl w-full bg-slate-900 border-2 border-slate-700 rounded-2xl p-5 shadow-2xl space-y-4 my-auto relative">
+    <div class="game-card">
+        <canvas id="confetti-canvas"></canvas>
+
+        <!-- SCREEN 1: START & MODE SELECTION -->
+        <div id="screen-start" class="screen active">
+            <h1>🎭 Tebak Emoji Fun</h1>
+            <p class="subtitle">Pilih Mode Kesulitan Sebelum Mulai Game!</p>
+
+            <div class="mode-container">
+                <button class="btn-mode selected" onclick="selectMode('easy', this)">Easy (20s)</button>
+                <button class="btn-mode" onclick="selectMode('medium', this)">Medium (12s)</button>
+                <button class="btn-mode" onclick="selectMode('hard', this)">Hard (6s)</button>
+            </div>
+
+            <button class="btn-main" onclick="startGame()">Mulai Permainan 🚀</button>
+        </div>
+
+        <!-- COUNTDOWN OVERLAY -->
+        <div id="countdown-overlay" class="countdown-overlay" style="display: none;">
+            <div id="countdown-text" class="countdown-number">3</div>
+        </div>
+
+        <!-- SCREEN 2: GAMEPLAY -->
+        <div id="screen-game" class="screen">
+            <div class="team-badge" id="team-turn-display">Giliran: Tim A</div>
+            <div class="emoji-box" id="emoji-display">🍿🎬</div>
+
+            <!-- Timer Section -->
+            <div class="timer-container">
+                <div class="timer-text" id="timer-display">⏱️ 20 DETIK</div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="timer-bar"></div>
+                </div>
+            </div>
+
+            <div class="options-grid" id="options-container"></div>
+
+            <!-- Power-Ups -->
+            <div class="powerups">
+                <button class="btn-powerup" id="btn-5050" onclick="use5050()">⚡ 50:50</button>
+                <button class="btn-powerup" id="btn-time" onclick="useExtraTime()">⌛ +10s Waktu</button>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: RESULT -->
+        <div id="screen-result" class="screen">
+            <h1>🏆 Game Selesai!</h1>
+            <p class="subtitle" id="winner-text">Selamat untuk pemenang!</p>
             
-            <!-- Global Audio Toggle Button -->
-            <button onclick="toggleAudioMute()" id="audio-toggle-btn" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 p-2 rounded-xl border border-slate-700 text-xs flex items-center gap-1.5 transition">
-                <i id="audio-icon" class="fa-solid fa-volume-high text-indigo-400"></i> SFX: ON
-            </button>
-
-            <div class="text-center pt-2">
-                <h1 class="text-4xl md:text-5xl font-teko tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500">
-                    VOCABULARY BATTLE
-                </h1>
-                <p class="text-xs md:text-sm text-slate-400">Game Adu Kosa Kata Bahasa Inggris - Indonesia</p>
+            <div style="margin: 20px 0; font-size: 1.2rem; line-height: 1.8;">
+                <p><strong>Skor Tim A:</strong> <span id="score-team-a">0</span></p>
+                <p><strong>Skor Tim B:</strong> <span id="score-team-b">0</span></p>
             </div>
 
-            <!-- Mode Permainan -->
-            <div>
-                <label class="block text-xs font-bold text-slate-300 uppercase mb-1"><i class="fa-solid fa-gamepad mr-1"></i> Mode Permainan</label>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="selectGameMode('2p')" id="btn-mode-2p" class="mode-btn p-2.5 rounded-xl border-2 border-red-500 bg-red-950/40 text-red-400 font-bold text-sm flex items-center justify-center gap-2 transition">
-                        <i class="fa-solid fa-users text-lg"></i> 2 Player (1 vs 1)
-                    </button>
-                    <button onclick="selectGameMode('ai')" id="btn-mode-ai" class="mode-btn p-2.5 rounded-xl border-2 border-slate-700 bg-slate-800 text-slate-400 font-bold text-sm flex items-center justify-center gap-2 transition">
-                        <i class="fa-solid fa-robot text-lg"></i> Vs AI Bot
-                    </button>
-                </div>
-            </div>
-
-            <!-- Pilihan Tingkat / Paket Soal -->
-            <div>
-                <label class="block text-xs font-bold text-slate-300 uppercase mb-1"><i class="fa-solid fa-layer-group mr-1"></i> Pilih Level / Paket Soal</label>
-                <select id="level-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm font-semibold text-white focus:outline-none focus:border-indigo-500">
-                    <option value="easy">🟢 Easy (Rekomendasi Kelas 1-2 SD)</option>
-                    <option value="medium" selected>🟡 Medium (Rekomendasi Kelas 3-4 SD)</option>
-                    <option value="hard">🔴 Hard (Rekomendasi Kelas 5-6 SD)</option>
-                    <option value="extreme">🔥 Extreme (SMP / Lanjutan)</option>
-                    <option value="emoji">🧩 Mode Emoji (Tebak Gambar & Audio)</option>
-                </select>
-            </div>
-
-            <!-- FITUR BARU 1: Pilihan Jumlah Soal -->
-            <div>
-                <label class="block text-xs font-bold text-slate-300 uppercase mb-1"><i class="fa-solid fa-list-ol mr-1"></i> Jumlah Soal</label>
-                <div class="grid grid-cols-6 gap-1.5">
-                    <button onclick="selectQuestionCount(5)" id="qcount-5" class="qcount-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold transition">5</button>
-                    <button onclick="selectQuestionCount(10)" id="qcount-10" class="qcount-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold transition">10</button>
-                    <button onclick="selectQuestionCount(15)" id="qcount-15" class="qcount-btn p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300 text-xs font-bold transition">15</button>
-                    <button onclick="selectQuestionCount(20)" id="qcount-20" class="qcount-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold transition">20</button>
-                    <button onclick="selectQuestionCount(25)" id="qcount-25" class="qcount-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold transition">25</button>
-                    <button onclick="selectQuestionCount(0)" id="qcount-0" class="qcount-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold transition">Semua</button>
-                </div>
-            </div>
-
-            <!-- Mode Waktu -->
-            <div>
-                <label class="block text-xs font-bold text-slate-300 uppercase mb-1"><i class="fa-solid fa-clock mr-1"></i> Batas Waktu per Soal</label>
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="selectTimer(10)" id="timer-10" class="timer-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold">10 Detik</button>
-                    <button onclick="selectTimer(15)" id="timer-15" class="timer-btn p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300 text-xs font-bold">15 Detik</button>
-                    <button onclick="selectTimer(0)" id="timer-0" class="timer-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold">Tanpa Waktu</button>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="pt-2 flex gap-2">
-                <button onclick="openTeacherModal()" class="w-1/3 bg-amber-600 hover:bg-amber-500 text-white font-bold p-3 rounded-xl text-xs md:text-sm flex items-center justify-center gap-1 transition">
-                    <i class="fa-solid fa-chalkboard-user"></i> Mode Guru
-                </button>
-                <button onclick="initiateGameSetup()" class="w-2/3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-bold p-3 rounded-xl text-sm md:text-base shadow-lg transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-play"></i> Lanjut Ke Arena
-                </button>
-            </div>
+            <button class="btn-main" onclick="resetGame()">Main Lagi 🔄</button>
         </div>
     </div>
 
-    <!-- ================= ARENA PERMAINAN (SPLIT SCREEN FIT) ================= -->
-    <div class="flex-1 w-full grid grid-cols-2 gap-2 h-full overflow-hidden relative">
-
-        <!-- OVERLAY SIAP / START & COUNTDOWN -->
-        <div id="readiness-overlay" class="absolute inset-0 z-40 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4">
-            <div id="ready-card" class="text-center space-y-4 max-w-md w-full bg-slate-900 border-2 border-indigo-500 p-6 rounded-2xl shadow-2xl">
-                <h2 class="text-3xl font-teko tracking-wide text-indigo-400">PEMAIN SIAP?</h2>
-                <p class="text-xs text-slate-300">Posisi soal & jawaban siap! Tekan tombol di bawah untuk memulai hitung mundur.</p>
-                <button onclick="startCountdownSequence()" class="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 font-teko text-2xl tracking-wider text-white rounded-xl shadow-lg active:scale-95 transition">
-                    🚀 SIAP / MULAI PERTANDINGAN
-                </button>
-            </div>
-            <div id="countdown-display" class="hidden text-8xl font-teko font-bold text-yellow-400 drop-shadow-[0_0_25px_rgba(250,204,21,0.8)]">
-                3
-            </div>
-        </div>
-
-        <!-- TIM MERAH (P1) - LEFT SIDE -->
-        <div id="p1-card-container" class="bg-slate-900/80 border-2 border-red-500/50 rounded-xl p-2 flex flex-col justify-between h-full relative overflow-hidden transition-all duration-300">
-            <!-- Header Info & Progress Bar -->
-            <div>
-                <div class="flex justify-between items-center mb-1">
-                    <span class="text-xs font-bold text-red-400 flex items-center gap-1">
-                        <i class="fa-solid fa-user"></i> <span id="p1-name-label">TIM MERAH</span>
-                    </span>
-                    <!-- FITUR COMBO / STREAK BADGE -->
-                    <div id="p1-streak-badge" class="hidden bg-gradient-to-r from-amber-500 to-red-500 text-black px-1.5 py-0.5 rounded-full text-[10px] font-black tracking-wider animate-combo">
-                        🔥 <span id="p1-streak-count">0</span> STREAK
-                    </div>
-                    <span id="p1-progress-text" class="text-xs font-mono font-bold text-red-400">Soal 1/15</span>
-                </div>
-                <!-- Progress Bar -->
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-red-900">
-                    <div id="p1-progress-bar" class="bg-red-500 h-full transition-all duration-300 w-0"></div>
-                </div>
-            </div>
-
-            <!-- Question Card -->
-            <div class="bg-red-950/30 border border-red-500/30 rounded-lg p-2 my-1 text-center flex-1 flex flex-col items-center justify-center relative">
-                <span id="p1-sub-label" class="text-[10px] text-red-300 uppercase tracking-widest font-bold mb-0.5">Bahasa Inggris</span>
-                <div class="flex items-center gap-2">
-                    <h2 id="p1-question" class="text-xl md:text-3xl font-bold text-white tracking-wide">...</h2>
-                    <!-- FITUR MINTAAN: LISTEN TO WORD BUAT MODE EMOJI / SOAL BIASA -->
-                    <button onclick="speakWord('p1')" id="p1-btn-listen" class="text-red-400 hover:text-red-300 text-xs p-1.5 bg-red-900/60 hover:bg-red-800 rounded-full border border-red-500/50 shadow flex items-center gap-1 transition" title="Listen to Word">
-                        <i class="fa-solid fa-volume-high"></i> <span class="text-[9px] font-bold pr-0.5">LISTEN</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Answer Buttons Grid (2x2) -->
-            <div id="p1-options-grid" class="grid grid-cols-2 gap-1.5 h-1/2">
-                <!-- Buttons injected dynamically -->
-            </div>
-        </div>
-
-        <!-- TIM BIRU (P2 / AI) - RIGHT SIDE -->
-        <div id="p2-card-container" class="bg-slate-900/80 border-2 border-blue-500/50 rounded-xl p-2 flex flex-col justify-between h-full relative overflow-hidden transition-all duration-300">
-            <!-- Header Info & Progress Bar -->
-            <div>
-                <div class="flex justify-between items-center mb-1">
-                    <span class="text-xs font-bold text-blue-400 flex items-center gap-1">
-                        <i id="p2-icon" class="fa-solid fa-user"></i> <span id="p2-name-label">TIM BIRU</span>
-                    </span>
-                    <!-- FITUR COMBO / STREAK BADGE -->
-                    <div id="p2-streak-badge" class="hidden bg-gradient-to-r from-cyan-400 to-blue-500 text-black px-1.5 py-0.5 rounded-full text-[10px] font-black tracking-wider animate-combo">
-                        🔥 <span id="p2-streak-count">0</span> STREAK
-                    </div>
-                    <span id="p2-progress-text" class="text-xs font-mono font-bold text-blue-400">Soal 1/15</span>
-                </div>
-                <!-- Progress Bar -->
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-blue-900">
-                    <div id="p2-progress-bar" class="bg-blue-500 h-full transition-all duration-300 w-0"></div>
-                </div>
-            </div>
-
-            <!-- Question Card -->
-            <div class="bg-blue-950/30 border border-blue-500/30 rounded-lg p-2 my-1 text-center flex-1 flex flex-col items-center justify-center relative">
-                <span id="p2-sub-label" class="text-[10px] text-blue-300 uppercase tracking-widest font-bold mb-0.5">Bahasa Inggris</span>
-                <div class="flex items-center gap-2">
-                    <h2 id="p2-question" class="text-xl md:text-3xl font-bold text-white tracking-wide">...</h2>
-                    <!-- FITUR MINTAAN: LISTEN TO WORD BUAT MODE EMOJI / SOAL BIASA -->
-                    <button onclick="speakWord('p2')" id="p2-btn-listen" class="text-blue-400 hover:text-blue-300 text-xs p-1.5 bg-blue-900/60 hover:bg-blue-800 rounded-full border border-blue-500/50 shadow flex items-center gap-1 transition" title="Listen to Word">
-                        <i class="fa-solid fa-volume-high"></i> <span class="text-[9px] font-bold pr-0.5">LISTEN</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Answer Buttons Grid (2x2) -->
-            <div id="p2-options-grid" class="grid grid-cols-2 gap-1.5 h-1/2">
-                <!-- Buttons injected dynamically -->
-            </div>
-        </div>
-    </div>
-
-    <!-- FOOTER STATUS & TIMER BAR -->
-    <div class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 mt-1 flex justify-between items-center text-xs font-mono">
-        <div class="text-red-400 font-bold">P1 Benar: <span id="p1-score-live">0</span></div>
-        <div id="timer-display-live" class="text-yellow-400 font-bold text-sm bg-slate-950 px-3 py-0.5 rounded border border-yellow-500/40">
-            ⏳ 15s
-        </div>
-        <div class="text-blue-400 font-bold">P2 Benar: <span id="p2-score-live">0</span></div>
-    </div>
-
-    <!-- ================= REKAP SCOREBOARD & STATISTIK ================= -->
-    <div id="recap-modal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md hidden flex flex-col items-center justify-center p-4 overflow-y-auto">
-        <div class="max-w-xl w-full bg-slate-900 border-2 border-indigo-500 rounded-2xl p-5 shadow-2xl space-y-4 my-auto">
-            <!-- Winner Banner -->
-            <div class="text-center">
-                <p class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Hasil Pertandingan</p>
-                <h1 id="winner-banner" class="text-4xl font-teko tracking-wider text-yellow-400">TIM MERAH MENANG!</h1>
-            </div>
-
-            <!-- Side by Side Stats -->
-            <div class="grid grid-cols-2 gap-3 text-xs">
-                <!-- P1 Stats -->
-                <div class="bg-red-950/30 border border-red-500/40 rounded-xl p-3 space-y-1.5">
-                    <p class="font-bold text-red-400 text-sm border-b border-red-800 pb-1" id="recap-p1-title">TIM MERAH</p>
-                    <div class="flex justify-between"><span>Jawaban Benar:</span><span id="recap-p1-correct" class="font-bold text-green-400">0</span></div>
-                    <div class="flex justify-between"><span>Jawaban Salah:</span><span id="recap-p1-wrong" class="font-bold text-red-400">0</span></div>
-                    <div class="flex justify-between"><span>Habis Waktu:</span><span id="recap-p1-timeout" class="font-bold text-amber-400">0</span></div>
-                    <div class="flex justify-between"><span>Max Combo:</span><span id="recap-p1-maxstreak" class="font-bold text-yellow-400">0 🔥</span></div>
-                    <div class="flex justify-between"><span>Akurasi:</span><span id="recap-p1-accuracy" class="font-bold text-indigo-300">0%</span></div>
-                    <div class="flex justify-between"><span>Rata-rata Waktu:</span><span id="recap-p1-avgtime" class="font-bold text-slate-300">0s</span></div>
-                </div>
-
-                <!-- P2 Stats -->
-                <div class="bg-blue-950/30 border border-blue-500/40 rounded-xl p-3 space-y-1.5">
-                    <p class="font-bold text-blue-400 text-sm border-b border-blue-800 pb-1" id="recap-p2-title">TIM BIRU</p>
-                    <div class="flex justify-between"><span>Jawaban Benar:</span><span id="recap-p2-correct" class="font-bold text-green-400">0</span></div>
-                    <div class="flex justify-between"><span>Jawaban Salah:</span><span id="recap-p2-wrong" class="font-bold text-red-400">0</span></div>
-                    <div class="flex justify-between"><span>Habis Waktu:</span><span id="recap-p2-timeout" class="font-bold text-amber-400">0</span></div>
-                    <div class="flex justify-between"><span>Max Combo:</span><span id="recap-p2-maxstreak" class="font-bold text-yellow-400">0 🔥</span></div>
-                    <div class="flex justify-between"><span>Akurasi:</span><span id="recap-p2-accuracy" class="font-bold text-indigo-300">0%</span></div>
-                    <div class="flex justify-between"><span>Rata-rata Waktu:</span><span id="recap-p2-avgtime" class="font-bold text-slate-300">0s</span></div>
-                </div>
-            </div>
-
-            <!-- FITUR BARU 3: ANALISIS TOPIK LEMAH (WEAKNESS TRACKER) -->
-            <div id="weakness-section" class="bg-amber-950/30 border border-amber-500/40 rounded-xl p-3 space-y-1.5 text-xs hidden">
-                <div class="font-bold text-amber-300 flex items-center gap-1 border-b border-amber-800/60 pb-1">
-                    <i class="fa-solid fa-lightbulb"></i> Evaluasi Kosa Kata yang Perlu Dipelajari Lagi:
-                </div>
-                <div id="weakness-list" class="flex flex-wrap gap-1.5 pt-1">
-                    <!-- Dynamic badges -->
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex gap-2 pt-2">
-                <button onclick="downloadCSVReport()" class="w-1/2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-file-csv"></i> Download Laporan (CSV)
-                </button>
-                <button onclick="returnToMenu()" class="w-1/2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold p-2.5 rounded-xl text-xs flex items-center justify-center gap-1">
-                    <i class="fa-solid fa-house"></i> Kembali Ke Menu
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= MODE GURU & EDITOR SOAL ================= -->
-    <div id="teacher-modal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md hidden flex flex-col items-center justify-center p-4 overflow-y-auto">
-        <div class="max-w-2xl w-full bg-slate-900 border-2 border-amber-500/60 rounded-2xl p-5 shadow-2xl space-y-4 my-auto max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                <h2 class="text-2xl font-teko text-amber-400 tracking-wide"><i class="fa-solid fa-chalkboard-user mr-2"></i>MODE GURU & KELOLA SOAL</h2>
-                <button onclick="closeTeacherModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <div class="overflow-y-auto space-y-4 flex-1 pr-1">
-                <!-- Tambah Paket / Kategori Custom Baru -->
-                <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-xl space-y-2">
-                    <h3 class="text-xs font-bold text-amber-300 uppercase">Buat Paket Soal Custom Baru</h3>
-                    <div class="flex gap-2">
-                        <input id="custom-pack-name" type="text" placeholder="Nama Paket (Misal: Ulangan Bab 1)" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
-                        <button onclick="createCustomPack()" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-3 py-2 rounded-lg text-xs">
-                            + Buat Paket
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Form Tambah Soal -->
-                <div class="bg-slate-800/60 border border-slate-700 p-3 rounded-xl space-y-2">
-                    <h3 class="text-xs font-bold text-amber-300 uppercase">Tambah Soal ke Paket Terpilih</h3>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="text-[10px] text-slate-400">Pilih Paket Target</label>
-                            <select id="teacher-target-pack" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white">
-                                <!-- Dynamic options -->
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-slate-400">Kata Bahasa Inggris (Soal / Emoji)</label>
-                            <input id="teacher-word-en" type="text" placeholder="Contoh: Book atau 🐶" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="text-[10px] text-green-400 font-bold">Jawaban Benar (Indonesian)</label>
-                            <input id="teacher-ans-correct" type="text" placeholder="Contoh: Buku" class="w-full bg-slate-900 border border-green-600/50 rounded p-1.5 text-xs text-white">
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-red-400 font-bold">Jawaban Pengecoh 1</label>
-                            <input id="teacher-ans-wrong1" type="text" placeholder="Contoh: Pensil" class="w-full bg-slate-900 border border-red-600/50 rounded p-1.5 text-xs text-white">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="text-[10px] text-red-400 font-bold">Jawaban Pengecoh 2</label>
-                            <input id="teacher-ans-wrong2" type="text" placeholder="Contoh: Meja" class="w-full bg-slate-900 border border-red-600/50 rounded p-1.5 text-xs text-white">
-                        </div>
-                        <div>
-                            <label class="text-[10px] text-red-400 font-bold">Jawaban Pengecoh 3</label>
-                            <input id="teacher-ans-wrong3" type="text" placeholder="Contoh: Kursi" class="w-full bg-slate-900 border border-red-600/50 rounded p-1.5 text-xs text-white">
-                        </div>
-                    </div>
-                    <button onclick="addQuestionFromTeacher()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold p-2 rounded-lg text-xs mt-1">
-                        <i class="fa-solid fa-plus mr-1"></i> Simpan Soal
-                    </button>
-                </div>
-
-                <!-- Printable Worksheet Generator -->
-                <div class="bg-indigo-950/40 border border-indigo-500/40 p-3 rounded-xl flex justify-between items-center">
-                    <div>
-                        <h4 class="text-xs font-bold text-indigo-300">Cetak Lembar Kerja Kertas (Worksheet PDF)</h4>
-                        <p class="text-[10px] text-slate-400">Hasilkan lembar latihan cetak untuk kelas secara langsung.</p>
-                    </div>
-                    <button onclick="printWorksheet()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-2 rounded-lg text-xs flex items-center gap-1">
-                        <i class="fa-solid fa-print"></i> Cetak Soal
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        /* FITUR NEW: AUDIO MUTE SYSTEM */
-        let isMuted = false;
-        function toggleAudioMute() {
-            isMuted = !isMuted;
-            const btn = document.getElementById('audio-toggle-btn');
-            const icon = document.getElementById('audio-icon');
-            if (isMuted) {
-                btn.innerHTML = `<i id="audio-icon" class="fa-solid fa-volume-xmark text-red-400"></i> SFX: OFF`;
-            } else {
-                btn.innerHTML = `<i id="audio-icon" class="fa-solid fa-volume-high text-indigo-400"></i> SFX: ON`;
-            }
-        }
+        // --- Web Audio API (Sound Effects Synthesizer) ---
+        const AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        /* WEB AUDIO API SOUND SYNTH (ENHANCED SFX) */
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
-            if (isMuted) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+            if (AudioCtx.state === 'suspended') AudioCtx.resume();
+            const osc = AudioCtx.createOscillator();
+            const gain = AudioCtx.createGain();
             osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            gain.connect(AudioCtx.destination);
+
+            const now = AudioCtx.currentTime;
 
             if (type === 'correct') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.12); // E5
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.3); // A5
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
             } else if (type === 'wrong') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-                osc.frequency.setValueAtTime(110, audioCtx.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-            } else if (type === 'beep') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-            } else if (type === 'go') {
+                osc.frequency.setValueAtTime(220, now); // A3
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.3); // A2
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'tick') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-            } else if (type === 'fanfare') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
-                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
-                osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.6);
+                osc.frequency.setValueAtTime(600, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now);
+                osc.stop(now + 0.05);
+            } else if (type === 'timeout') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, now);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else if (type === 'win') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, now);
+                osc.frequency.setValueAtTime(554.37, now + 0.1);
+                osc.frequency.setValueAtTime(659.25, now + 0.2);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
             }
         }
 
-        /* DEFAULT QUESTION BANK (INCLUDES EMOJI MODE) */
-        const defaultQuestions = {
-            easy: [
-                { word: "Cat", correct: "Kucing", wrongs: ["Anjing", "Kelinci", "Burung"] },
-                { word: "Book", correct: "Buku", wrongs: ["Pensil", "Meja", "Tas"] },
-                { word: "Red", correct: "Merah", wrongs: ["Biru", "Hijau", "Kuning"] },
-                { word: "Mother", correct: "Ibu", wrongs: ["Ayah", "Kakak", "Nenek"] },
-                { word: "Water", correct: "Air", wrongs: ["Susu", "Jus", "Teh"] },
-                { word: "Sun", correct: "Matahari", wrongs: ["Bulan", "Bintang", "Awan"] },
-                { word: "Apple", correct: "Apel", wrongs: ["Pisang", "Jeruk", "Anggur"] },
-                { word: "Dog", correct: "Anjing", wrongs: ["Kucing", "Kuda", "Sapi"] }
-            ],
-            medium: [
-                { word: "Teacher", correct: "Guru", wrongs: ["Dokter", "Polisi", "Petani"] },
-                { word: "Kitchen", correct: "Dapur", wrongs: ["Kamar Tidur", "Taman", "Garasi"] },
-                { word: "Always", correct: "Selalu", wrongs: ["Kadang-kadang", "Jarang", "Tidak Pernah"] },
-                { word: "Library", correct: "Perpustakaan", wrongs: ["Kantin", "Pasar", "Rumah Sakit"] },
-                { word: "Delicious", correct: "Lezat", wrongs: ["Pahit", "Asin", "Pedas"] },
-                { word: "Mountain", correct: "Gunung", wrongs: ["Pantai", "Danau", "Sungai"] }
-            ],
-            hard: [
-                { word: "Knowledge", correct: "Pengetahuan", wrongs: ["Perasaan", "Mimpi", "Keberuntungan"] },
-                { word: "Environment", correct: "Lingkungan", wrongs: ["Pembangunan", "Pemerintahan", "Kebudayaan"] },
-                { word: "Dangerous", correct: "Berbahaya", wrongs: ["Aman", "Nyaman", "Mudah"] },
-                { word: "Improve", correct: "Meningkatkan", wrongs: ["Menurunkan", "Menghancurkan", "Mengabaikan"] }
-            ],
-            extreme: [
-                { word: "Ambiguous", correct: "Bermakna Ganda", wrongs: ["Jelas", "Singkat", "Tegas"] },
-                { word: "Benevolent", correct: "Penuh Kebajikan", wrongs: ["Kejam", "Sombong", "Egois"] }
-            ],
-            emoji: [
-                { word: "🐶", listenWord: "Dog", correct: "Anjing", wrongs: ["Kucing", "Burung", "Singa"] },
-                { word: "🐱", listenWord: "Cat", correct: "Kucing", wrongs: ["Anjing", "Kelinci", "Sapi"] },
-                { word: "🍎", listenWord: "Apple", correct: "Apel", wrongs: ["Pisang", "Jeruk", "Anggur"] },
-                { word: "🚗", listenWord: "Car", correct: "Mobil", wrongs: ["Motor", "Sepeda", "Pesawat"] },
-                { word: "🚀", listenWord: "Rocket", correct: "Roket", wrongs: ["Mobil", "Kapal", "Kereta"] },
-                { word: "🍕", listenWord: "Pizza", correct: "Piza", wrongs: ["Roti", "Kue", "Burger"] },
-                { word: "⚽", listenWord: "Soccer Ball", correct: "Bola Sepak", wrongs: ["Basket", "Voli", "Tenis"] },
-                { word: "📚", listenWord: "Books", correct: "Buku", wrongs: ["Pensil", "Tas", "Penggaris"] },
-                { word: "🌧️", listenWord: "Rain", correct: "Hujan", wrongs: ["Matahari", "Awan", "Angin"] },
-                { word: "🔥", listenWord: "Fire", correct: "Api", wrongs: ["Air", "Es", "Tanah"] }
-            ]
-        };
+        // --- Master Bank Soal (Jawaban & Opsi Tetap KONSISTEN) ---
+        const questionBank = [
+            { emoji: "🍿🎬", options: ["Bioskop", "Restoran", "Festival Musik", "Taman Bermain"], answer: "Bioskop" },
+            { emoji: "🐱👓", options: ["Kucing Keren", "Kucing Pintar", "Detektif Hewan", "Dokter Hewan"], answer: "Kucing Keren" },
+            { emoji: "🚀🌕", options: ["Terbang Tinggi", "Misi Luar Angkasa", "Malam Hari", "Satelit Buatan"], answer: "Misi Luar Angkasa" },
+            { emoji: "🍔🍟🥤", options: ["Makanan Sehat", "Fast Food", "Pesta Ulang Tahun", "Piknik Bersama"], answer: "Fast Food" },
+            { emoji: "⚽🏆", options: ["Juara Sepak Bola", "Latihan Olahraga", "Nonton Bola", "Beli Sepatu"], answer: "Juara Sepak Bola" }
+        ];
 
-        let activeQuestionPacks = JSON.parse(localStorage.getItem('vocab_custom_packs')) || defaultQuestions;
+        // Game Settings
+        const modeDurations = { easy: 20, medium: 12, hard: 6 };
+        let selectedMode = 'easy';
+        let currentQuestionIndex = 0;
+        let currentTeam = 'A'; // 'A' atau 'B'
+        let scores = { A: 0, B: 0 };
+        let powerupsUsed = { A: { f50: false, time: false }, B: { f50: false, time: false } };
 
-        /* GAME CONFIG & STATE */
-        let gameConfig = { mode: '2p', packKey: 'medium', timerLimit: 15, questionCount: 15 };
-        let matchState = {
-            p1: { score: 0, wrong: 0, timeout: 0, times: [], streak: 0, maxStreak: 0, index: 0, wrongWords: [] },
-            p2: { score: 0, wrong: 0, timeout: 0, times: [], streak: 0, maxStreak: 0, index: 0, wrongWords: [] },
-            questions: [],
-            activeTimer: null,
-            timerLeft: 15,
-            questionStartTime: 0
-        };
+        let timerInterval = null;
+        let timeLeft = 0;
+        let totalTime = 20;
 
-        function selectGameMode(mode) {
-            gameConfig.mode = mode;
-            document.querySelectorAll('.mode-btn').forEach(btn => {
-                btn.classList.remove('border-red-500', 'bg-red-950/40', 'text-red-400');
-                btn.classList.add('border-slate-700', 'bg-slate-800', 'text-slate-400');
-            });
-            const activeBtn = document.getElementById(`btn-mode-${mode}`);
-            activeBtn.classList.remove('border-slate-700', 'bg-slate-800', 'text-slate-400');
-            activeBtn.classList.add('border-red-500', 'bg-red-950/40', 'text-red-400');
+        function selectMode(mode, element) {
+            selectedMode = mode;
+            document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('selected'));
+            element.classList.add('selected');
+            playSound('tick');
         }
 
-        function selectTimer(sec) {
-            gameConfig.timerLimit = sec;
-            document.querySelectorAll('.timer-btn').forEach(btn => {
-                btn.classList.remove('border-2', 'border-indigo-500', 'bg-indigo-950/50', 'text-indigo-300');
-                btn.classList.add('border', 'border-slate-700', 'bg-slate-800', 'text-slate-300');
-            });
-            const activeBtn = document.getElementById(`timer-${sec}`);
-            activeBtn.classList.remove('border-slate-700', 'bg-slate-800', 'text-slate-300');
-            activeBtn.classList.add('border-2', 'border-indigo-500', 'bg-indigo-950/50', 'text-indigo-300');
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
         }
 
-        /* FITUR NEW: PILIHAN JUMLAH SOAL */
-        function selectQuestionCount(count) {
-            gameConfig.questionCount = count;
-            document.querySelectorAll('.qcount-btn').forEach(btn => {
-                btn.classList.remove('border-2', 'border-indigo-500', 'bg-indigo-950/50', 'text-indigo-300');
-                btn.classList.add('border', 'border-slate-700', 'bg-slate-800', 'text-slate-300');
-            });
-            const activeBtn = document.getElementById(`qcount-${count}`);
-            activeBtn.classList.remove('border-slate-700', 'bg-slate-800', 'text-slate-300');
-            activeBtn.classList.add('border-2', 'border-indigo-500', 'bg-indigo-950/50', 'text-indigo-300');
-        }
-
-        function initiateGameSetup() {
-            gameConfig.packKey = document.getElementById('level-select').value;
-            let qPool = activeQuestionPacks[gameConfig.packKey] || defaultQuestions.medium;
+        function startGame() {
+            scores = { A: 0, B: 0 };
+            currentQuestionIndex = 0;
+            currentTeam = 'A';
+            powerupsUsed = { A: { f50: false, time: false }, B: { f50: false, time: false } };
+            totalTime = modeDurations[selectedMode];
             
-            // Shuffle question order
-            let shuffled = [...qPool].sort(() => Math.random() - 0.5);
-
-            // Apply selected question count filter
-            if (gameConfig.questionCount > 0 && gameConfig.questionCount < shuffled.length) {
-                matchState.questions = shuffled.slice(0, gameConfig.questionCount);
-            } else {
-                matchState.questions = shuffled;
-            }
-
-            matchState.p1 = { score: 0, wrong: 0, timeout: 0, times: [], streak: 0, maxStreak: 0, index: 0, wrongWords: [] };
-            matchState.p2 = { score: 0, wrong: 0, timeout: 0, times: [], streak: 0, maxStreak: 0, index: 0, wrongWords: [] };
-
-            document.getElementById('p1-name-label').innerText = "TIM MERAH";
-            document.getElementById('p2-name-label').innerText = gameConfig.mode === 'ai' ? "BOT AI" : "TIM BIRU";
-            document.getElementById('p2-icon').className = gameConfig.mode === 'ai' ? "fa-solid fa-robot" : "fa-solid fa-user";
-
-            // Update mode labels
-            const subLabel = gameConfig.packKey === 'emoji' ? 'Mode Emoji' : 'Bahasa Inggris';
-            document.getElementById('p1-sub-label').innerText = subLabel;
-            document.getElementById('p2-sub-label').innerText = subLabel;
-
-            document.getElementById('main-menu').classList.add('hidden');
-            document.getElementById('readiness-overlay').classList.remove('hidden');
-            document.getElementById('ready-card').classList.remove('hidden');
-            document.getElementById('countdown-display').classList.add('hidden');
-
-            renderCurrentQuestions();
-            setButtonsDisabled(true); // Lock buttons before countdown
+            runCountdown(() => {
+                switchScreen('screen-game');
+                loadQuestion();
+            });
         }
 
-        function startCountdownSequence() {
-            document.getElementById('ready-card').classList.add('hidden');
-            const cdDisplay = document.getElementById('countdown-display');
-            cdDisplay.classList.remove('hidden');
-
+        // --- Fix Countdown 3, 2, 1 lengkap ---
+        function runCountdown(callback) {
+            const overlay = document.getElementById('countdown-overlay');
+            const textElem = document.getElementById('countdown-text');
+            overlay.style.display = 'flex';
+            
             let count = 3;
-            cdDisplay.innerText = count;
-            cdDisplay.className = "text-8xl font-teko font-bold text-yellow-400 animate-cd";
-            playSound('beep');
+            textElem.innerText = count;
+            playSound('tick');
 
-            const cdInterval = setInterval(() => {
+            const interval = setInterval(() => {
                 count--;
                 if (count > 0) {
-                    cdDisplay.innerText = count;
-                    cdDisplay.className = "text-8xl font-teko font-bold text-yellow-400 animate-cd";
-                    playSound('beep');
+                    textElem.innerText = count;
+                    playSound('tick');
                 } else if (count === 0) {
-                    cdDisplay.innerText = "GO!";
-                    cdDisplay.className = "text-8xl font-teko font-bold text-green-400 animate-cd";
-                    playSound('go');
+                    textElem.innerText = "MULAI!";
+                    playSound('tick');
                 } else {
-                    clearInterval(cdInterval);
-                    document.getElementById('readiness-overlay').classList.add('hidden');
-                    setButtonsDisabled(false); // Unlock buttons!
-                    startTimer();
+                    clearInterval(interval);
+                    overlay.style.display = 'none';
+                    callback();
                 }
-            }, 850);
+            }, 800);
         }
 
-        function renderCurrentQuestions() {
-            const total = matchState.questions.length;
+        function loadQuestion() {
+            clearInterval(timerInterval);
             
-            // Render P1
-            if (matchState.p1.index < total) {
-                const q1 = matchState.questions[matchState.p1.index];
-                document.getElementById('p1-question').innerText = q1.word;
-                document.getElementById('p1-progress-text').innerText = `Soal ${matchState.p1.index + 1}/${total}`;
-                document.getElementById('p1-progress-bar').style.width = `${((matchState.p1.index) / total) * 100}%`;
-                renderOptions('p1', q1);
-            } else {
-                document.getElementById('p1-question').innerText = "SELESAI!";
-                document.getElementById('p1-options-grid').innerHTML = `<div class="col-span-2 flex items-center justify-center text-green-400 font-bold">Menunggu P2...</div>`;
-            }
+            const q = questionBank[currentQuestionIndex];
+            document.getElementById('team-turn-display').innerText = `Giliran: Tim ${currentTeam}`;
+            document.getElementById('emoji-display').innerText = q.emoji;
 
-            // Render P2
-            if (matchState.p2.index < total) {
-                const q2 = matchState.questions[matchState.p2.index];
-                document.getElementById('p2-question').innerText = q2.word;
-                document.getElementById('p2-progress-text').innerText = `Soal ${matchState.p2.index + 1}/${total}`;
-                document.getElementById('p2-progress-bar').style.width = `${((matchState.p2.index) / total) * 100}%`;
-                renderOptions('p2', q2);
-            } else {
-                document.getElementById('p2-question').innerText = "SELESAI!";
-                document.getElementById('p2-options-grid').innerHTML = `<div class="col-span-2 flex items-center justify-center text-green-400 font-bold">Menunggu P1...</div>`;
-            }
+            // Power-ups status update
+            document.getElementById('btn-5050').disabled = powerupsUsed[currentTeam].f50;
+            document.getElementById('btn-time').disabled = powerupsUsed[currentTeam].time;
 
-            document.getElementById('p1-score-live').innerText = matchState.p1.score;
-            document.getElementById('p2-score-live').innerText = matchState.p2.score;
-
-            // Update Combo Badges Visuals
-            updateStreakDisplay('p1');
-            updateStreakDisplay('p2');
-
-            if (matchState.p1.index >= total && matchState.p2.index >= total) {
-                endMatch();
-            }
-        }
-
-        function renderOptions(player, q) {
-            const grid = document.getElementById(`${player}-options-grid`);
-            grid.innerHTML = '';
+            // Render opsi jawaban (Urutan KONSISTEN & TDK DI-RANDOMIZE)
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
             
-            // Shuffle options automatically
-            let options = [q.correct, ...q.wrongs].sort(() => Math.random() - 0.5);
-
-            options.forEach(opt => {
+            q.options.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = `opt-btn ${player}-opt w-full h-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-xs md:text-sm rounded-lg p-1 transition flex items-center justify-center text-center`;
+                btn.className = 'btn-option';
                 btn.innerText = opt;
-                btn.onclick = () => handleAnswer(player, opt, q.correct);
-                grid.appendChild(btn);
+                btn.onclick = () => handleAnswer(opt, btn);
+                container.appendChild(btn);
             });
-        }
 
-        function handleAnswer(player, selected, correct) {
-            const timeTaken = (Date.now() - matchState.questionStartTime) / 1000;
-            matchState[player].times.push(timeTaken);
-
-            const currentQ = matchState.questions[matchState[player].index];
-
-            if (selected === correct) {
-                matchState[player].score++;
-                matchState[player].streak++;
-                if (matchState[player].streak > matchState[player].maxStreak) {
-                    matchState[player].maxStreak = matchState[player].streak;
-                }
-                playSound('correct');
-            } else {
-                matchState[player].wrong++;
-                matchState[player].streak = 0; // Reset streak on wrong
-                matchState[player].wrongWords.push(currentQ.listenWord || currentQ.word);
-                playSound('wrong');
-            }
-
-            matchState[player].index++;
-            
-            if (gameConfig.mode === 'ai' && player === 'p1' && matchState.p2.index < matchState.questions.length) {
-                setTimeout(triggerAITurn, 400);
-            }
-
-            renderCurrentQuestions();
-        }
-
-        function updateStreakDisplay(player) {
-            const badge = document.getElementById(`${player}-streak-badge`);
-            const count = document.getElementById(`${player}-streak-count`);
-            const card = document.getElementById(`${player}-card-container`);
-
-            if (matchState[player].streak >= 2) {
-                badge.classList.remove('hidden');
-                count.innerText = matchState[player].streak;
-                card.classList.add(player === 'p1' ? 'streak-glow-p1' : 'streak-glow-p2');
-            } else {
-                badge.classList.add('hidden');
-                card.classList.remove('streak-glow-p1', 'streak-glow-p2');
-            }
-        }
-
-        function triggerAITurn() {
-            if (matchState.p2.index >= matchState.questions.length) return;
-            const q = matchState.questions[matchState.p2.index];
-            const isCorrect = Math.random() < 0.7; // AI 70% accuracy
-            const chosen = isCorrect ? q.correct : q.wrongs[Math.floor(Math.random() * q.wrongs.length)];
-            
-            matchState.p2.times.push(1.5);
-            if (chosen === q.correct) {
-                matchState.p2.score++;
-                matchState.p2.streak++;
-                if (matchState.p2.streak > matchState.p2.maxStreak) matchState.p2.maxStreak = matchState.p2.streak;
-            } else {
-                matchState.p2.wrong++;
-                matchState.p2.streak = 0;
-                matchState.p2.wrongWords.push(q.listenWord || q.word);
-            }
-            matchState.p2.index++;
-            renderCurrentQuestions();
+            startTimer();
         }
 
         function startTimer() {
-            if (matchState.activeTimer) clearInterval(matchState.activeTimer);
-            if (gameConfig.timerLimit === 0) {
-                document.getElementById('timer-display-live').innerText = "⏳ ∞";
-                return;
-            }
+            timeLeft = totalTime;
+            updateTimerUI();
 
-            matchState.timerLeft = gameConfig.timerLimit;
-            matchState.questionStartTime = Date.now();
-            document.getElementById('timer-display-live').innerText = `⏳ ${matchState.timerLeft}s`;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerUI();
 
-            matchState.activeTimer = setInterval(() => {
-                matchState.timerLeft--;
-                document.getElementById('timer-display-live').innerText = `⏳ ${matchState.timerLeft}s`;
+                if (timeLeft <= 3 && timeLeft > 0) playSound('tick');
 
-                if (matchState.timerLeft <= 0) {
-                    // Handle Timeout
-                    if (matchState.p1.index < matchState.questions.length) {
-                        const q1 = matchState.questions[matchState.p1.index];
-                        matchState.p1.timeout++;
-                        matchState.p1.streak = 0;
-                        matchState.p1.wrongWords.push(q1.listenWord || q1.word);
-                        matchState.p1.index++;
-                    }
-                    if (matchState.p2.index < matchState.questions.length) {
-                        const q2 = matchState.questions[matchState.p2.index];
-                        matchState.p2.timeout++;
-                        matchState.p2.streak = 0;
-                        matchState.p2.wrongWords.push(q2.listenWord || q2.word);
-                        matchState.p2.index++;
-                    }
-                    matchState.timerLeft = gameConfig.timerLimit;
-                    renderCurrentQuestions();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    playSound('timeout');
+                    highlightCorrectAnswer();
+                    setTimeout(nextTurn, 1500);
                 }
             }, 1000);
         }
 
-        function setButtonsDisabled(disabled) {
-            document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = disabled);
+        function updateTimerUI() {
+            document.getElementById('timer-display').innerText = `⏱️ ${timeLeft} DETIK`;
+            const percentage = (timeLeft / totalTime) * 100;
+            document.getElementById('timer-bar').style.width = `${Math.max(0, percentage)}%`;
         }
 
-        /* LISTEN TO WORD FEATURE (SOAL BIASA & EMOJI) */
-        function speakWord(player) {
-            const idx = matchState[player].index;
-            if (idx < matchState.questions.length) {
-                const q = matchState.questions[idx];
-                // Jika mode emoji, gunakan properti listenWord
-                const wordToSpeak = q.listenWord ? q.listenWord : q.word;
-                
-                const utterance = new SpeechSynthesisUtterance(wordToSpeak);
-                utterance.lang = 'en-US';
-                window.speechSynthesis.speak(utterance);
-            }
-        }
+        function handleAnswer(selectedOption, btnElement) {
+            clearInterval(timerInterval);
+            const q = questionBank[currentQuestionIndex];
+            const allButtons = document.querySelectorAll('.btn-option');
+            allButtons.forEach(b => b.disabled = true);
 
-        /* RECAP & SCOREBOARD */
-        function endMatch() {
-            if (matchState.activeTimer) clearInterval(matchState.activeTimer);
-            playSound('fanfare');
-            confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-
-            const p1 = matchState.p1;
-            const p2 = matchState.p2;
-            const total = matchState.questions.length;
-
-            let winnerText = "PERTANDINGAN SERI!";
-            if (p1.score > p2.score) winnerText = "TIM MERAH MENANG! 🏆";
-            else if (p2.score > p1.score) winnerText = gameConfig.mode === 'ai' ? "BOT AI MENANG! 🤖" : "TIM BIRU MENANG! 🏆";
-
-            document.getElementById('winner-banner').innerText = winnerText;
-
-            // Stats calculation
-            document.getElementById('recap-p1-correct').innerText = p1.score;
-            document.getElementById('recap-p1-wrong').innerText = p1.wrong;
-            document.getElementById('recap-p1-timeout').innerText = p1.timeout;
-            document.getElementById('recap-p1-maxstreak').innerText = `${p1.maxStreak} 🔥`;
-            document.getElementById('recap-p1-accuracy').innerText = `${Math.round((p1.score / total) * 100)}%`;
-            const p1Avg = p1.times.length ? (p1.times.reduce((a,b)=>a+b,0)/p1.times.length).toFixed(1) : 0;
-            document.getElementById('recap-p1-avgtime').innerText = `${p1Avg}s`;
-
-            document.getElementById('recap-p2-correct').innerText = p2.score;
-            document.getElementById('recap-p2-wrong').innerText = p2.wrong;
-            document.getElementById('recap-p2-timeout').innerText = p2.timeout;
-            document.getElementById('recap-p2-maxstreak').innerText = `${p2.maxStreak} 🔥`;
-            document.getElementById('recap-p2-accuracy').innerText = `${Math.round((p2.score / total) * 100)}%`;
-            const p2Avg = p2.times.length ? (p2.times.reduce((a,b)=>a+b,0)/p2.times.length).toFixed(1) : 0;
-            document.getElementById('recap-p2-avgtime').innerText = `${p2Avg}s`;
-
-            // FITUR BARU 3: POPULATE WEAKNESS TRACKER
-            const combinedWrong = [...new Set([...p1.wrongWords, ...p2.wrongWords])];
-            const weaknessSec = document.getElementById('weakness-section');
-            const weaknessList = document.getElementById('weakness-list');
-
-            if (combinedWrong.length > 0) {
-                weaknessSec.classList.remove('hidden');
-                weaknessList.innerHTML = '';
-                combinedWrong.forEach(w => {
-                    const badge = document.createElement('span');
-                    badge.className = 'bg-amber-900/60 border border-amber-500/50 text-amber-200 px-2 py-0.5 rounded-md font-mono text-[11px]';
-                    badge.innerText = w;
-                    weaknessList.appendChild(badge);
-                });
+            if (selectedOption === q.answer) {
+                btnElement.classList.add('correct');
+                playSound('correct');
+                scores[currentTeam] += 10;
             } else {
-                weaknessSec.classList.add('hidden');
+                btnElement.classList.add('wrong');
+                playSound('wrong');
+                highlightCorrectAnswer();
             }
 
-            document.getElementById('recap-modal').classList.remove('hidden');
+            setTimeout(nextTurn, 1500);
         }
 
-        function downloadCSVReport() {
-            let csv = "Pemain,Benar,Salah,Timeout,Max Streak,Akurasi(%)\n";
-            csv += `Tim Merah,${matchState.p1.score},${matchState.p1.wrong},${matchState.p1.timeout},${matchState.p1.maxStreak},${Math.round((matchState.p1.score/matchState.questions.length)*100)}\n`;
-            csv += `Tim Biru,${matchState.p2.score},${matchState.p2.wrong},${matchState.p2.timeout},${matchState.p2.maxStreak},${Math.round((matchState.p2.score/matchState.questions.length)*100)}\n`;
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `Laporan_VocabBattle_${Date.now()}.csv`);
-            a.click();
-        }
-
-        function returnToMenu() {
-            document.getElementById('recap-modal').classList.add('hidden');
-            document.getElementById('main-menu').classList.remove('hidden');
-        }
-
-        /* TEACHER MODAL & CUSTOM PACK LOGIC */
-        function openTeacherModal() {
-            updateTeacherPackDropdown();
-            document.getElementById('teacher-modal').classList.remove('hidden');
-        }
-
-        function closeTeacherModal() {
-            document.getElementById('teacher-modal').classList.add('hidden');
-        }
-
-        function updateTeacherPackDropdown() {
-            const targetSelect = document.getElementById('teacher-target-pack');
-            const levelSelect = document.getElementById('level-select');
-            targetSelect.innerHTML = '';
-            
-            Object.keys(activeQuestionPacks).forEach(key => {
-                const opt = document.createElement('option');
-                opt.value = key;
-                opt.innerText = key.toUpperCase();
-                targetSelect.appendChild(opt);
-
-                if (!Array.from(levelSelect.options).some(o => o.value === key)) {
-                    const lOpt = document.createElement('option');
-                    lOpt.value = key;
-                    lOpt.innerText = `⭐ Custom: ${key}`;
-                    levelSelect.appendChild(lOpt);
+        function highlightCorrectAnswer() {
+            const q = questionBank[currentQuestionIndex];
+            document.querySelectorAll('.btn-option').forEach(b => {
+                if (b.innerText === q.answer) {
+                    b.classList.add('correct');
                 }
             });
         }
 
-        function createCustomPack() {
-            const name = document.getElementById('custom-pack-name').value.trim().toLowerCase().replace(/\s+/g, '_');
-            if (!name) return alert("Masukkan nama paket!");
-            if (!activeQuestionPacks[name]) {
-                activeQuestionPacks[name] = [];
-                localStorage.setItem('vocab_custom_packs', JSON.stringify(activeQuestionPacks));
-                updateTeacherPackDropdown();
-                alert(`Paket '${name}' berhasil dibuat!`);
+        function nextTurn() {
+            if (currentTeam === 'A') {
+                currentTeam = 'B';
+            } else {
+                currentTeam = 'A';
+                currentQuestionIndex++;
+            }
+
+            if (currentQuestionIndex < questionBank.length) {
+                loadQuestion();
+            } else {
+                endGame();
             }
         }
 
-        function addQuestionFromTeacher() {
-            const target = document.getElementById('teacher-target-pack').value;
-            const word = document.getElementById('teacher-word-en').value.trim();
-            const correct = document.getElementById('teacher-ans-correct').value.trim();
-            const w1 = document.getElementById('teacher-ans-wrong1').value.trim();
-            const w2 = document.getElementById('teacher-ans-wrong2').value.trim();
-            const w3 = document.getElementById('teacher-ans-wrong3').value.trim();
+        // --- Power-Up Functions ---
+        function use5050() {
+            powerupsUsed[currentTeam].f50 = true;
+            document.getElementById('btn-5050').disabled = true;
+            playSound('tick');
 
-            if (!word || !correct || !w1 || !w2 || !w3) return alert("Lengkapi semua field soal!");
+            const q = questionBank[currentQuestionIndex];
+            const buttons = Array.from(document.querySelectorAll('.btn-option'));
+            let removed = 0;
 
-            activeQuestionPacks[target].push({
-                word: word,
-                correct: correct,
-                wrongs: [w1, w2, w3]
+            buttons.forEach(btn => {
+                if (btn.innerText !== q.answer && removed < 2) {
+                    btn.style.visibility = 'hidden';
+                    removed++;
+                }
             });
-
-            localStorage.setItem('vocab_custom_packs', JSON.stringify(activeQuestionPacks));
-            alert("Soal berhasil ditambahkan ke paket!");
-            document.getElementById('teacher-word-en').value = '';
-            document.getElementById('teacher-ans-correct').value = '';
-            document.getElementById('teacher-ans-wrong1').value = '';
-            document.getElementById('teacher-ans-wrong2').value = '';
-            document.getElementById('teacher-ans-wrong3').value = '';
         }
 
-        function printWorksheet() {
-            const target = document.getElementById('teacher-target-pack').value;
-            const qList = activeQuestionPacks[target] || [];
-            
-            let win = window.open('', '', 'width=800,height=600');
-            win.document.write(`<html><head><title>Lembar Kerja - ${target}</title>`);
-            win.document.write(`<style>body{font-family:sans-serif;padding:20px;} .q{margin-bottom:15px;}</style></head><body>`);
-            win.document.write(`<h2>Lembar Kerja Kosa Kata: ${target.toUpperCase()}</h2><hr><br>`);
-            
-            qList.forEach((q, i) => {
-                win.document.write(`<div class="q"><strong>${i+1}. Apa arti dari kata "${q.word}"?</strong><br>`);
-                let opts = [q.correct, ...q.wrongs].sort(() => Math.random() - 0.5);
-                opts.forEach((o, j) => {
-                    win.document.write(` &nbsp;&nbsp; [ &nbsp; ] ${String.fromCharCode(65+j)}. ${o}<br>`);
-                });
-                win.document.write(`</div>`);
-            });
+        function useExtraTime() {
+            powerupsUsed[currentTeam].time = true;
+            document.getElementById('btn-time').disabled = true;
+            playSound('tick');
+            timeLeft += 10;
+            totalTime += 10;
+            updateTimerUI();
+        }
 
-            win.document.write(`</body></html>`);
-            win.document.close();
-            win.print();
+        function endGame() {
+            switchScreen('screen-result');
+            playSound('win');
+            startConfetti();
+
+            document.getElementById('score-team-a').innerText = scores.A;
+            document.getElementById('score-team-b').innerText = scores.B;
+
+            const winText = document.getElementById('winner-text');
+            if (scores.A > scores.B) {
+                winText.innerText = "🎉 Selamat! Tim A Keluar Sebagai Juara!";
+            } else if (scores.B > scores.A) {
+                winText.innerText = "🎉 Selamat! Tim B Keluar Sebagai Juara!";
+            } else {
+                winText.innerText = "🤝 Permainan Seri! Kedua Tim Sama-sama Hebat!";
+            }
+        }
+
+        function resetGame() {
+            switchScreen('screen-start');
+        }
+
+        // --- Visual Confetti Effect ---
+        function startConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            const pieces = [];
+            const colors = ['#f43f5e', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b'];
+
+            for (let i = 0; i < 80; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 3 + 2,
+                    rotation: Math.random() * 360
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                pieces.forEach(p => {
+                    ctx.save();
+                    ctx.fillStyle = p.color;
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation);
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+
+                    p.y += p.speed;
+                    p.rotation += 0.05;
+
+                    if (p.y > canvas.height) p.y = -20;
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
         }
     </script>
 </body>
