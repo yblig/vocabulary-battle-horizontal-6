@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuis Interaktif Touchscreen Sekolah</title>
+    <title>Kuis Interaktif Sekolah 30 Fitur</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #f0f4f9;
-            --panel-left: #ffffff;
-            --panel-right: #ffffff;
-            --accent-red: #e63946;
-            --accent-blue: #2a6fdb;
-            --text-dark: #1e293b;
+            --bg-main: #f1f5f9;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+            --text-dark: #0f172a;
             --text-muted: #64748b;
             --success-color: #10b981;
-            --error-color: #ef4444;
-            --border-radius: 20px;
+            --error-color: #f43f5e;
+            --border-radius: 18px;
         }
 
         * {
@@ -45,41 +43,49 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            padding: 0 20px;
             z-index: 10;
         }
 
         .header-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: var(--text-dark);
             display: flex;
             align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions {
+            display: flex;
             gap: 10px;
+        }
+
+        .mode-btn, .feedback-btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .mode-btn {
+            background: #e2e8f0;
+            color: var(--text-dark);
         }
 
         .feedback-btn {
             background: #25d366;
             color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
         }
 
-        .feedback-btn:active {
+        .mode-btn:active, .feedback-btn:active {
             transform: scale(0.95);
         }
 
-        /* Split Screen Container */
+        /* Container View Mode (TV vs HP) */
         .screen-container {
             flex: 1;
             display: flex;
@@ -88,13 +94,26 @@
             height: calc(100vh - 60px);
         }
 
-        /* Divider */
+        body.hp-mode .divider {
+            display: none;
+        }
+
+        body.hp-mode .side-right {
+            display: none;
+        }
+
+        body.hp-mode .side-left {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Divider TV */
         .divider {
             width: 8px;
             background: #334155;
             height: 100%;
             z-index: 5;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
         /* Player Split Section */
@@ -102,199 +121,213 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 24px;
+            padding: 20px;
             background: var(--bg-main);
             position: relative;
             overflow: hidden;
         }
 
         .side-left {
-            border-right: 1px solid #e2e8f0;
+            border-right: 1px solid #cbd5e1;
         }
 
-        /* Subject Selector Badge */
-        .subject-badge {
-            align-self: flex-start;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
+        /* Subject Badge & Info Bar */
+        .info-bar {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            margin-bottom: 12px;
         }
 
-        .side-left .subject-badge {
-            background: #fee2e2;
-            color: var(--accent-red);
+        .subject-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
         }
 
-        .side-right .subject-badge {
-            background: #dbeafe;
-            color: var(--accent-blue);
+        .side-left .subject-badge { background: #fee2e2; color: var(--accent-red); }
+        .side-right .subject-badge { background: #dbeafe; color: var(--accent-blue); }
+
+        .timer-badge {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            background: #ffffff;
+            padding: 6px 12px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
         }
 
-        /* Progress Bar Section (Sesuai Sketsa) */
+        /* Progress Bar Section */
         .progress-box {
             background: #ffffff;
-            padding: 16px 20px;
+            padding: 14px 18px;
             border-radius: var(--border-radius);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-            margin-bottom: 20px;
-            border: 1px solid #f1f5f9;
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
         }
 
         .progress-label {
             display: flex;
             justify-content: space-between;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             margin-bottom: 8px;
         }
 
         .progress-track {
-            height: 14px;
+            height: 12px;
             background: #e2e8f0;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
-            position: relative;
         }
 
         .progress-fill {
             height: 100%;
             width: 0%;
-            border-radius: 10px;
-            transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 8px;
+            transition: width 0.3s ease;
         }
 
-        .side-left .progress-fill {
-            background: linear-gradient(90deg, #f87171, var(--accent-red));
-        }
+        .side-left .progress-fill { background: var(--accent-red); }
+        .side-right .progress-fill { background: var(--accent-blue); }
 
-        .side-right .progress-fill {
-            background: linear-gradient(90deg, #60a5fa, var(--accent-blue));
-        }
-
-        /* Question Box (Sesuai Sketsa) */
+        /* Question Box */
         .question-card {
             flex: 1;
             background: #ffffff;
             border-radius: var(--border-radius);
-            padding: 28px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f1f5f9;
-            animation: fadeIn 0.4s ease-out;
+            border: 1px solid #e2e8f0;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .question-text {
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--text-dark);
             line-height: 1.4;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         /* Option Buttons Grid */
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 10px;
         }
 
         .opt-btn {
             background: #f8fafc;
             border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 16px;
-            font-size: 1rem;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-dark);
             cursor: pointer;
             text-align: left;
             transition: all 0.2s ease;
             outline: none;
-            display: flex;
-            align-items: center;
         }
 
-        .opt-btn:active {
-            transform: scale(0.97);
-        }
+        .opt-btn:active { transform: scale(0.97); }
 
         .opt-btn.correct {
             background: #d1fae5 !important;
             border-color: var(--success-color) !important;
             color: #065f46 !important;
-            animation: pulseCorrect 0.4s ease;
+            animation: pulse 0.3s ease;
         }
 
         .opt-btn.wrong {
             background: #fee2e2 !important;
             border-color: var(--error-color) !important;
             color: #991b1b !important;
-            animation: shake 0.4s ease;
+            animation: shake 0.3s ease;
         }
 
-        /* Subject Select Overlay */
-        .subject-select-overlay {
+        /* Subject Setup Overlay */
+        .setup-overlay {
             position: absolute;
             inset: 0;
             background: #ffffff;
             z-index: 8;
-            padding: 30px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
+            overflow-y: auto;
         }
 
-        .subject-title {
-            font-size: 1.3rem;
+        .setup-title {
+            font-size: 1.2rem;
             font-weight: 800;
             color: var(--text-dark);
         }
 
-        .subject-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .setup-group {
             width: 100%;
             max-width: 320px;
-        }
-
-        .subject-btn {
-            padding: 16px;
-            border-radius: 14px;
-            border: 2px solid #e2e8f0;
-            background: #f8fafc;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            cursor: pointer;
-            transition: all 0.2s;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .setup-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .checkbox-item {
+            display: flex;
             align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            font-weight: 600;
+            cursor: pointer;
         }
 
-        .side-left .subject-btn:active {
-            background: var(--accent-red);
-            color: white;
-            border-color: var(--accent-red);
+        .select-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            font-weight: 700;
+            outline: none;
+            background: #f8fafc;
         }
 
-        .side-right .subject-btn:active {
-            background: var(--accent-blue);
+        .start-btn {
+            width: 100%;
+            max-width: 320px;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: var(--text-dark);
             color: white;
-            border-color: var(--accent-blue);
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
         }
 
         /* Result Panel */
@@ -304,30 +337,24 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             height: 100%;
         }
 
         .result-score {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 800;
             color: var(--text-dark);
         }
 
         .restart-btn {
-            padding: 12px 28px;
-            border-radius: 12px;
+            padding: 12px 24px;
+            border-radius: 10px;
             border: none;
             background: var(--text-dark);
             color: white;
             font-weight: 700;
             cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.2s;
-        }
-
-        .restart-btn:active {
-            transform: scale(0.95);
         }
 
         /* Modal Feedback */
@@ -340,93 +367,54 @@
             display: none;
             justify-content: center;
             align-items: center;
-            animation: fadeIn 0.2s ease;
         }
 
         .modal-card {
             background: white;
             width: 90%;
-            max-width: 480px;
-            border-radius: 24px;
-            padding: 30px;
+            max-width: 440px;
+            border-radius: 20px;
+            padding: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            position: relative;
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .close-btn {
-            background: #f1f5f9;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .feedback-input {
-            width: 100%;
-            height: 120px;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 14px;
-            font-size: 1rem;
-            outline: none;
-            resize: none;
             margin-bottom: 16px;
         }
 
-        .feedback-input:focus {
-            border-color: var(--accent-blue);
+        .modal-title { font-size: 1.1rem; font-weight: 800; color: var(--text-dark); }
+        .close-btn { background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: 800; cursor: pointer; }
+
+        .feedback-input {
+            width: 100%;
+            height: 100px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            resize: none;
+            margin-bottom: 12px;
         }
 
         .send-wa-btn {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             background: #25d366;
             color: white;
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             font-weight: 800;
-            font-size: 1rem;
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
         }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
 
-        @keyframes pulseCorrect {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
-        }
-
-        /* Particles Canvas */
         canvas.particle-canvas {
             position: absolute;
             inset: 0;
@@ -437,86 +425,132 @@
 </head>
 <body>
 
-    <!-- Header UI -->
     <header>
-        <div class="header-title">
-            <span>🏫</span> Interactive Learning Touchscreen
+        <div class="header-title">🏫 Kuis Touchscreen</div>
+        <div class="header-actions">
+            <button class="mode-btn" id="toggleModeBtn" onclick="toggleDisplayMode()">📱 Mode HP</button>
+            <button class="feedback-btn" onclick="openFeedbackModal()">💬 Feedback</button>
         </div>
-        <button class="feedback-btn" onclick="openFeedbackModal()">
-            💬 Beri Feedback & Rekomendasi
-        </button>
     </header>
 
-    <!-- Main Split Screen -->
     <div class="screen-container">
         
-        <!-- SISI KIRI (RED THEME) -->
+        <!-- SISI KIRI -->
         <div class="quiz-side side-left" id="side-left">
             <canvas class="particle-canvas" id="canvas-left"></canvas>
             
-            <!-- Subject Overlay -->
-            <div class="subject-select-overlay" id="overlay-left">
-                <div class="subject-title">Pilih Mata Pelajaran (Kiri)</div>
-                <div class="subject-list">
-                    <button class="subject-btn" onclick="selectSubject('left', 'MTK')">📐 Matematika <span>➔</span></button>
-                    <button class="subject-btn" onclick="selectSubject('left', 'ENG')">🇬🇧 B. Inggris <span>➔</span></button>
-                    <button class="subject-btn" onclick="selectSubject('left', 'IPA')">🔬 IPA <span>➔</span></button>
+            <div class="setup-overlay" id="overlay-left">
+                <div class="setup-title">Pengaturan Kuis (Kiri)</div>
+                
+                <div class="setup-group">
+                    <div class="setup-label">Pilih Mata Pelajaran (Bisa Gabungan):</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item"><input type="checkbox" value="MTK" class="subj-check-left" checked> 📐 Matematika</label>
+                        <label class="checkbox-item"><input type="checkbox" value="ENG" class="subj-check-left" checked> 🇬🇧 Bahasa Inggris</label>
+                        <label class="checkbox-item"><input type="checkbox" value="IPA" class="subj-check-left"> 🔬 IPA</label>
+                        <label class="checkbox-item"><input type="checkbox" value="IPS" class="subj-check-left"> 🌏 IPS</label>
+                    </div>
                 </div>
+
+                <div class="setup-group">
+                    <div class="setup-label">Tingkat Kesulitan:</div>
+                    <select class="select-input" id="diff-left">
+                        <option value="easy">Mudah</option>
+                        <option value="medium" selected>Sedang</option>
+                        <option value="hard">Sulit</option>
+                    </select>
+                </div>
+
+                <div class="setup-group">
+                    <div class="setup-label">Mode Waktu:</div>
+                    <select class="select-input" id="time-mode-left">
+                        <option value="15">Waktu (15 Detik / Soal)</option>
+                        <option value="10">Waktu (10 Detik / Soal)</option>
+                        <option value="0" selected>Timeless (Tanpa Waktu)</option>
+                    </select>
+                </div>
+
+                <button class="start-btn" onclick="startQuiz('left')">Mulai Kuis 🚀</button>
             </div>
 
-            <div class="subject-badge" id="badge-left">Sisi Kiri</div>
+            <div class="info-bar">
+                <div class="subject-badge" id="badge-left">Sisi Kiri</div>
+                <div class="timer-badge" id="timer-left">⏱️ ∞</div>
+            </div>
 
-            <!-- Progress Bar Box -->
             <div class="progress-box">
                 <div class="progress-label">
                     <span>PROGRESS BAR</span>
-                    <span id="prog-text-left">Soal 1 / 5</span>
+                    <span id="prog-text-left">Soal 0 / 0</span>
                 </div>
                 <div class="progress-track">
                     <div class="progress-fill" id="prog-fill-left"></div>
                 </div>
             </div>
 
-            <!-- Question Area -->
             <div class="question-card" id="q-card-left">
-                <div class="question-text" id="q-text-left">Memuat pertanyaan...</div>
+                <div class="question-text" id="q-text-left">Silakan atur kuis untuk memulai...</div>
                 <div class="options-grid" id="opts-left"></div>
             </div>
         </div>
 
-        <!-- DIVIDER BAR -->
         <div class="divider"></div>
 
-        <!-- SISI KANAN (BLUE THEME) -->
+        <!-- SISI KANAN -->
         <div class="quiz-side side-right" id="side-right">
             <canvas class="particle-canvas" id="canvas-right"></canvas>
 
-            <!-- Subject Overlay -->
-            <div class="subject-select-overlay" id="overlay-right">
-                <div class="subject-title">Pilih Mata Pelajaran (Kanan)</div>
-                <div class="subject-list">
-                    <button class="subject-btn" onclick="selectSubject('right', 'MTK')">📐 Matematika <span>➔</span></button>
-                    <button class="subject-btn" onclick="selectSubject('right', 'ENG')">🇬🇧 B. Inggris <span>➔</span></button>
-                    <button class="subject-btn" onclick="selectSubject('right', 'IPA')">🔬 IPA <span>➔</span></button>
+            <div class="setup-overlay" id="overlay-right">
+                <div class="setup-title">Pengaturan Kuis (Kanan)</div>
+                
+                <div class="setup-group">
+                    <div class="setup-label">Pilih Mata Pelajaran (Bisa Gabungan):</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item"><input type="checkbox" value="MTK" class="subj-check-right" checked> 📐 Matematika</label>
+                        <label class="checkbox-item"><input type="checkbox" value="ENG" class="subj-check-right"> 🇬🇧 Bahasa Inggris</label>
+                        <label class="checkbox-item"><input type="checkbox" value="IPA" class="subj-check-right" checked> 🔬 IPA</label>
+                        <label class="checkbox-item"><input type="checkbox" value="IPS" class="subj-check-right"> 🌏 IPS</label>
+                    </div>
                 </div>
+
+                <div class="setup-group">
+                    <div class="setup-label">Tingkat Kesulitan:</div>
+                    <select class="select-input" id="diff-right">
+                        <option value="easy">Mudah</option>
+                        <option value="medium" selected>Sedang</option>
+                        <option value="hard">Sulit</option>
+                    </select>
+                </div>
+
+                <div class="setup-group">
+                    <div class="setup-label">Mode Waktu:</div>
+                    <select class="select-input" id="time-mode-right">
+                        <option value="15">Waktu (15 Detik / Soal)</option>
+                        <option value="10">Waktu (10 Detik / Soal)</option>
+                        <option value="0" selected>Timeless (Tanpa Waktu)</option>
+                    </select>
+                </div>
+
+                <button class="start-btn" onclick="startQuiz('right')">Mulai Kuis 🚀</button>
             </div>
 
-            <div class="subject-badge" id="badge-right">Sisi Kanan</div>
+            <div class="info-bar">
+                <div class="subject-badge" id="badge-right">Sisi Kanan</div>
+                <div class="timer-badge" id="timer-right">⏱️ ∞</div>
+            </div>
 
-            <!-- Progress Bar Box -->
             <div class="progress-box">
                 <div class="progress-label">
                     <span>PROGRESS BAR</span>
-                    <span id="prog-text-right">Soal 1 / 5</span>
+                    <span id="prog-text-right">Soal 0 / 0</span>
                 </div>
                 <div class="progress-track">
                     <div class="progress-fill" id="prog-fill-right"></div>
                 </div>
             </div>
 
-            <!-- Question Area -->
             <div class="question-card" id="q-card-right">
-                <div class="question-text" id="q-text-right">Memuat pertanyaan...</div>
+                <div class="question-text" id="q-text-right">Silakan atur kuis untuk memulai...</div>
                 <div class="options-grid" id="opts-right"></div>
             </div>
         </div>
@@ -527,147 +561,205 @@
     <div class="modal-backdrop" id="feedbackModal">
         <div class="modal-card">
             <div class="modal-header">
-                <div class="modal-title">Kirim Feedback / Rekomendasi</div>
+                <div class="modal-title">Beri Feedback & Rekomendasi</div>
                 <button class="close-btn" onclick="closeFeedbackModal()">✕</button>
             </div>
-            <textarea class="feedback-input" id="feedbackText" placeholder="Tuliskan saran, rekomendasi fitur, atau masukan untuk TV Touchscreen ini..."></textarea>
-            <button class="send-wa-btn" onclick="sendToWhatsApp()">
-                🚀 Kirim ke WhatsApp (082135272525)
-            </button>
+            <textarea class="feedback-input" id="feedbackText" placeholder="Tuliskan rekomendasi atau masukan kamu di sini..."></textarea>
+            <button class="send-wa-btn" onclick="sendToWhatsApp()">🚀 Kirim ke WA (082135272525)</button>
         </div>
     </div>
 
     <script>
-        // Database Soal
-        const quizData = {
-            MTK: [
-                { q: "Berapakah hasil dari 15 + 27?", opts: ["32", "42", "40", "44"], ans: 1 },
-                { q: "Berapakah hasil dari 12 x 8?", opts: ["86", "94", "96", "104"], ans: 2 },
-                { q: "Berapakah akar kuadrat dari 81?", opts: ["7", "8", "9", "10"], ans: 2 },
-                { q: "Berapakah 100 dikurangi 45?", opts: ["55", "65", "45", "50"], ans: 0 },
-                { q: "Berapakah 36 dibagi 4?", opts: ["7", "8", "9", "6"], ans: 2 }
-            ],
-            ENG: [
-                { q: "What is the English translation of 'Buku'?", opts: ["Pencil", "Book", "Bag", "Ruler"], ans: 1 },
-                { q: "Choose the correct greeting for the morning:", opts: ["Good Night", "Good Afternoon", "Good Morning", "Good Evening"], ans: 2 },
-                { q: "What color is a ripe banana?", opts: ["Red", "Yellow", "Blue", "Green"], ans: 1 },
-                { q: "Which animal is known as the 'King of the Jungle'?", opts: ["Elephant", "Tiger", "Lion", "Monkey"], ans: 2 },
-                { q: "What is the opposite of 'Big'?", opts: ["Small", "Tall", "Long", "Huge"], ans: 0 }
-            ],
-            IPA: [
-                { q: "Planet terdekat dari Matahari adalah...", opts: ["Venus", "Bumi", "Merkurius", "Mars"], ans: 2 },
-                { q: "Proses pembuatan makanan pada tumbuhan disebut...", opts: ["Respirasi", "Fotosintesis", "Evaporasi", "Oksidasi"], ans: 1 },
-                { q: "Gas yang kita hirup untuk bernapas adalah...", opts: ["Oksigen", "Karbondioksida", "Nitrogen", "Helium"], ans: 0 },
-                { q: "Hewan pemakan daging disebut...", opts: ["Herbivora", "Karnivora", "Omnivora", "Insektivora"], ans: 1 },
-                { q: "Benda yang dapat menarik besi adalah...", opts: ["Kaca", "Kayu", "Magnet", "Plastik"], ans: 2 }
-            ]
+        // Database Bank Soal Berdasarkan Mapel & Difficulty
+        const masterQuestions = {
+            MTK: {
+                easy: [
+                    { q: "Berapakah hasil dari 12 + 15?", opts: ["25", "27", "28", "30"], ans: 1 },
+                    { q: "Berapakah hasil dari 20 - 8?", opts: ["10", "12", "14", "16"], ans: 1 }
+                ],
+                medium: [
+                    { q: "Berapakah hasil dari 14 x 5?", opts: ["60", "65", "70", "75"], ans: 2 },
+                    { q: "Berapakah akar kuadrat dari 144?", opts: ["10", "11", "12", "13"], ans: 2 }
+                ],
+                hard: [
+                    { q: "Berapakah hasil dari 25% dari 200?", opts: ["40", "50", "60", "70"], ans: 1 },
+                    { q: "Berapakah hasil dari 3^3 + 4^2?", opts: ["41", "43", "45", "47"], ans: 1 }
+                ]
+            },
+            ENG: {
+                easy: [
+                    { q: "What is the English translation of 'Kucing'?", opts: ["Dog", "Cat", "Bird", "Fish"], ans: 1 },
+                    { q: "What is the opposite of 'Hot'?", opts: ["Warm", "Cold", "Dry", "Wet"], ans: 1 }
+                ],
+                medium: [
+                    { q: "Which one is a verb?", opts: ["Beautiful", "Run", "Quickly", "Apple"], ans: 1 },
+                    { q: "Choose the correct sentence:", opts: ["She go to school", "She goes to school", "She going to school", "She gone to school"], ans: 1 }
+                ],
+                hard: [
+                    { q: "What is the past tense of 'Write'?", opts: ["Writed", "Writing", "Wrote", "Written"], ans: 2 },
+                    { q: "Synonym of 'Huge' is...", opts: ["Tiny", "Gigantic", "Narrow", "Short"], ans: 1 }
+                ]
+            },
+            IPA: {
+                easy: [
+                    { q: "Tumbuhan bernapas menggunakan...", opts: ["Stomata", "Paru-paru", "Insang", "Kulit"], ans: 0 },
+                    { q: "Air membeku pada suhu...", opts: ["100°C", "50°C", "0°C", "-10°C"], ans: 2 }
+                ],
+                medium: [
+                    { q: "Planet terbesar di tata surya adalah...", opts: ["Saturnus", "Jupiter", "Bumi", "Neptunus"], ans: 1 },
+                    { q: "Zat hijau daun pada tumbuhan disebut...", opts: ["Klorofil", "Karoten", "Xantofil", "Melanin"], ans: 0 }
+                ],
+                hard: [
+                    { q: "Hukum Newton I berkaitan dengan sifat...", opts: ["Akselerasi", "Kelembaman (Inersia)", "Aksi-Reaksi", "Gravitasi"], ans: 1 },
+                    { q: "Unsur kimia dengan lambang 'Au' adalah...", opts: ["Perak", "Tembaga", "Emas", "Aluminium"], ans: 2 }
+                ]
+            },
+            IPS: {
+                easy: [
+                    { q: "Candi Borobudur terletak di provinsi...", opts: ["Jawa Barat", "Jawa Tengah", "Jawa Timur", "Bali"], ans: 1 },
+                    { q: "Mata uang negara Indonesia adalah...", opts: ["Ringgit", "Rupiah", "Dollar", "Yen"], ans: 1 }
+                ],
+                medium: [
+                    { q: "Ibu kota negara Indonesia yang baru bernama...", opts: ["Nusantara", "Jakarta", "Bandung", "Surabaya"], ans: 0 },
+                    { q: "Benua terbesar di dunia adalah...", opts: ["Afrika", "Amerika", "Asia", "Eropa"], ans: 2 }
+                ],
+                hard: [
+                    { q: "Naskah Proklamasi Kemerdekaan diketik oleh...", opts: ["Sayuti Melik", "Sukarni", "Moh. Hatta", "Ahmad Soebardjo"], ans: 0 },
+                    { q: "Organisasi PBB resmi berdiri pada tahun...", opts: ["1942", "1945", "1950", "1960"], ans: 1 }
+                ]
+            }
         };
 
         // State Player Sisi Kiri & Kanan
         const state = {
-            left: { subject: null, index: 0, score: 0, locked: false },
-            right: { subject: null, index: 0, score: 0, locked: false }
+            left: { questions: [], index: 0, score: 0, locked: false, timer: null, timeLeft: 0 },
+            right: { questions: [], index: 0, score: 0, locked: false, timer: null, timeLeft: 0 }
         };
 
-        // Audio Synthesizer (Web Audio API - Kreatif tanpa file audio eksternal)
+        let isHpMode = false;
+
+        // Toggle Display Mode (TV Split vs HP Single)
+        function toggleDisplayMode() {
+            isHpMode = !isHpMode;
+            document.body.classList.toggle('hp-mode', isHpMode);
+            const btn = document.getElementById('toggleModeBtn');
+            btn.innerText = isHpMode ? '📺 Mode TV' : '📱 Mode HP';
+        }
+
+        // Web Audio Synthesizer
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(type) {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-
             const now = audioCtx.currentTime;
 
             if (type === 'click') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
-                gain.gain.setValueAtTime(0.15, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.05);
-                osc.start(now);
-                osc.stop(now + 0.05);
+                osc.frequency.setValueAtTime(450, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.04);
+                osc.start(now); osc.stop(now + 0.04);
             } else if (type === 'correct') {
-                // Harmonic Chime
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
-                osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.08);
                 gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-                osc.start(now);
-                osc.stop(now + 0.4);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                osc.start(now); osc.stop(now + 0.35);
             } else if (type === 'wrong') {
-                // Low Wobble
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(180, now);
-                osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.linearRampToValueAtTime(100, now + 0.2);
                 gain.gain.setValueAtTime(0.2, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.25);
-                osc.start(now);
-                osc.stop(now + 0.25);
+                gain.gain.linearRampToValueAtTime(0, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
             } else if (type === 'finish') {
-                // Fanfare singkat
-                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                [523.25, 659.25, 783.99].forEach((freq, idx) => {
                     const subOsc = audioCtx.createOscillator();
                     const subGain = audioCtx.createGain();
-                    subOsc.connect(subGain);
-                    subGain.connect(audioCtx.destination);
+                    subOsc.connect(subGain); subGain.connect(audioCtx.destination);
                     subOsc.frequency.value = freq;
-                    subGain.gain.setValueAtTime(0.15, now + (idx * 0.08));
-                    subGain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.08) + 0.3);
-                    subOsc.start(now + (idx * 0.08));
-                    subOsc.stop(now + (idx * 0.08) + 0.3);
+                    subGain.gain.setValueAtTime(0.12, now + (idx * 0.07));
+                    subGain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.07) + 0.25);
+                    subOsc.start(now + (idx * 0.07)); subOsc.stop(now + (idx * 0.07) + 0.25);
                 });
             }
         }
 
-        // Fungsi Pilih Mapel
-        function selectSubject(side, subject) {
+        // Mulai Kuis
+        function startQuiz(side) {
             playSound('click');
-            state[side].subject = subject;
-            state[side].index = 0;
-            state[side].score = 0;
-            state[side].locked = false;
+            const checkboxes = document.querySelectorAll(`.subj-check-${side}:checked`);
+            const selectedSubjects = Array.from(checkboxes).map(cb => cb.value);
+
+            if (selectedSubjects.length === 0) {
+                alert('Pilih minimal satu mata pelajaran!');
+                return;
+            }
+
+            const diff = document.getElementById(`diff-${side}`).value;
+            const timeLimit = parseInt(document.getElementById(`time-mode-${side}`).value);
+
+            // Kumpulkan Soal Sesuai Filter
+            let combinedQuestions = [];
+            selectedSubjects.forEach(subj => {
+                if (masterQuestions[subj] && masterQuestions[subj][diff]) {
+                    combinedQuestions = combinedQuestions.concat(masterQuestions[subj][diff]);
+                }
+            });
+
+            // Acak Soal
+            combinedQuestions.sort(() => Math.random() - 0.5);
+
+            const pState = state[side];
+            pState.questions = combinedQuestions;
+            pState.index = 0;
+            pState.score = 0;
+            pState.locked = false;
+            pState.timeLimit = timeLimit;
 
             document.getElementById(`overlay-${side}`).style.display = 'none';
-            document.getElementById(`badge-${side}`).innerText = `Mata Pelajaran: ${subject}`;
+            document.getElementById(`badge-${side}`).innerText = `${selectedSubjects.join(' + ')} (${diff.toUpperCase()})`;
+            
             renderQuestion(side);
         }
 
-        // Render Soal & Options
+        // Render Soal & Timer
         function renderQuestion(side) {
             const pState = state[side];
-            const data = quizData[pState.subject];
-            
-            // Update Progress Bar
-            const progPercent = (pState.index / data.length) * 100;
-            document.getElementById(`prog-fill-${side}`).style.width = `${progPercent}%`;
-            document.getElementById(`prog-text-${side}`).innerText = `Soal ${pState.index + 1} / ${data.length}`;
+            clearInterval(pState.timer);
 
             const qCard = document.getElementById(`q-card-${side}`);
             
-            if (pState.index >= data.length) {
-                // Tampilan Selesai
+            if (pState.index >= pState.questions.length) {
+                // Selesai
                 document.getElementById(`prog-fill-${side}`).style.width = `100%`;
+                document.getElementById(`timer-${side}`).innerText = `⏱️ Selesai`;
                 playSound('finish');
+                const finalPercent = Math.round((pState.score / pState.questions.length) * 100);
                 qCard.innerHTML = `
                     <div class="result-panel">
-                        <div style="font-size: 2.5rem;">🎉</div>
-                        <h2>Selesai!</h2>
-                        <div class="result-score">${pState.score * 20} <span style="font-size: 1.2rem; color: #64748b;">Poin</span></div>
-                        <p>Jawaban Benar: ${pState.score} dari ${data.length} Soal</p>
+                        <div style="font-size: 2.2rem;">🎉</div>
+                        <h2>Kuis Selesai!</h2>
+                        <div class="result-score">${finalPercent} <span style="font-size: 1rem; color: #64748b;">Poin</span></div>
+                        <p>Benar ${pState.score} dari ${pState.questions.length} Soal</p>
                         <button class="restart-btn" onclick="resetSide('${side}')">Main Lagi 🔄</button>
                     </div>
                 `;
                 return;
             }
 
-            const qCurrent = data[pState.index];
+            // Update Progress Bar
+            const progPercent = (pState.index / pState.questions.length) * 100;
+            document.getElementById(`prog-fill-${side}`).style.width = `${progPercent}%`;
+            document.getElementById(`prog-text-${side}`).innerText = `Soal ${pState.index + 1} / ${pState.questions.length}`;
+
+            // Render Current Question
+            const qCurrent = pState.questions[pState.index];
             qCard.innerHTML = `
                 <div class="question-text">${qCurrent.q}</div>
                 <div class="options-grid" id="opts-${side}"></div>
@@ -681,26 +773,43 @@
                 btn.onclick = () => handleAnswer(side, i, btn);
                 optsGrid.appendChild(btn);
             });
+
+            // Mode Waktu Timer
+            if (pState.timeLimit > 0) {
+                pState.timeLeft = pState.timeLimit;
+                document.getElementById(`timer-${side}`).innerText = `⏱️ ${pState.timeLeft}s`;
+                pState.timer = setInterval(() => {
+                    pState.timeLeft--;
+                    document.getElementById(`timer-${side}`).innerText = `⏱️ ${pState.timeLeft}s`;
+                    if (pState.timeLeft <= 0) {
+                        clearInterval(pState.timer);
+                        handleAnswer(side, -1, null); // Waktu Habis (Salah)
+                    }
+                }, 1000);
+            } else {
+                document.getElementById(`timer-${side}`).innerText = `⏱️ ∞`;
+            }
         }
 
-        // Handle Klik Jawaban
+        // Handle Jawaban
         function handleAnswer(side, selectedIdx, btnElem) {
             const pState = state[side];
             if (pState.locked) return;
             pState.locked = true;
+            clearInterval(pState.timer);
 
-            const currentQ = quizData[pState.subject][pState.index];
+            const currentQ = pState.questions[pState.index];
             const allBtns = document.querySelectorAll(`#opts-${side} .opt-btn`);
 
             if (selectedIdx === currentQ.ans) {
-                btnElem.classList.add('correct');
+                if (btnElem) btnElem.classList.add('correct');
                 playSound('correct');
                 triggerParticles(side);
                 pState.score++;
             } else {
-                btnElem.classList.add('wrong');
+                if (btnElem) btnElem.classList.add('wrong');
                 playSound('wrong');
-                allBtns[currentQ.ans].classList.add('correct');
+                if (allBtns[currentQ.ans]) allBtns[currentQ.ans].classList.add('correct');
             }
 
             setTimeout(() => {
@@ -715,31 +824,21 @@
             document.getElementById(`overlay-${side}`).style.display = 'flex';
         }
 
-        // Modal Feedback & WhatsApp Integration
-        function openFeedbackModal() {
-            playSound('click');
-            document.getElementById('feedbackModal').style.display = 'flex';
-        }
-
-        function closeFeedbackModal() {
-            playSound('click');
-            document.getElementById('feedbackModal').style.display = 'none';
-        }
+        // Feedback WhatsApp
+        function openFeedbackModal() { playSound('click'); document.getElementById('feedbackModal').style.display = 'flex'; }
+        function closeFeedbackModal() { playSound('click'); document.getElementById('feedbackModal').style.display = 'none'; }
 
         function sendToWhatsApp() {
             const text = document.getElementById('feedbackText').value.trim();
-            if (!text) {
-                alert('Tuliskan rekomendasi atau feedback terlebih dahulu ya!');
-                return;
-            }
+            if (!text) { alert('Tuliskan masukan kamu dulu ya!'); return; }
             const phone = "82135272525";
-            const encodedText = encodeURIComponent(`Halo! Masukan & Rekomendasi untuk TV Touchscreen Sekolah:\n\n"${text}"`);
+            const encodedText = encodeURIComponent(`Halo! Masukan & Rekomendasi Aplikasi Kuis:\n\n"${text}"`);
             window.open(`https://wa.me/${phone}?text=${encodedText}`, '_blank');
             closeFeedbackModal();
             document.getElementById('feedbackText').value = '';
         }
 
-        // Animasi Partikel Selebrasi (Confetti Mini)
+        // Canvas Partikel
         function triggerParticles(side) {
             const canvas = document.getElementById(`canvas-${side}`);
             const ctx = canvas.getContext('2d');
@@ -747,15 +846,13 @@
             canvas.height = canvas.offsetHeight;
 
             const particles = [];
-            const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
+            const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ec4899'];
 
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 25; i++) {
                 particles.push({
-                    x: canvas.width / 2,
-                    y: canvas.height / 2,
-                    vx: (Math.random() - 0.5) * 10,
-                    vy: (Math.random() - 0.5) * 10 - 3,
-                    size: Math.random() * 6 + 4,
+                    x: canvas.width / 2, y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8 - 2,
+                    size: Math.random() * 5 + 3,
                     color: colors[Math.floor(Math.random() * colors.length)],
                     alpha: 1
                 });
@@ -764,14 +861,10 @@
             function animate() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 let active = false;
-
                 particles.forEach(p => {
                     if (p.alpha > 0) {
                         active = true;
-                        p.x += p.vx;
-                        p.y += p.vy;
-                        p.vy += 0.2; // gravity
-                        p.alpha -= 0.02;
+                        p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.alpha -= 0.025;
                         ctx.globalAlpha = Math.max(0, p.alpha);
                         ctx.fillStyle = p.color;
                         ctx.beginPath();
@@ -779,12 +872,8 @@
                         ctx.fill();
                     }
                 });
-
-                if (active) {
-                    requestAnimationFrame(animate);
-                } else {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                }
+                if (active) requestAnimationFrame(animate);
+                else ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
             animate();
         }
