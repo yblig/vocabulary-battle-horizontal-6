@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tebak Emoji Super Fun!</title>
+    <title>Game Tebak Emoji Super Keren!</title>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --primary: #4f46e5;
-            --accent: #ff007f;
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #ec4899;
+            --bg-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #d946ef 100%);
+            --card-bg: rgba(255, 255, 255, 0.96);
             --success: #10b981;
             --danger: #ef4444;
         }
@@ -18,7 +19,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -28,235 +29,244 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            color: #333;
+            color: #1f2937;
         }
 
-        .game-card {
+        .main-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
+            border-radius: 28px;
             padding: 30px;
-            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(10px);
-            animation: fadeIn 0.5s ease-out;
+            backdrop-filter: blur(12px);
         }
 
+        .screen { display: none; text-align: center; }
+        .screen.active { display: block; animation: fadeIn 0.4s ease-out; }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .screen { display: none; }
-        .screen.active { display: block; }
-
         h1 {
-            color: var(--primary);
+            color: var(--primary-dark);
             font-size: 2.2rem;
+            margin-bottom: 8px;
+            font-weight: 800;
+        }
+
+        p.desc {
+            color: #6b7280;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: #374151;
+            margin: 15px 0 8px 0;
+            text-align: left;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Group Buttons (Mode & Category) */
+        .option-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
             margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
-        .subtitle {
-            color: #666;
-            margin-bottom: 25px;
-        }
-
-        /* Mode Selection */
-        .mode-container {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-
-        .btn-mode {
-            padding: 12px 20px;
-            border: 2px solid var(--primary);
-            background: white;
-            color: var(--primary);
-            border-radius: 12px;
-            font-weight: bold;
+        .btn-select {
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 14px;
+            font-weight: 700;
+            color: #4b5563;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
-        .btn-mode.selected, .btn-mode:hover {
+        .btn-select.active, .btn-select:hover {
             background: var(--primary);
             color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
-        /* Primary Button */
-        .btn-main {
-            background: linear-gradient(45deg, #ff007f, #7928ca);
+        .btn-action {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
             color: white;
             border: none;
-            padding: 15px 35px;
+            padding: 16px 40px;
             font-size: 1.2rem;
-            font-weight: bold;
+            font-weight: 800;
             border-radius: 50px;
             cursor: pointer;
+            margin-top: 20px;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(255, 0, 127, 0.4);
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.4);
+            width: 100%;
         }
 
-        .btn-main:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 25px rgba(255, 0, 127, 0.6);
+        .btn-action:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px rgba(236, 72, 153, 0.6);
         }
 
         /* Countdown Overlay */
         .countdown-overlay {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.95);
+            inset: 0;
+            background: rgba(255, 255, 255, 0.96);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10;
+            z-index: 50;
         }
 
         .countdown-number {
-            font-size: 6rem;
+            font-size: 7rem;
             font-weight: 900;
             color: var(--primary);
-            animation: popScale 0.8s ease-in-out infinite;
+            animation: popIn 0.7s infinite;
         }
 
-        @keyframes popScale {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.3); opacity: 1; }
+        @keyframes popIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
             100% { transform: scale(1); opacity: 0; }
         }
 
-        /* Game Elements */
-        .team-badge {
+        /* Game Screen Elements */
+        .badge-team {
             display: inline-block;
             background: #e0e7ff;
-            color: var(--primary);
-            padding: 8px 16px;
+            color: var(--primary-dark);
+            padding: 8px 20px;
             border-radius: 20px;
-            font-weight: bold;
+            font-weight: 800;
+            font-size: 1.1rem;
             margin-bottom: 15px;
         }
 
-        .emoji-box {
+        .emoji-display-box {
+            background: #f9fafb;
+            border: 3px dashed #d1d5db;
+            border-radius: 24px;
+            padding: 25px;
             font-size: 4.5rem;
-            background: #f3f4f6;
-            padding: 20px;
-            border-radius: 20px;
-            margin: 15px 0;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-            animation: bounce 2s infinite;
+            margin-bottom: 15px;
+            animation: floating 3s ease-in-out infinite;
         }
 
-        @keyframes bounce {
+        @keyframes floating {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
         }
 
-        /* Timer Section */
-        .timer-container {
-            margin: 15px 0;
+        /* Real-time Timer bawah Soal */
+        .timer-box {
+            background: #f3f4f6;
+            padding: 12px 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
         }
 
-        .timer-text {
-            font-size: 1.5rem;
-            font-weight: bold;
+        .timer-number {
+            font-size: 1.8rem;
+            font-weight: 900;
             color: var(--accent);
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
 
-        .progress-bar-bg {
+        .progress-bar {
+            width: 100%;
+            height: 10px;
             background: #e5e7eb;
-            height: 12px;
-            border-radius: 6px;
+            border-radius: 5px;
             overflow: hidden;
         }
 
-        .progress-bar-fill {
-            background: linear-gradient(90deg, #10b981, #ef4444);
+        .progress-fill {
             height: 100%;
+            background: linear-gradient(90deg, #10b981, #ef4444);
             width: 100%;
             transition: width 1s linear;
         }
 
         /* Options Grid */
-        .options-grid {
+        .answers-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 20px;
         }
 
-        .btn-option {
+        .btn-answer {
             background: white;
             border: 2px solid #e5e7eb;
-            padding: 15px;
+            padding: 16px;
             border-radius: 16px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
+            color: #374151;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
 
-        .btn-option:hover:not(:disabled) {
+        .btn-answer:hover:not(:disabled) {
             border-color: var(--primary);
-            background: #f4f5ff;
+            background: #f5f3ff;
             transform: translateY(-2px);
         }
 
-        .btn-option.correct {
+        .btn-answer.correct {
             background: var(--success) !important;
             color: white !important;
             border-color: var(--success) !important;
-            animation: pulse 0.5s;
         }
 
-        .btn-option.wrong {
+        .btn-answer.wrong {
             background: var(--danger) !important;
             color: white !important;
             border-color: var(--danger) !important;
         }
 
-        /* Power-ups */
-        .powerups {
+        /* Powerups */
+        .powerup-bar {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             margin-top: 20px;
         }
 
         .btn-powerup {
-            background: #f3f4f6;
-            border: 1px solid #d1d5db;
-            padding: 8px 15px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            padding: 8px 16px;
             border-radius: 20px;
             font-size: 0.85rem;
+            font-weight: 700;
             cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-
-        .btn-powerup:hover:not(:disabled) {
-            background: #e5e7eb;
         }
 
         .btn-powerup:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
         }
 
-        /* Confetti Overlay */
-        #confetti-canvas {
+        #canvas-confetti {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            inset: 0;
             pointer-events: none;
             z-index: 100;
         }
@@ -264,373 +274,392 @@
 </head>
 <body>
 
-    <div class="game-card">
-        <canvas id="confetti-canvas"></canvas>
+    <div class="main-card">
+        <canvas id="canvas-confetti"></canvas>
 
-        <!-- SCREEN 1: START & MODE SELECTION -->
-        <div id="screen-start" class="screen active">
-            <h1>🎭 Tebak Emoji Fun</h1>
-            <p class="subtitle">Pilih Mode Kesulitan Sebelum Mulai Game!</p>
+        <!-- SCREEN 1: PENGATURAN MODE & KATEGORI -->
+        <div id="screen-setup" class="screen active">
+            <h1>🧩 Tebak Emoji Party</h1>
+            <p class="desc">Atur mode permainan dan kategori emoji sebelum tanding!</p>
 
-            <div class="mode-container">
-                <button class="btn-mode selected" onclick="selectMode('easy', this)">Easy (20s)</button>
-                <button class="btn-mode" onclick="selectMode('medium', this)">Medium (12s)</button>
-                <button class="btn-mode" onclick="selectMode('hard', this)">Hard (6s)</button>
+            <div class="section-title">1. Pilih Kategori Emoji:</div>
+            <div class="option-group" id="category-group">
+                <button class="btn-select active" onclick="setCategory('film', this)">🎬 Film</button>
+                <button class="btn-select" onclick="setCategory('makanan', this)">🍔 Makanan</button>
+                <button class="btn-select" onclick="setCategory('olahraga', this)">⚽ Olahraga</button>
+                <button class="btn-select" onclick="setCategory('hewan', this)">🦁 Hewan</button>
             </div>
 
-            <button class="btn-main" onclick="startGame()">Mulai Permainan 🚀</button>
+            <div class="section-title">2. Pilih Tingkat Kesulitan (Waktu):</div>
+            <div class="option-group" id="mode-group">
+                <button class="btn-select active" onclick="setDifficulty('easy', this)">Easy (20s)</button>
+                <button class="btn-select" onclick="setDifficulty('medium', this)">Medium (12s)</button>
+                <button class="btn-select" onclick="setDifficulty('hard', this)">Hard (6s)</button>
+            </div>
+
+            <button class="btn-action" onclick="prepareGame()">MULAI GAME 🚀</button>
         </div>
 
         <!-- COUNTDOWN OVERLAY -->
-        <div id="countdown-overlay" class="countdown-overlay" style="display: none;">
-            <div id="countdown-text" class="countdown-number">3</div>
+        <div id="countdown-layer" class="countdown-overlay" style="display: none;">
+            <div id="countdown-val" class="countdown-number">3</div>
         </div>
 
         <!-- SCREEN 2: GAMEPLAY -->
         <div id="screen-game" class="screen">
-            <div class="team-badge" id="team-turn-display">Giliran: Tim A</div>
-            <div class="emoji-box" id="emoji-display">🍿🎬</div>
+            <div class="badge-team" id="display-team">Giliran: Tim A</div>
+            
+            <div class="emoji-display-box" id="display-emoji">🍿🎬</div>
 
-            <!-- Timer Section -->
-            <div class="timer-container">
-                <div class="timer-text" id="timer-display">⏱️ 20 DETIK</div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="timer-bar"></div>
+            <!-- Timer di Bawah Soal -->
+            <div class="timer-box">
+                <div class="timer-number" id="display-timer">⏱️ 20 DETIK</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="fill-timer"></div>
                 </div>
             </div>
 
-            <div class="options-grid" id="options-container"></div>
+            <div class="answers-grid" id="grid-answers"></div>
 
-            <!-- Power-Ups -->
-            <div class="powerups">
-                <button class="btn-powerup" id="btn-5050" onclick="use5050()">⚡ 50:50</button>
-                <button class="btn-powerup" id="btn-time" onclick="useExtraTime()">⌛ +10s Waktu</button>
+            <div class="powerup-bar">
+                <button class="btn-powerup" id="pwr-5050" onclick="trigger5050()">⚡ Power 50:50</button>
+                <button class="btn-powerup" id="pwr-time" onclick="triggerExtraTime()">⌛ +10s Waktu</button>
             </div>
         </div>
 
-        <!-- SCREEN 3: RESULT -->
+        <!-- SCREEN 3: HASIL AKHIR -->
         <div id="screen-result" class="screen">
-            <h1>🏆 Game Selesai!</h1>
-            <p class="subtitle" id="winner-text">Selamat untuk pemenang!</p>
-            
-            <div style="margin: 20px 0; font-size: 1.2rem; line-height: 1.8;">
-                <p><strong>Skor Tim A:</strong> <span id="score-team-a">0</span></p>
-                <p><strong>Skor Tim B:</strong> <span id="score-team-b">0</span></p>
+            <h1>🏆 Hasil Pertandingan</h1>
+            <p class="desc" id="display-winner">Selamat untuk para pemenang!</p>
+
+            <div style="background: #f9fafb; padding: 20px; border-radius: 20px; margin: 20px 0; font-size: 1.2rem;">
+                <p style="margin-bottom: 10px;"><strong>Skor Tim A:</strong> <span id="score-a">0</span></p>
+                <p><strong>Skor Tim B:</strong> <span id="score-b">0</span></p>
             </div>
 
-            <button class="btn-main" onclick="resetGame()">Main Lagi 🔄</button>
+            <button class="btn-action" onclick="restartSetup()">MAIN LAGI 🔄</button>
         </div>
     </div>
 
     <script>
-        // --- Web Audio API (Sound Effects Synthesizer) ---
-        const AudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // --- Synthesized Sound Effects (Audio Web API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        function playSound(type) {
-            if (AudioCtx.state === 'suspended') AudioCtx.resume();
-            const osc = AudioCtx.createOscillator();
-            const gain = AudioCtx.createGain();
+        function playSFX(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
             osc.connect(gain);
-            gain.connect(AudioCtx.destination);
-
-            const now = AudioCtx.currentTime;
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
 
             if (type === 'correct') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.exponentialRampToValueAtTime(880, now + 0.3); // A5
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
                 gain.gain.setValueAtTime(0.3, now);
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
             } else if (type === 'wrong') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, now); // A3
-                osc.frequency.exponentialRampToValueAtTime(110, now + 0.3); // A2
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.3);
                 gain.gain.setValueAtTime(0.3, now);
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
             } else if (type === 'tick') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.setValueAtTime(650, now);
                 gain.gain.setValueAtTime(0.1, now);
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                osc.start(now);
-                osc.stop(now + 0.05);
+                osc.start(now); osc.stop(now + 0.05);
             } else if (type === 'timeout') {
                 osc.type = 'square';
-                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.setValueAtTime(140, now);
                 gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                osc.start(now);
-                osc.stop(now + 0.5);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
             } else if (type === 'win') {
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(440, now);
                 osc.frequency.setValueAtTime(554.37, now + 0.1);
                 osc.frequency.setValueAtTime(659.25, now + 0.2);
                 gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                osc.start(now);
-                osc.stop(now + 0.5);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                osc.start(now); osc.stop(now + 0.6);
             }
         }
 
-        // --- Master Bank Soal (Jawaban & Opsi Tetap KONSISTEN) ---
-        const questionBank = [
-            { emoji: "🍿🎬", options: ["Bioskop", "Restoran", "Festival Musik", "Taman Bermain"], answer: "Bioskop" },
-            { emoji: "🐱👓", options: ["Kucing Keren", "Kucing Pintar", "Detektif Hewan", "Dokter Hewan"], answer: "Kucing Keren" },
-            { emoji: "🚀🌕", options: ["Terbang Tinggi", "Misi Luar Angkasa", "Malam Hari", "Satelit Buatan"], answer: "Misi Luar Angkasa" },
-            { emoji: "🍔🍟🥤", options: ["Makanan Sehat", "Fast Food", "Pesta Ulang Tahun", "Piknik Bersama"], answer: "Fast Food" },
-            { emoji: "⚽🏆", options: ["Juara Sepak Bola", "Latihan Olahraga", "Nonton Bola", "Beli Sepatu"], answer: "Juara Sepak Bola" }
-        ];
+        // --- Master Data Bank Soal per Kategori ---
+        const questionDatabase = {
+            film: [
+                { emoji: "🍿🎬", options: ["Bioskop", "Restoran", "Konser Musik", "Taman Bermain"], answer: "Bioskop" },
+                { emoji: "🕷️🧍", options: ["Spider-Man", "Batman", "Superman", "Iron Man"], answer: "Spider-Man" },
+                { emoji: "🦁👑", options: ["The Lion King", "Madagascar", "Tarzan", "Zootopia"], answer: "The Lion King" }
+            ],
+            makanan: [
+                { emoji: "🍔🍟🥤", options: ["Fast Food", "Sarapan", "Pesta Kue", "Barbeque"], answer: "Fast Food" },
+                { emoji: "🍕🇮🇹", options: ["Pizza Italy", "Roti Bakar", "Pasta Spaghetti", "Kebab"], answer: "Pizza Italy" },
+                { emoji: "🍣🇯🇵", options: ["Sushi Japan", "Ramen", "Dimsum", "Takoyaki"], answer: "Sushi Japan" }
+            ],
+            olahraga: [
+                { emoji: "⚽🏆", options: ["Juara Sepak Bola", "Basket", "Lari Marathon", "Badminton"], answer: "Juara Sepak Bola" },
+                { emoji: "🥊🥇", options: ["Juara Tinju", "Karateman", "Taekwondo", "Silat"], answer: "Juara Tinju" },
+                { emoji: "🏊‍♂️🌊", options: ["Renang Laut", "Mancing", "Lancar Selancar", "Penyelam"], answer: "Renang Laut" }
+            ],
+            hewan: [
+                { emoji: "🐱👓", options: ["Kucing Keren", "Anjing Pintar", "Monyet Lucu", "Kelinci Gemoy"], answer: "Kucing Keren" },
+                { emoji: "🐼🎋", options: ["Panda Makan Bambu", "Koala", "Beruang Kutub", "Kangguru"], answer: "Panda Makan Bambu" },
+                { emoji: "🦉🌙", options: ["Burung Hantu", "Elang", "Kelelawar", "Burung Cendrawasih"], answer: "Burung Hantu" }
+            ]
+        };
 
-        // Game Settings
-        const modeDurations = { easy: 20, medium: 12, hard: 6 };
-        let selectedMode = 'easy';
-        let currentQuestionIndex = 0;
-        let currentTeam = 'A'; // 'A' atau 'B'
-        let scores = { A: 0, B: 0 };
-        let powerupsUsed = { A: { f50: false, time: false }, B: { f50: false, time: false } };
+        // State Management
+        let selectedCategory = 'film';
+        let selectedDifficulty = 'easy';
+        const difficultyTimes = { easy: 20, medium: 12, hard: 6 };
 
-        let timerInterval = null;
-        let timeLeft = 0;
-        let totalTime = 20;
+        let currentQuestions = [];
+        let questionIndex = 0;
+        let activeTeam = 'A';
+        let teamScores = { A: 0, B: 0 };
+        let powerupState = { A: { f50: false, time: false }, B: { f50: false, time: false } };
 
-        function selectMode(mode, element) {
-            selectedMode = mode;
-            document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('selected'));
-            element.classList.add('selected');
-            playSound('tick');
+        let timerRef = null;
+        let secondsLeft = 0;
+        let maxTime = 20;
+
+        function setCategory(cat, btn) {
+            selectedCategory = cat;
+            document.querySelectorAll('#category-group .btn-select').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            playSFX('tick');
         }
 
-        function switchScreen(screenId) {
+        function setDifficulty(diff, btn) {
+            selectedDifficulty = diff;
+            document.querySelectorAll('#mode-group .btn-select').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            playSFX('tick');
+        }
+
+        function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+            document.getElementById(id).classList.add('active');
         }
 
-        function startGame() {
-            scores = { A: 0, B: 0 };
-            currentQuestionIndex = 0;
-            currentTeam = 'A';
-            powerupsUsed = { A: { f50: false, time: false }, B: { f50: false, time: false } };
-            totalTime = modeDurations[selectedMode];
+        function prepareGame() {
+            teamScores = { A: 0, B: 0 };
+            questionIndex = 0;
+            activeTeam = 'A';
+            powerupState = { A: { f50: false, time: false }, B: { f50: false, time: false } };
             
-            runCountdown(() => {
-                switchScreen('screen-game');
-                loadQuestion();
+            currentQuestions = questionDatabase[selectedCategory];
+            maxTime = difficultyTimes[selectedDifficulty];
+
+            startCountdown(() => {
+                showScreen('screen-game');
+                renderQuestion();
             });
         }
 
-        // --- Fix Countdown 3, 2, 1 lengkap ---
-        function runCountdown(callback) {
-            const overlay = document.getElementById('countdown-overlay');
-            const textElem = document.getElementById('countdown-text');
+        // --- Countdown Fix (3, 2, 1 lengkap) ---
+        function startCountdown(onComplete) {
+            const overlay = document.getElementById('countdown-layer');
+            const numDisplay = document.getElementById('countdown-val');
             overlay.style.display = 'flex';
-            
+
             let count = 3;
-            textElem.innerText = count;
-            playSound('tick');
+            numDisplay.innerText = count;
+            playSFX('tick');
 
             const interval = setInterval(() => {
                 count--;
                 if (count > 0) {
-                    textElem.innerText = count;
-                    playSound('tick');
+                    numDisplay.innerText = count;
+                    playSFX('tick');
                 } else if (count === 0) {
-                    textElem.innerText = "MULAI!";
-                    playSound('tick');
+                    numDisplay.innerText = "START!";
+                    playSFX('tick');
                 } else {
                     clearInterval(interval);
                     overlay.style.display = 'none';
-                    callback();
+                    onComplete();
                 }
             }, 800);
         }
 
-        function loadQuestion() {
-            clearInterval(timerInterval);
-            
-            const q = questionBank[currentQuestionIndex];
-            document.getElementById('team-turn-display').innerText = `Giliran: Tim ${currentTeam}`;
-            document.getElementById('emoji-display').innerText = q.emoji;
+        function renderQuestion() {
+            clearInterval(timerRef);
+            const q = currentQuestions[questionIndex];
 
-            // Power-ups status update
-            document.getElementById('btn-5050').disabled = powerupsUsed[currentTeam].f50;
-            document.getElementById('btn-time').disabled = powerupsUsed[currentTeam].time;
+            document.getElementById('display-team').innerText = `Giliran: Tim ${activeTeam}`;
+            document.getElementById('display-emoji').innerText = q.emoji;
 
-            // Render opsi jawaban (Urutan KONSISTEN & TDK DI-RANDOMIZE)
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
-            
+            // Power-up button states
+            document.getElementById('pwr-5050').disabled = powerupState[activeTeam].f50;
+            document.getElementById('pwr-time').disabled = powerupState[activeTeam].time;
+
+            // Render opsi jawaban (TIDAK DIACAK agar konsisten)
+            const grid = document.getElementById('grid-answers');
+            grid.innerHTML = '';
+
             q.options.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = 'btn-option';
+                btn.className = 'btn-answer';
                 btn.innerText = opt;
-                btn.onclick = () => handleAnswer(opt, btn);
-                container.appendChild(btn);
+                btn.onclick = () => selectAnswer(opt, btn);
+                grid.appendChild(btn);
             });
 
-            startTimer();
+            beginTimer();
         }
 
-        function startTimer() {
-            timeLeft = totalTime;
-            updateTimerUI();
+        function beginTimer() {
+            secondsLeft = maxTime;
+            updateTimerDisplay();
 
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerUI();
+            timerRef = setInterval(() => {
+                secondsLeft--;
+                updateTimerDisplay();
 
-                if (timeLeft <= 3 && timeLeft > 0) playSound('tick');
+                if (secondsLeft <= 3 && secondsLeft > 0) playSFX('tick');
 
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    playSound('timeout');
-                    highlightCorrectAnswer();
-                    setTimeout(nextTurn, 1500);
+                if (secondsLeft <= 0) {
+                    clearInterval(timerRef);
+                    playSFX('timeout');
+                    revealCorrect();
+                    setTimeout(switchTurn, 1500);
                 }
             }, 1000);
         }
 
-        function updateTimerUI() {
-            document.getElementById('timer-display').innerText = `⏱️ ${timeLeft} DETIK`;
-            const percentage = (timeLeft / totalTime) * 100;
-            document.getElementById('timer-bar').style.width = `${Math.max(0, percentage)}%`;
+        function updateTimerDisplay() {
+            document.getElementById('display-timer').innerText = `⏱️ ${secondsLeft} DETIK`;
+            const pct = (secondsLeft / maxTime) * 100;
+            document.getElementById('fill-timer').style.width = `${Math.max(0, pct)}%`;
         }
 
-        function handleAnswer(selectedOption, btnElement) {
-            clearInterval(timerInterval);
-            const q = questionBank[currentQuestionIndex];
-            const allButtons = document.querySelectorAll('.btn-option');
-            allButtons.forEach(b => b.disabled = true);
+        function selectAnswer(chosen, btn) {
+            clearInterval(timerRef);
+            const q = currentQuestions[questionIndex];
+            document.querySelectorAll('.btn-answer').forEach(b => b.disabled = true);
 
-            if (selectedOption === q.answer) {
-                btnElement.classList.add('correct');
-                playSound('correct');
-                scores[currentTeam] += 10;
+            if (chosen === q.answer) {
+                btn.classList.add('correct');
+                playSFX('correct');
+                teamScores[activeTeam] += 10;
             } else {
-                btnElement.classList.add('wrong');
-                playSound('wrong');
-                highlightCorrectAnswer();
+                btn.classList.add('wrong');
+                playSFX('wrong');
+                revealCorrect();
             }
 
-            setTimeout(nextTurn, 1500);
+            setTimeout(switchTurn, 1500);
         }
 
-        function highlightCorrectAnswer() {
-            const q = questionBank[currentQuestionIndex];
-            document.querySelectorAll('.btn-option').forEach(b => {
-                if (b.innerText === q.answer) {
-                    b.classList.add('correct');
-                }
+        function revealCorrect() {
+            const q = currentQuestions[questionIndex];
+            document.querySelectorAll('.btn-answer').forEach(b => {
+                if (b.innerText === q.answer) b.classList.add('correct');
             });
         }
 
-        function nextTurn() {
-            if (currentTeam === 'A') {
-                currentTeam = 'B';
+        function switchTurn() {
+            if (activeTeam === 'A') {
+                activeTeam = 'B';
             } else {
-                currentTeam = 'A';
-                currentQuestionIndex++;
+                activeTeam = 'A';
+                questionIndex++;
             }
 
-            if (currentQuestionIndex < questionBank.length) {
-                loadQuestion();
+            if (questionIndex < currentQuestions.length) {
+                renderQuestion();
             } else {
-                endGame();
+                finishGame();
             }
         }
 
-        // --- Power-Up Functions ---
-        function use5050() {
-            powerupsUsed[currentTeam].f50 = true;
-            document.getElementById('btn-5050').disabled = true;
-            playSound('tick');
+        // --- Powerups ---
+        function trigger5050() {
+            powerupState[activeTeam].f50 = true;
+            document.getElementById('pwr-5050').disabled = true;
+            playSFX('tick');
 
-            const q = questionBank[currentQuestionIndex];
-            const buttons = Array.from(document.querySelectorAll('.btn-option'));
-            let removed = 0;
+            const q = currentQuestions[questionIndex];
+            const buttons = Array.from(document.querySelectorAll('.btn-answer'));
+            let removedCount = 0;
 
             buttons.forEach(btn => {
-                if (btn.innerText !== q.answer && removed < 2) {
+                if (btn.innerText !== q.answer && removedCount < 2) {
                     btn.style.visibility = 'hidden';
-                    removed++;
+                    removedCount++;
                 }
             });
         }
 
-        function useExtraTime() {
-            powerupsUsed[currentTeam].time = true;
-            document.getElementById('btn-time').disabled = true;
-            playSound('tick');
-            timeLeft += 10;
-            totalTime += 10;
-            updateTimerUI();
+        function triggerExtraTime() {
+            powerupState[activeTeam].time = true;
+            document.getElementById('pwr-time').disabled = true;
+            playSFX('tick');
+            secondsLeft += 10;
+            maxTime += 10;
+            updateTimerDisplay();
         }
 
-        function endGame() {
-            switchScreen('screen-result');
-            playSound('win');
-            startConfetti();
+        function finishGame() {
+            showScreen('screen-result');
+            playSFX('win');
+            launchConfetti();
 
-            document.getElementById('score-team-a').innerText = scores.A;
-            document.getElementById('score-team-b').innerText = scores.B;
+            document.getElementById('score-a').innerText = teamScores.A;
+            document.getElementById('score-b').innerText = teamScores.B;
 
-            const winText = document.getElementById('winner-text');
-            if (scores.A > scores.B) {
-                winText.innerText = "🎉 Selamat! Tim A Keluar Sebagai Juara!";
-            } else if (scores.B > scores.A) {
-                winText.innerText = "🎉 Selamat! Tim B Keluar Sebagai Juara!";
+            const winBox = document.getElementById('display-winner');
+            if (teamScores.A > teamScores.B) {
+                winBox.innerText = "🎉 Tim A Menang!";
+            } else if (teamScores.B > teamScores.A) {
+                winBox.innerText = "🎉 Tim B Menang!";
             } else {
-                winText.innerText = "🤝 Permainan Seri! Kedua Tim Sama-sama Hebat!";
+                winBox.innerText = "🤝 Hasil Seri!";
             }
         }
 
-        function resetGame() {
-            switchScreen('screen-start');
+        function restartSetup() {
+            showScreen('screen-setup');
         }
 
-        // --- Visual Confetti Effect ---
-        function startConfetti() {
-            const canvas = document.getElementById('confetti-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
+        // --- Confetti ---
+        function launchConfetti() {
+            const cvs = document.getElementById('canvas-confetti');
+            const ctx = cvs.getContext('2d');
+            cvs.width = cvs.parentElement.clientWidth;
+            cvs.height = cvs.parentElement.clientHeight;
 
-            const pieces = [];
-            const colors = ['#f43f5e', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b'];
+            const items = [];
+            const palette = ['#ec4899', '#8b5cf6', '#10b981', '#f59e0b', '#3b82f6'];
 
-            for (let i = 0; i < 80; i++) {
-                pieces.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    size: Math.random() * 8 + 4,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    speed: Math.random() * 3 + 2,
-                    rotation: Math.random() * 360
+            for (let i = 0; i < 70; i++) {
+                items.push({
+                    x: Math.random() * cvs.width,
+                    y: Math.random() * cvs.height - cvs.height,
+                    sz: Math.random() * 8 + 4,
+                    color: palette[Math.floor(Math.random() * palette.length)],
+                    sp: Math.random() * 3 + 2
                 });
             }
 
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                pieces.forEach(p => {
-                    ctx.save();
+            function animate() {
+                ctx.clearRect(0, 0, cvs.width, cvs.height);
+                items.forEach(p => {
                     ctx.fillStyle = p.color;
-                    ctx.translate(p.x, p.y);
-                    ctx.rotate(p.rotation);
-                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-                    ctx.restore();
-
-                    p.y += p.speed;
-                    p.rotation += 0.05;
-
-                    if (p.y > canvas.height) p.y = -20;
+                    ctx.fillRect(p.x, p.y, p.sz, p.sz);
+                    p.y += p.sp;
+                    if (p.y > cvs.height) p.y = -10;
                 });
-                requestAnimationFrame(draw);
+                requestAnimationFrame(animate);
             }
-            draw();
+            animate();
         }
     </script>
 </body>
