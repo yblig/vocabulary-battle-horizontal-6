@@ -32,17 +32,7 @@
             font-family: 'Teko', sans-serif;
         }
 
-        /* Neon Glows */
-        .glow-red {
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
-            border-color: #ef4444;
-        }
-        .glow-blue {
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
-            border-color: #3b82f6;
-        }
-
-        /* Custom Scrollbar for Teacher Modal */
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -63,14 +53,36 @@
         .animate-cd {
             animation: countdownPulse 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
+
+        @keyframes comboPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-combo {
+            animation: comboPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .streak-glow-p1 {
+            box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.5), 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+        .streak-glow-p2 {
+            box-shadow: inset 0 0 15px rgba(59, 130, 246, 0.5), 0 0 15px rgba(59, 130, 246, 0.4);
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-white h-screen w-screen flex flex-col justify-between p-2 overflow-hidden select-none">
 
     <!-- ================= MENU UTAMA ================= -->
     <div id="main-menu" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-4 overflow-y-auto">
-        <div class="max-w-xl w-full bg-slate-900 border-2 border-slate-700 rounded-2xl p-5 shadow-2xl space-y-4 my-auto">
-            <div class="text-center">
+        <div class="max-w-xl w-full bg-slate-900 border-2 border-slate-700 rounded-2xl p-5 shadow-2xl space-y-4 my-auto relative">
+            
+            <!-- Global Audio Toggle Button -->
+            <button onclick="toggleAudioMute()" id="audio-toggle-btn" class="absolute top-4 right-4 text-slate-400 hover:text-white bg-slate-800 p-2 rounded-xl border border-slate-700 text-xs flex items-center gap-1.5 transition">
+                <i id="audio-icon" class="fa-solid fa-volume-high text-indigo-400"></i> SFX: ON
+            </button>
+
+            <div class="text-center pt-2">
                 <h1 class="text-4xl md:text-5xl font-teko tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500">
                     VOCABULARY BATTLE
                 </h1>
@@ -98,7 +110,21 @@
                     <option value="medium" selected>🟡 Medium (Rekomendasi Kelas 3-4 SD)</option>
                     <option value="hard">🔴 Hard (Rekomendasi Kelas 5-6 SD)</option>
                     <option value="extreme">🔥 Extreme (SMP / Lanjutan)</option>
+                    <option value="emoji">🧩 Mode Emoji (Tebak Gambar & Audio)</option>
                 </select>
+            </div>
+
+            <!-- FITUR BARU 1: Pilihan Jumlah Soal -->
+            <div>
+                <label class="block text-xs font-bold text-slate-300 uppercase mb-1"><i class="fa-solid fa-list-ol mr-1"></i> Jumlah Soal</label>
+                <div class="grid grid-cols-6 gap-1.5">
+                    <button onclick="selectQuestionCount(5)" id="qcount-5" class="qcount-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold transition">5</button>
+                    <button onclick="selectQuestionCount(10)" id="qcount-10" class="qcount-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold transition">10</button>
+                    <button onclick="selectQuestionCount(15)" id="qcount-15" class="qcount-btn p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300 text-xs font-bold transition">15</button>
+                    <button onclick="selectQuestionCount(20)" id="qcount-20" class="qcount-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold transition">20</button>
+                    <button onclick="selectQuestionCount(25)" id="qcount-25" class="qcount-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold transition">25</button>
+                    <button onclick="selectQuestionCount(0)" id="qcount-0" class="qcount-btn p-2 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 text-xs font-bold transition">Semua</button>
+                </div>
             </div>
 
             <!-- Mode Waktu -->
@@ -141,13 +167,17 @@
         </div>
 
         <!-- TIM MERAH (P1) - LEFT SIDE -->
-        <div class="bg-slate-900/80 border-2 border-red-500/50 rounded-xl p-2 flex flex-col justify-between h-full relative overflow-hidden">
+        <div id="p1-card-container" class="bg-slate-900/80 border-2 border-red-500/50 rounded-xl p-2 flex flex-col justify-between h-full relative overflow-hidden transition-all duration-300">
             <!-- Header Info & Progress Bar -->
             <div>
                 <div class="flex justify-between items-center mb-1">
                     <span class="text-xs font-bold text-red-400 flex items-center gap-1">
                         <i class="fa-solid fa-user"></i> <span id="p1-name-label">TIM MERAH</span>
                     </span>
+                    <!-- FITUR COMBO / STREAK BADGE -->
+                    <div id="p1-streak-badge" class="hidden bg-gradient-to-r from-amber-500 to-red-500 text-black px-1.5 py-0.5 rounded-full text-[10px] font-black tracking-wider animate-combo">
+                        🔥 <span id="p1-streak-count">0</span> STREAK
+                    </div>
                     <span id="p1-progress-text" class="text-xs font-mono font-bold text-red-400">Soal 1/15</span>
                 </div>
                 <!-- Progress Bar -->
@@ -158,24 +188,14 @@
 
             <!-- Question Card -->
             <div class="bg-red-950/30 border border-red-500/30 rounded-lg p-2 my-1 text-center flex-1 flex flex-col items-center justify-center relative">
-                <span class="text-[10px] text-red-300 uppercase tracking-widest font-bold mb-0.5">Bahasa Inggris</span>
+                <span id="p1-sub-label" class="text-[10px] text-red-300 uppercase tracking-widest font-bold mb-0.5">Bahasa Inggris</span>
                 <div class="flex items-center gap-2">
                     <h2 id="p1-question" class="text-xl md:text-3xl font-bold text-white tracking-wide">...</h2>
-                    <button onclick="speakWord('p1')" class="text-red-400 hover:text-red-300 text-xs p-1 bg-red-900/40 rounded-full border border-red-500/40">
-                        <i class="fa-solid fa-volume-high"></i>
+                    <!-- FITUR MINTAAN: LISTEN TO WORD BUAT MODE EMOJI / SOAL BIASA -->
+                    <button onclick="speakWord('p1')" id="p1-btn-listen" class="text-red-400 hover:text-red-300 text-xs p-1.5 bg-red-900/60 hover:bg-red-800 rounded-full border border-red-500/50 shadow flex items-center gap-1 transition" title="Listen to Word">
+                        <i class="fa-solid fa-volume-high"></i> <span class="text-[9px] font-bold pr-0.5">LISTEN</span>
                     </button>
                 </div>
-                <p id="p1-hint-text" class="text-[10px] text-amber-300 font-mono mt-0.5 hidden"></p>
-            </div>
-
-            <!-- Student Lifelines (50:50 & Hint) -->
-            <div class="flex gap-1 mb-1">
-                <button onclick="useFiftyFifty('p1')" id="p1-btn-5050" class="flex-1 py-0.5 bg-red-900/40 hover:bg-red-800/60 border border-red-500/40 rounded text-[10px] text-red-300 font-bold transition">
-                    ⚡ 50:50
-                </button>
-                <button onclick="useHint('p1')" id="p1-btn-hint" class="flex-1 py-0.5 bg-amber-900/40 hover:bg-amber-800/60 border border-amber-500/40 rounded text-[10px] text-amber-300 font-bold transition">
-                    💡 Hint
-                </button>
             </div>
 
             <!-- Answer Buttons Grid (2x2) -->
@@ -185,13 +205,17 @@
         </div>
 
         <!-- TIM BIRU (P2 / AI) - RIGHT SIDE -->
-        <div class="bg-slate-900/80 border-2 border-blue-500/50 rounded-xl p-2 flex flex-col justify-between h-full relative overflow-hidden">
+        <div id="p2-card-container" class="bg-slate-900/80 border-2 border-blue-500/50 rounded-xl p-2 flex flex-col justify-between h-full relative overflow-hidden transition-all duration-300">
             <!-- Header Info & Progress Bar -->
             <div>
                 <div class="flex justify-between items-center mb-1">
                     <span class="text-xs font-bold text-blue-400 flex items-center gap-1">
                         <i id="p2-icon" class="fa-solid fa-user"></i> <span id="p2-name-label">TIM BIRU</span>
                     </span>
+                    <!-- FITUR COMBO / STREAK BADGE -->
+                    <div id="p2-streak-badge" class="hidden bg-gradient-to-r from-cyan-400 to-blue-500 text-black px-1.5 py-0.5 rounded-full text-[10px] font-black tracking-wider animate-combo">
+                        🔥 <span id="p2-streak-count">0</span> STREAK
+                    </div>
                     <span id="p2-progress-text" class="text-xs font-mono font-bold text-blue-400">Soal 1/15</span>
                 </div>
                 <!-- Progress Bar -->
@@ -202,24 +226,14 @@
 
             <!-- Question Card -->
             <div class="bg-blue-950/30 border border-blue-500/30 rounded-lg p-2 my-1 text-center flex-1 flex flex-col items-center justify-center relative">
-                <span class="text-[10px] text-blue-300 uppercase tracking-widest font-bold mb-0.5">Bahasa Inggris</span>
+                <span id="p2-sub-label" class="text-[10px] text-blue-300 uppercase tracking-widest font-bold mb-0.5">Bahasa Inggris</span>
                 <div class="flex items-center gap-2">
                     <h2 id="p2-question" class="text-xl md:text-3xl font-bold text-white tracking-wide">...</h2>
-                    <button onclick="speakWord('p2')" class="text-blue-400 hover:text-blue-300 text-xs p-1 bg-blue-900/40 rounded-full border border-blue-500/40">
-                        <i class="fa-solid fa-volume-high"></i>
+                    <!-- FITUR MINTAAN: LISTEN TO WORD BUAT MODE EMOJI / SOAL BIASA -->
+                    <button onclick="speakWord('p2')" id="p2-btn-listen" class="text-blue-400 hover:text-blue-300 text-xs p-1.5 bg-blue-900/60 hover:bg-blue-800 rounded-full border border-blue-500/50 shadow flex items-center gap-1 transition" title="Listen to Word">
+                        <i class="fa-solid fa-volume-high"></i> <span class="text-[9px] font-bold pr-0.5">LISTEN</span>
                     </button>
                 </div>
-                <p id="p2-hint-text" class="text-[10px] text-amber-300 font-mono mt-0.5 hidden"></p>
-            </div>
-
-            <!-- Student Lifelines (50:50 & Hint) -->
-            <div class="flex gap-1 mb-1">
-                <button onclick="useFiftyFifty('p2')" id="p2-btn-5050" class="flex-1 py-0.5 bg-blue-900/40 hover:bg-blue-800/60 border border-blue-500/40 rounded text-[10px] text-blue-300 font-bold transition">
-                    ⚡ 50:50
-                </button>
-                <button onclick="useHint('p2')" id="p2-btn-hint" class="flex-1 py-0.5 bg-amber-900/40 hover:bg-amber-800/60 border border-amber-500/40 rounded text-[10px] text-amber-300 font-bold transition">
-                    💡 Hint
-                </button>
             </div>
 
             <!-- Answer Buttons Grid (2x2) -->
@@ -255,6 +269,7 @@
                     <div class="flex justify-between"><span>Jawaban Benar:</span><span id="recap-p1-correct" class="font-bold text-green-400">0</span></div>
                     <div class="flex justify-between"><span>Jawaban Salah:</span><span id="recap-p1-wrong" class="font-bold text-red-400">0</span></div>
                     <div class="flex justify-between"><span>Habis Waktu:</span><span id="recap-p1-timeout" class="font-bold text-amber-400">0</span></div>
+                    <div class="flex justify-between"><span>Max Combo:</span><span id="recap-p1-maxstreak" class="font-bold text-yellow-400">0 🔥</span></div>
                     <div class="flex justify-between"><span>Akurasi:</span><span id="recap-p1-accuracy" class="font-bold text-indigo-300">0%</span></div>
                     <div class="flex justify-between"><span>Rata-rata Waktu:</span><span id="recap-p1-avgtime" class="font-bold text-slate-300">0s</span></div>
                 </div>
@@ -265,8 +280,19 @@
                     <div class="flex justify-between"><span>Jawaban Benar:</span><span id="recap-p2-correct" class="font-bold text-green-400">0</span></div>
                     <div class="flex justify-between"><span>Jawaban Salah:</span><span id="recap-p2-wrong" class="font-bold text-red-400">0</span></div>
                     <div class="flex justify-between"><span>Habis Waktu:</span><span id="recap-p2-timeout" class="font-bold text-amber-400">0</span></div>
+                    <div class="flex justify-between"><span>Max Combo:</span><span id="recap-p2-maxstreak" class="font-bold text-yellow-400">0 🔥</span></div>
                     <div class="flex justify-between"><span>Akurasi:</span><span id="recap-p2-accuracy" class="font-bold text-indigo-300">0%</span></div>
                     <div class="flex justify-between"><span>Rata-rata Waktu:</span><span id="recap-p2-avgtime" class="font-bold text-slate-300">0s</span></div>
+                </div>
+            </div>
+
+            <!-- FITUR BARU 3: ANALISIS TOPIK LEMAH (WEAKNESS TRACKER) -->
+            <div id="weakness-section" class="bg-amber-950/30 border border-amber-500/40 rounded-xl p-3 space-y-1.5 text-xs hidden">
+                <div class="font-bold text-amber-300 flex items-center gap-1 border-b border-amber-800/60 pb-1">
+                    <i class="fa-solid fa-lightbulb"></i> Evaluasi Kosa Kata yang Perlu Dipelajari Lagi:
+                </div>
+                <div id="weakness-list" class="flex flex-wrap gap-1.5 pt-1">
+                    <!-- Dynamic badges -->
                 </div>
             </div>
 
@@ -313,8 +339,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="text-[10px] text-slate-400">Kata Bahasa Inggris (Soal)</label>
-                            <input id="teacher-word-en" type="text" placeholder="Contoh: Book" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white">
+                            <label class="text-[10px] text-slate-400">Kata Bahasa Inggris (Soal / Emoji)</label>
+                            <input id="teacher-word-en" type="text" placeholder="Contoh: Book atau 🐶" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-xs text-white">
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
@@ -358,9 +384,23 @@
 
     <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        /* WEB AUDIO API SOUND SYNTH */
+        /* FITUR NEW: AUDIO MUTE SYSTEM */
+        let isMuted = false;
+        function toggleAudioMute() {
+            isMuted = !isMuted;
+            const btn = document.getElementById('audio-toggle-btn');
+            const icon = document.getElementById('audio-icon');
+            if (isMuted) {
+                btn.innerHTML = `<i id="audio-icon" class="fa-solid fa-volume-xmark text-red-400"></i> SFX: OFF`;
+            } else {
+                btn.innerHTML = `<i id="audio-icon" class="fa-solid fa-volume-high text-indigo-400"></i> SFX: ON`;
+            }
+        }
+
+        /* WEB AUDIO API SOUND SYNTH (ENHANCED SFX) */
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
+            if (isMuted) return;
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
@@ -368,32 +408,44 @@
             gain.connect(audioCtx.destination);
 
             if (type === 'correct') {
+                osc.type = 'sine';
                 osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15); // E5
+                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.12); // E5
                 gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.25);
             } else if (type === 'wrong') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
                 osc.frequency.setValueAtTime(110, audioCtx.currentTime + 0.15);
                 gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.3);
             } else if (type === 'beep') {
+                osc.type = 'triangle';
                 osc.frequency.setValueAtTime(440, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.1);
             } else if (type === 'go') {
+                osc.type = 'sine';
                 osc.frequency.setValueAtTime(880, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
                 osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'fanfare') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.6);
             }
         }
 
-        /* DEFAULT QUESTION BANK */
+        /* DEFAULT QUESTION BANK (INCLUDES EMOJI MODE) */
         const defaultQuestions = {
             easy: [
                 { word: "Cat", correct: "Kucing", wrongs: ["Anjing", "Kelinci", "Burung"] },
@@ -422,16 +474,28 @@
             extreme: [
                 { word: "Ambiguous", correct: "Bermakna Ganda", wrongs: ["Jelas", "Singkat", "Tegas"] },
                 { word: "Benevolent", correct: "Penuh Kebajikan", wrongs: ["Kejam", "Sombong", "Egois"] }
+            ],
+            emoji: [
+                { word: "🐶", listenWord: "Dog", correct: "Anjing", wrongs: ["Kucing", "Burung", "Singa"] },
+                { word: "🐱", listenWord: "Cat", correct: "Kucing", wrongs: ["Anjing", "Kelinci", "Sapi"] },
+                { word: "🍎", listenWord: "Apple", correct: "Apel", wrongs: ["Pisang", "Jeruk", "Anggur"] },
+                { word: "🚗", listenWord: "Car", correct: "Mobil", wrongs: ["Motor", "Sepeda", "Pesawat"] },
+                { word: "🚀", listenWord: "Rocket", correct: "Roket", wrongs: ["Mobil", "Kapal", "Kereta"] },
+                { word: "🍕", listenWord: "Pizza", correct: "Piza", wrongs: ["Roti", "Kue", "Burger"] },
+                { word: "⚽", listenWord: "Soccer Ball", correct: "Bola Sepak", wrongs: ["Basket", "Voli", "Tenis"] },
+                { word: "📚", listenWord: "Books", correct: "Buku", wrongs: ["Pensil", "Tas", "Penggaris"] },
+                { word: "🌧️", listenWord: "Rain", correct: "Hujan", wrongs: ["Matahari", "Awan", "Angin"] },
+                { word: "🔥", listenWord: "Fire", correct: "Api", wrongs: ["Air", "Es", "Tanah"] }
             ]
         };
 
         let activeQuestionPacks = JSON.parse(localStorage.getItem('vocab_custom_packs')) || defaultQuestions;
 
         /* GAME CONFIG & STATE */
-        let gameConfig = { mode: '2p', packKey: 'medium', timerLimit: 15 };
+        let gameConfig = { mode: '2p', packKey: 'medium', timerLimit: 15, questionCount: 15 };
         let matchState = {
-            p1: { score: 0, wrong: 0, timeout: 0, times: [], used5050: false, usedHint: false, index: 0 },
-            p2: { score: 0, wrong: 0, timeout: 0, times: [], used5050: false, usedHint: false, index: 0 },
+            p1: { score: 0, wrong: 0, timeout: 0, times: [], streak: 0, maxStreak: 0, index: 0, wrongWords: [] },
+            p2: { score: 0, wrong: 0, timeout: 0, times: [], streak: 0, maxStreak: 0, index: 0, wrongWords: [] },
             questions: [],
             activeTimer: null,
             timerLeft: 15,
@@ -460,18 +524,43 @@
             activeBtn.classList.add('border-2', 'border-indigo-500', 'bg-indigo-950/50', 'text-indigo-300');
         }
 
+        /* FITUR NEW: PILIHAN JUMLAH SOAL */
+        function selectQuestionCount(count) {
+            gameConfig.questionCount = count;
+            document.querySelectorAll('.qcount-btn').forEach(btn => {
+                btn.classList.remove('border-2', 'border-indigo-500', 'bg-indigo-950/50', 'text-indigo-300');
+                btn.classList.add('border', 'border-slate-700', 'bg-slate-800', 'text-slate-300');
+            });
+            const activeBtn = document.getElementById(`qcount-${count}`);
+            activeBtn.classList.remove('border-slate-700', 'bg-slate-800', 'text-slate-300');
+            activeBtn.classList.add('border-2', 'border-indigo-500', 'bg-indigo-950/50', 'text-indigo-300');
+        }
+
         function initiateGameSetup() {
             gameConfig.packKey = document.getElementById('level-select').value;
             let qPool = activeQuestionPacks[gameConfig.packKey] || defaultQuestions.medium;
             
             // Shuffle question order
-            matchState.questions = [...qPool].sort(() => Math.random() - 0.5);
-            matchState.p1 = { score: 0, wrong: 0, timeout: 0, times: [], used5050: false, usedHint: false, index: 0 };
-            matchState.p2 = { score: 0, wrong: 0, timeout: 0, times: [], used5050: false, usedHint: false, index: 0 };
+            let shuffled = [...qPool].sort(() => Math.random() - 0.5);
+
+            // Apply selected question count filter
+            if (gameConfig.questionCount > 0 && gameConfig.questionCount < shuffled.length) {
+                matchState.questions = shuffled.slice(0, gameConfig.questionCount);
+            } else {
+                matchState.questions = shuffled;
+            }
+
+            matchState.p1 = { score: 0, wrong: 0, timeout: 0, times: [], streak: 0, maxStreak: 0, index: 0, wrongWords: [] };
+            matchState.p2 = { score: 0, wrong: 0, timeout: 0, times: [], streak: 0, maxStreak: 0, index: 0, wrongWords: [] };
 
             document.getElementById('p1-name-label').innerText = "TIM MERAH";
             document.getElementById('p2-name-label').innerText = gameConfig.mode === 'ai' ? "BOT AI" : "TIM BIRU";
             document.getElementById('p2-icon').className = gameConfig.mode === 'ai' ? "fa-solid fa-robot" : "fa-solid fa-user";
+
+            // Update mode labels
+            const subLabel = gameConfig.packKey === 'emoji' ? 'Mode Emoji' : 'Bahasa Inggris';
+            document.getElementById('p1-sub-label').innerText = subLabel;
+            document.getElementById('p2-sub-label').innerText = subLabel;
 
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('readiness-overlay').classList.remove('hidden');
@@ -520,7 +609,6 @@
                 document.getElementById('p1-question').innerText = q1.word;
                 document.getElementById('p1-progress-text').innerText = `Soal ${matchState.p1.index + 1}/${total}`;
                 document.getElementById('p1-progress-bar').style.width = `${((matchState.p1.index) / total) * 100}%`;
-                document.getElementById('p1-hint-text').classList.add('hidden');
                 renderOptions('p1', q1);
             } else {
                 document.getElementById('p1-question').innerText = "SELESAI!";
@@ -533,7 +621,6 @@
                 document.getElementById('p2-question').innerText = q2.word;
                 document.getElementById('p2-progress-text').innerText = `Soal ${matchState.p2.index + 1}/${total}`;
                 document.getElementById('p2-progress-bar').style.width = `${((matchState.p2.index) / total) * 100}%`;
-                document.getElementById('p2-hint-text').classList.add('hidden');
                 renderOptions('p2', q2);
             } else {
                 document.getElementById('p2-question').innerText = "SELESAI!";
@@ -542,6 +629,10 @@
 
             document.getElementById('p1-score-live').innerText = matchState.p1.score;
             document.getElementById('p2-score-live').innerText = matchState.p2.score;
+
+            // Update Combo Badges Visuals
+            updateStreakDisplay('p1');
+            updateStreakDisplay('p2');
 
             if (matchState.p1.index >= total && matchState.p2.index >= total) {
                 endMatch();
@@ -552,7 +643,7 @@
             const grid = document.getElementById(`${player}-options-grid`);
             grid.innerHTML = '';
             
-            // Shuffle options automatically!
+            // Shuffle options automatically
             let options = [q.correct, ...q.wrongs].sort(() => Math.random() - 0.5);
 
             options.forEach(opt => {
@@ -568,11 +659,19 @@
             const timeTaken = (Date.now() - matchState.questionStartTime) / 1000;
             matchState[player].times.push(timeTaken);
 
+            const currentQ = matchState.questions[matchState[player].index];
+
             if (selected === correct) {
                 matchState[player].score++;
+                matchState[player].streak++;
+                if (matchState[player].streak > matchState[player].maxStreak) {
+                    matchState[player].maxStreak = matchState[player].streak;
+                }
                 playSound('correct');
             } else {
                 matchState[player].wrong++;
+                matchState[player].streak = 0; // Reset streak on wrong
+                matchState[player].wrongWords.push(currentQ.listenWord || currentQ.word);
                 playSound('wrong');
             }
 
@@ -585,6 +684,21 @@
             renderCurrentQuestions();
         }
 
+        function updateStreakDisplay(player) {
+            const badge = document.getElementById(`${player}-streak-badge`);
+            const count = document.getElementById(`${player}-streak-count`);
+            const card = document.getElementById(`${player}-card-container`);
+
+            if (matchState[player].streak >= 2) {
+                badge.classList.remove('hidden');
+                count.innerText = matchState[player].streak;
+                card.classList.add(player === 'p1' ? 'streak-glow-p1' : 'streak-glow-p2');
+            } else {
+                badge.classList.add('hidden');
+                card.classList.remove('streak-glow-p1', 'streak-glow-p2');
+            }
+        }
+
         function triggerAITurn() {
             if (matchState.p2.index >= matchState.questions.length) return;
             const q = matchState.questions[matchState.p2.index];
@@ -592,7 +706,15 @@
             const chosen = isCorrect ? q.correct : q.wrongs[Math.floor(Math.random() * q.wrongs.length)];
             
             matchState.p2.times.push(1.5);
-            if (chosen === q.correct) matchState.p2.score++; else matchState.p2.wrong++;
+            if (chosen === q.correct) {
+                matchState.p2.score++;
+                matchState.p2.streak++;
+                if (matchState.p2.streak > matchState.p2.maxStreak) matchState.p2.maxStreak = matchState.p2.streak;
+            } else {
+                matchState.p2.wrong++;
+                matchState.p2.streak = 0;
+                matchState.p2.wrongWords.push(q.listenWord || q.word);
+            }
             matchState.p2.index++;
             renderCurrentQuestions();
         }
@@ -615,11 +737,17 @@
                 if (matchState.timerLeft <= 0) {
                     // Handle Timeout
                     if (matchState.p1.index < matchState.questions.length) {
+                        const q1 = matchState.questions[matchState.p1.index];
                         matchState.p1.timeout++;
+                        matchState.p1.streak = 0;
+                        matchState.p1.wrongWords.push(q1.listenWord || q1.word);
                         matchState.p1.index++;
                     }
                     if (matchState.p2.index < matchState.questions.length) {
+                        const q2 = matchState.questions[matchState.p2.index];
                         matchState.p2.timeout++;
+                        matchState.p2.streak = 0;
+                        matchState.p2.wrongWords.push(q2.listenWord || q2.word);
                         matchState.p2.index++;
                     }
                     matchState.timerLeft = gameConfig.timerLimit;
@@ -632,51 +760,25 @@
             document.querySelectorAll('.opt-btn').forEach(btn => btn.disabled = disabled);
         }
 
-        /* STUDENT HELPER FEATURES */
+        /* LISTEN TO WORD FEATURE (SOAL BIASA & EMOJI) */
         function speakWord(player) {
             const idx = matchState[player].index;
             if (idx < matchState.questions.length) {
-                const word = matchState[player].questions ? matchState[player].questions[idx].word : matchState.questions[idx].word;
-                const utterance = new SpeechSynthesisUtterance(word);
+                const q = matchState.questions[idx];
+                // Jika mode emoji, gunakan properti listenWord
+                const wordToSpeak = q.listenWord ? q.listenWord : q.word;
+                
+                const utterance = new SpeechSynthesisUtterance(wordToSpeak);
                 utterance.lang = 'en-US';
                 window.speechSynthesis.speak(utterance);
             }
         }
 
-        function useFiftyFifty(player) {
-            if (matchState[player].used5050) return;
-            matchState[player].used5050 = true;
-            document.getElementById(`${player}-btn-5050`).classList.add('opacity-40', 'cursor-not-allowed');
-
-            const idx = matchState[player].index;
-            const q = matchState.questions[idx];
-            const btns = Array.from(document.querySelectorAll(`.${player}-opt`));
-            
-            let removed = 0;
-            btns.forEach(btn => {
-                if (btn.innerText !== q.correct && removed < 2) {
-                    btn.style.visibility = 'hidden';
-                    removed++;
-                }
-            });
-        }
-
-        function useHint(player) {
-            if (matchState[player].usedHint) return;
-            matchState[player].usedHint = true;
-            document.getElementById(`${player}-btn-hint`).classList.add('opacity-40', 'cursor-not-allowed');
-
-            const idx = matchState[player].index;
-            const q = matchState.questions[idx];
-            const hintElem = document.getElementById(`${player}-hint-text`);
-            hintElem.innerText = `Hint: Awal '${q.correct[0]}', ${q.correct.length} Huruf`;
-            hintElem.classList.remove('hidden');
-        }
-
         /* RECAP & SCOREBOARD */
         function endMatch() {
             if (matchState.activeTimer) clearInterval(matchState.activeTimer);
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            playSound('fanfare');
+            confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
 
             const p1 = matchState.p1;
             const p2 = matchState.p2;
@@ -692,6 +794,7 @@
             document.getElementById('recap-p1-correct').innerText = p1.score;
             document.getElementById('recap-p1-wrong').innerText = p1.wrong;
             document.getElementById('recap-p1-timeout').innerText = p1.timeout;
+            document.getElementById('recap-p1-maxstreak').innerText = `${p1.maxStreak} 🔥`;
             document.getElementById('recap-p1-accuracy').innerText = `${Math.round((p1.score / total) * 100)}%`;
             const p1Avg = p1.times.length ? (p1.times.reduce((a,b)=>a+b,0)/p1.times.length).toFixed(1) : 0;
             document.getElementById('recap-p1-avgtime').innerText = `${p1Avg}s`;
@@ -699,17 +802,36 @@
             document.getElementById('recap-p2-correct').innerText = p2.score;
             document.getElementById('recap-p2-wrong').innerText = p2.wrong;
             document.getElementById('recap-p2-timeout').innerText = p2.timeout;
+            document.getElementById('recap-p2-maxstreak').innerText = `${p2.maxStreak} 🔥`;
             document.getElementById('recap-p2-accuracy').innerText = `${Math.round((p2.score / total) * 100)}%`;
             const p2Avg = p2.times.length ? (p2.times.reduce((a,b)=>a+b,0)/p2.times.length).toFixed(1) : 0;
             document.getElementById('recap-p2-avgtime').innerText = `${p2Avg}s`;
+
+            // FITUR BARU 3: POPULATE WEAKNESS TRACKER
+            const combinedWrong = [...new Set([...p1.wrongWords, ...p2.wrongWords])];
+            const weaknessSec = document.getElementById('weakness-section');
+            const weaknessList = document.getElementById('weakness-list');
+
+            if (combinedWrong.length > 0) {
+                weaknessSec.classList.remove('hidden');
+                weaknessList.innerHTML = '';
+                combinedWrong.forEach(w => {
+                    const badge = document.createElement('span');
+                    badge.className = 'bg-amber-900/60 border border-amber-500/50 text-amber-200 px-2 py-0.5 rounded-md font-mono text-[11px]';
+                    badge.innerText = w;
+                    weaknessList.appendChild(badge);
+                });
+            } else {
+                weaknessSec.classList.add('hidden');
+            }
 
             document.getElementById('recap-modal').classList.remove('hidden');
         }
 
         function downloadCSVReport() {
-            let csv = "Pemain,Benar,Salah,Timeout,Akurasi(%)\n";
-            csv += `Tim Merah,${matchState.p1.score},${matchState.p1.wrong},${matchState.p1.timeout},${Math.round((matchState.p1.score/matchState.questions.length)*100)}\n`;
-            csv += `Tim Biru,${matchState.p2.score},${matchState.p2.wrong},${matchState.p2.timeout},${Math.round((matchState.p2.score/matchState.questions.length)*100)}\n`;
+            let csv = "Pemain,Benar,Salah,Timeout,Max Streak,Akurasi(%)\n";
+            csv += `Tim Merah,${matchState.p1.score},${matchState.p1.wrong},${matchState.p1.timeout},${matchState.p1.maxStreak},${Math.round((matchState.p1.score/matchState.questions.length)*100)}\n`;
+            csv += `Tim Biru,${matchState.p2.score},${matchState.p2.wrong},${matchState.p2.timeout},${matchState.p2.maxStreak},${Math.round((matchState.p2.score/matchState.questions.length)*100)}\n`;
 
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
