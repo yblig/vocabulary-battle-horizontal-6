@@ -123,7 +123,7 @@ html.force-landscape body{
 </select>
 </div>
 
-<!-- SECTION KUSUS EMOJI DIFFICULTY -->
+<!-- SECTION KHUSUS EMOJI DIFFICULTY -->
 <div id="emoji-diff-section" class="mt-4 hidden bg-amber-950/30 border border-amber-500/40 p-3 rounded-xl">
 <label class="text-xs font-bold text-amber-300 uppercase"><i class="fa-solid fa-face-smile"></i> Emoji Difficulty Level</label>
 <div class="grid grid-cols-3 gap-2 mt-1.5">
@@ -420,7 +420,7 @@ function playSound(type){
   osc.start(); osc.stop(audioCtx.currentTime+.4);
 }
 
-/* ================= QUESTION DATABASE (ENGLISH CHOICES FOR EMOJI MODE) ================= */
+/* ================= QUESTION DATABASE ================= */
 const defaultQuestions={
 easy:[
   ["Cat","Kucing",["Anjing","Burung","Kelinci"]],["Book","Buku",["Pensil","Tas","Meja"]],["Red","Merah",["Biru","Hijau","Kuning"]],["Mother","Ibu",["Ayah","Nenek","Kakak"]],
@@ -469,34 +469,35 @@ extreme:[
   ["Equanimity","Ketenangan Pikiran",["Kepanikan","Kemarahan","Kecemasan"]],["Formidable","Sangat Tangguh",["Lemah","Kecil","Mudah"]],["Inquisitive","Sangat Ingin Tahu",["Apatis","Cuek","Pendiam"]],["Juxtapose","Menyejajarkan",["Mempisahkan","Menghancurkan","Menyembunyikan"]],
   ["Magnanimous","Bermurah Hati",["Dendam","Kikir","Iri"]],["Perseverance","Ketekunan",["Keputusasaan","Kelemahan","Mogok"]],["Quixotic","Terlalu Idealistis",["Praktis","Realistis","Logis"]],["Serendipity","Keberuntungan Tak Terduga",["Kesialan","Rencana","Pola"]],["Tantamount","Sama Artimya",["Berbeda","Jauh","Bertentangan"]],["Unprecedented","Belum Pernah Ada",["Biasa","Rutin","Umum"]],["Vehement","Sangat Strong",["Lemah","Ragu","Dingin"]],["Zealous","Sangat Semangat",["Apatis","Lesu","Takut"]]
 ],
-
-/* EMOJI MODE - EASY (PILIKAN JAWABAN BAHASA INGGRIS) */
 emoji_easy:[
   ["🐶","Dog",["Cat","Bird","Lion"]],["🐱","Cat",["Dog","Rabbit","Cow"]],["🍎","Apple",["Banana","Orange","Grape"]],["🚗","Car",["Motorcycle","Bicycle","Airplane"]],
   ["🚀","Rocket",["Car","Ship","Train"]],["🍕","Pizza",["Bread","Cake","Burger"]],["⚽","Soccer Ball",["Basketball","Volleyball","Tennis"]],["📚","Books",["Pencil","Bag","Ruler"]],
-  ["🌧️","Rain",["Sun","Cloud","Wind"]],["🔥","Fire",["Water","Ice","Earth"]],["🍌","Banana",["Apple","Orange","Pineapple"]],["🐸","Frog",["Snake","Fish","Turtle"]],["🦁","Lion",["Tiger","Wolf","Bear"]],
-  ["✈️","Airplane",["Helicopter","Ship","Car"]],["🚲","Bicycle",["Motorcycle","Car","Train"]],["🍦","Ice Cream",["Chocolate","Candy","Cake"]],["🎸","Guitar",["Drum","Piano","Violin"]],["☀️","Sun",["Moon","Star","Cloud"]]
-].map(x=>({word:x[0],correct:x[1],wrongs:x[2],listenWord:x[1]})),
-
-/* EMOJI MODE - MEDIUM (PILIHAN JAWABAN BAHASA INGGRIS) */
+  ["🌧️","Rain",["Sun","Cloud","Wind"]],["🔥","Fire",["Water","Ice","Earth"]],["🍌","Banana",["Apple","Orange","Pineapple"]],["🐸","Frog",["Snake","Fish","Turtle"]],
+  ["🦁","Lion",["Tiger","Wolf","Bear"]],["✈️","Airplane",["Helicopter","Ship","Car"]],["🚲","Bicycle",["Motorcycle","Car","Train"]],["🍦","Ice Cream",["Chocolate","Candy","Cake"]],
+  ["🎸","Guitar",["Drum","Piano","Violin"]],["☀️","Sun",["Moon","Star","Cloud"]],["🍔","Burger",["Pizza","Bread","Cake"]],["⏰","Clock",["Watch","Phone","Camera"]]
+],
 emoji_medium:[
-  ["🌙","Moon",["Sun","Star","Cloud"]],["🍔","Burger",["Pizza","Bread","Fries"]],["🏀","Basketball",["Soccer Ball","Volleyball","Tennis"]],["🎈","Balloon",["Ball","Lamp","Toy"]],
-  ["🔑","Key",["Door","Lock","House"]],["⏰","Alarm Clock",["Watch","Phone","Calendar"]],["🎁","Gift",["Money","Letter","Bag"]],["🥑","Avocado",["Apple","Banana","Orange"]],
-  ["🐼","Panda",["Bear","Cat","Dog"]],["🍩","Donut",["Cake","Bread","Candy"]],["🌋","Volcano",["Mountain","Sea","Cloud"]],["🌈","Rainbow",["Cloud","Rain","Sun"]],
-  ["🌵","Cactus",["Tree","Flower","Grass"]],["🍓","Strawberry",["Apple","Cherry","Grape"]]
-].map(x=>({word:x[0],correct:x[1],wrongs:x[2],listenWord:x[1]})),
-
-/* EMOJI MODE - HARD (PILIHAN JAWABAN BAHASA INGGRIS) */
+  ["🌙","Moon",["Sun","Star","Cloud"]],["🏀","Basketball",["Soccer Ball","Volleyball","Tennis"]],["🎈","Balloon",["Ball","Lamp","Toy"]],["🔑","Key",["Door","Lock","House"]],
+  ["🎁","Gift",["Money","Letter","Bag"]],["🥑","Avocado",["Apple","Banana","Orange"]],["🐼","Panda",["Bear","Cat","Dog"]],["🍩","Donut",["Cake","Bread","Candy"]],
+  ["🌋","Volcano",["Mountain","Sea","Cloud"]],["🌈","Rainbow",["Cloud","Rain","Sun"]],["🌵","Cactus",["Tree","Flower","Grass"]],["🍓","Strawberry",["Apple","Cherry","Grape"]],
+  ["🍿","Popcorn",["Chips","Candy","Chocolate"]],["🐬","Dolphin",["Fish","Whale","Shark"]],["👑","Crown",["Hat","Ring","Shirt"]],["📷","Camera",["Phone","Watch","Clock"]]
+],
 emoji_hard:[
-  ["🍿","Popcorn",["Chips","Candy","Chocolate"]],["🐬","Dolphin",["Fish","Whale","Shark"]],["👑","Crown",["Hat","Ring","Shirt"]],["🎓","Graduation Cap",["Hat","Book","Bag"]],
-  ["🎨","Palette",["Book","Pencil","Camera"]],["🎯","Target",["Ball","Guitar","Clock"]],["🎧","Headphones",["Phone","Camera","Lamp"]],["🔮","Crystal Ball",["Glass","Clock","Star"]]
-].map(x=>({word:x[0],correct:x[1],wrongs:x[2],listenWord:x[1]}))
+  ["🎓","Graduation Cap",["Hat","Book","Bag"]],["🎨","Palette",["Book","Pencil","Camera"]],["🎯","Target",["Ball","Guitar","Clock"]],["🎧","Headphones",["Phone","Camera","Lamp"]],
+  ["🔮","Crystal Ball",["Glass","Clock","Star"]],["⛺","Camping Tent",["House","Car","Bag"]],["🛸","UFO",["Airplane","Rocket","Star"]],["⛵","Sailboat",["Ship","Car","Airplane"]],
+  ["🏆","Trophy",["Medal","Crown","Gift"]],["📱","Smartphone",["Laptop","Watch","Camera"]]
+]
 };
 
 function normalizeDatabase(){
   const result={};
   Object.keys(defaultQuestions).forEach(level=>{
-    result[level]=defaultQuestions[level].map(q=>Array.isArray(q)?{word:q[0],correct:q[1],wrongs:q[2],listenWord:q[3]||q[0]}:q);
+    result[level]=defaultQuestions[level].map(q=>{
+      if(Array.isArray(q)){
+        return {word:q[0], correct:q[1], wrongs:q[2], listenWord:q[3]||(level.startsWith("emoji")?q[1]:q[0])};
+      }
+      return q;
+    });
   });
   return result;
 }
@@ -576,8 +577,9 @@ function selectQuestionCount(count){
 
 /* ================= START GAME ================= */
 function shuffleArray(arr){
-  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
-  return arr;
+  const copy=[...arr];
+  for(let i=copy.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [copy[i],copy[j]]=[copy[j],copy[i]]; }
+  return copy;
 }
 
 function withShuffledOptions(q){
@@ -589,8 +591,8 @@ function buildQuestionSets(){
   let pool=activeQuestionPacks[gameConfig.packKey]||activeQuestionPacks.medium;
   let targetCount=gameConfig.questionCount>0?Math.min(gameConfig.questionCount, pool.length):pool.length;
 
-  let p1Pool=shuffleArray([...pool]).slice(0, targetCount);
-  let p2Pool=shuffleArray([...pool]).slice(0, targetCount);
+  let p1Pool=shuffleArray(pool).slice(0, targetCount);
+  let p2Pool=shuffleArray(pool).slice(0, targetCount);
 
   return { p1:p1Pool.map(withShuffledOptions), p2:p2Pool.map(withShuffledOptions) };
 }
@@ -1112,58 +1114,64 @@ function updateTeacherPreview(){
   const pack=activeQuestionPacks[key]||[];
   const box=document.getElementById("teacher-pack-preview");
   box.innerHTML=pack.length
-    ? pack.map(q=>`• ${q.word} → ${q.correct}`).join("<br>")
+    ? pack.map((q,idx)=>`<div>${idx+1}. <strong>${q.word}</strong> ➔ ${q.correct} (${q.wrongs.join(", ")})</div>`).join("")
     : "Paket ini masih kosong.";
 }
 
 function createCustomPack(){
   const nameInput=document.getElementById("custom-pack-name");
-  const raw=nameInput.value.trim();
-  if(!raw){ alert("Masukkan nama paket terlebih dahulu."); return; }
-  const key="custom_"+raw.toLowerCase().replace(/[^a-z0-9]+/g,"_");
-  if(activeQuestionPacks[key]){ alert("Paket dengan nama ini sudah ada."); return; }
-  activeQuestionPacks[key]=[];
+  const rawName=nameInput.value.trim().toLowerCase().replace(/\s+/g,"_");
+  if(!rawName){ alert("Masukkan nama paket!"); return; }
+  if(activeQuestionPacks[rawName]){ alert("Nama paket sudah ada!"); return; }
+
+  activeQuestionPacks[rawName]=[];
   persistCustomPacks();
+  
+  const levelSelect=document.getElementById("level-select");
+  const opt=document.createElement("option");
+  opt.value=rawName;
+  opt.innerText=`⭐ ${rawName.toUpperCase()} (Kustom)`;
+  levelSelect.appendChild(opt);
+
   nameInput.value="";
   updateTeacherPackDropdown();
-  document.getElementById("teacher-target-pack").value=key;
+  document.getElementById("teacher-target-pack").value=rawName;
   updateTeacherPreview();
-  addPackToLevelSelect(key,raw);
-}
-
-function addPackToLevelSelect(key,label){
-  const level=document.getElementById("level-select");
-  if(!Array.from(level.options).some(o=>o.value===key)){
-    const opt=document.createElement("option");
-    opt.value=key;
-    opt.innerText="📘 "+label+" (kustom)";
-    level.appendChild(opt);
-  }
+  alert(`Paket "${rawName}" berhasil dibuat!`);
 }
 
 function deleteCustomPack(){
   const key=document.getElementById("teacher-target-pack").value;
-  if(defaultQuestions[key]){ alert("Paket bawaan tidak bisa dihapus."); return; }
-  if(!confirm(`Hapus paket "${key}"?`))return;
-  delete activeQuestionPacks[key];
-  persistCustomPacks();
-  const level=document.getElementById("level-select");
-  Array.from(level.options).forEach(o=>{ if(o.value===key) o.remove(); });
-  updateTeacherPackDropdown();
+  if(defaultQuestions[key]){ alert("Paket bawaan tidak bisa dihapus!"); return; }
+  if(confirm(`Yakin mau menghapus paket "${key}"?`)){
+    delete activeQuestionPacks[key];
+    persistCustomPacks();
+    
+    const levelSelect=document.getElementById("level-select");
+    const opt=[...levelSelect.options].find(o=>o.value===key);
+    if(opt) opt.remove();
+
+    updateTeacherPackDropdown();
+    alert("Paket berhasil dihapus!");
+  }
 }
 
 function addQuestionFromTeacher(){
-  const key=document.getElementById("teacher-target-pack").value;
+  const packKey=document.getElementById("teacher-target-pack").value;
   const word=document.getElementById("teacher-word-en").value.trim();
   const correct=document.getElementById("teacher-ans-correct").value.trim();
   const w1=document.getElementById("teacher-ans-wrong1").value.trim();
   const w2=document.getElementById("teacher-ans-wrong2").value.trim();
   const w3=document.getElementById("teacher-ans-wrong3").value.trim();
 
-  if(!word||!correct||!w1||!w2||!w3){ alert("Isi semua kolom soal terlebih dahulu."); return; }
-  if(!activeQuestionPacks[key]){ activeQuestionPacks[key]=[]; }
+  if(!word || !correct || !w1 || !w2 || !w3){
+    alert("Harap isi semua kolom kata dan pilihan jawaban!");
+    return;
+  }
 
-  activeQuestionPacks[key].push({ word, correct, wrongs:[w1,w2,w3], listenWord:correct });
+  const newQ={ word:word, correct:correct, wrongs:[w1,w2,w3], listenWord:correct };
+  if(!activeQuestionPacks[packKey]) activeQuestionPacks[packKey]=[];
+  activeQuestionPacks[packKey].push(newQ);
   persistCustomPacks();
 
   document.getElementById("teacher-word-en").value="";
@@ -1173,39 +1181,65 @@ function addQuestionFromTeacher(){
   document.getElementById("teacher-ans-wrong3").value="";
 
   updateTeacherPreview();
+  alert("Soal berhasil ditambahkan!");
 }
 
 function printWorksheet(){
   const key=document.getElementById("teacher-target-pack").value;
   const pack=activeQuestionPacks[key]||[];
-  if(!pack.length){ alert("Paket ini belum memiliki soal."); return; }
+  if(!pack.length){ alert("Paket ini kosong, tidak ada soal untuk dicetak!"); return; }
 
-  const rows=pack.map((q,i)=>{
-    const options=[q.correct,...q.wrongs];
-    for(let j=options.length-1;j>0;j--){ const k=Math.floor(Math.random()*(j+1)); [options[j],options[k]]=[options[k],options[j]]; }
-    return `<tr><td>${i+1}</td><td>${q.word}</td><td>${options.join(" &nbsp;|&nbsp; ")}</td></tr>`;
-  }).join("");
+  const printWin=window.open("","_blank");
+  let html=`
+    <html>
+    <head>
+      <title>Worksheet - ${key.toUpperCase()}</title>
+      <style>
+        body{ font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        h1{ text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        .grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .item{ border: 1px solid #ccc; padding: 12px; border-radius: 8px; page-break-inside: avoid; }
+        .word{ font-size: 1.4rem; font-weight: bold; margin-bottom: 8px; }
+        .options{ display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.9rem; }
+      </style>
+    </head>
+    <body>
+      <h1>VOCABULARY WORKSHEET (${key.toUpperCase()})</h1>
+      <p>Nama: _______________________ &nbsp;&nbsp;&nbsp;&nbsp; Kelas: ____________</p>
+      <div class="grid">
+  `;
 
-  const win=window.open("","_blank");
-  win.document.write(`
-    <html><head><title>Worksheet - ${key}</title>
-    <style>
-      body{font-family:Arial,sans-serif;padding:24px;color:#111}
-      h1{font-size:20px;margin-bottom:4px}
-      p{color:#555;font-size:12px}
-      table{width:100%;border-collapse:collapse;margin-top:16px}
-      td,th{border:1px solid #ccc;padding:8px;font-size:13px;text-align:left}
-      th{background:#f2f2f2}
-    </style>
-    </head><body>
-    <h1>Vocabulary Worksheet — ${key.toUpperCase()}</h1>
-    <p>Nama: _____________________  Kelas: _______  Tanggal: _______</p>
-    <table><tr><th>No</th><th>Kata</th><th>Pilihan Jawaban</th></tr>${rows}</table>
-    </body></html>
-  `);
-  win.document.close();
-  win.print();
+  pack.forEach((q,i)=>{
+    const opts=shuffleArray([q.correct,...q.wrongs]);
+    html+=`
+      <div class="item">
+        <div class="word">${i+1}. ${q.word}</div>
+        <div class="options">
+          <div>A. ${opts[0]}</div>
+          <div>B. ${opts[1]}</div>
+          <div>C. ${opts[2]}</div>
+          <div>D. ${opts[3]}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  html+=`</div></body></html>`;
+  printWin.document.write(html);
+  printWin.document.close();
+  printWin.print();
 }
+
+/* ================= INIT ON LOAD ================= */
+window.addEventListener("DOMContentLoaded",()=>{
+  const levelSelect=document.getElementById("level-select");
+  Object.keys(savedCustom).forEach(key=>{
+    const opt=document.createElement("option");
+    opt.value=key;
+    opt.innerText=`⭐ ${key.toUpperCase()} (Kustom)`;
+    levelSelect.appendChild(opt);
+  });
+});
 </script>
 </body>
 </html>
