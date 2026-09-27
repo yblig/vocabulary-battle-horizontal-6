@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -420,11 +421,11 @@ function playSound(type){
   const osc=audioCtx.createOscillator();
   const gain=audioCtx.createGain();
   osc.connect(gain); gain.connect(audioCtx.destination);
-  if(type==="correct"){ osc.type="sine"; osc.frequency.setValueAtTime(523,audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(1046,audioCtx.currentTime+.18); gain.gain.setValueAtTime(.22,audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.35); }
-  if(type==="wrong"){ osc.type="sawtooth"; osc.frequency.setValueAtTime(180,audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(90,audioCtx.currentTime+.25); gain.gain.setValueAtTime(.18,audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.3); }
-  if(type==="timeout"){ osc.type="square"; osc.frequency.setValueAtTime(400,audioCtx.currentTime); osc.frequency.setValueAtTime(200,audioCtx.currentTime+.15); gain.gain.setValueAtTime(.15,audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.3); }
-  if(type==="beep"){ osc.type="triangle"; osc.frequency.value=700; gain.gain.setValueAtTime(.12,audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.1); }
-  if(type==="go"){ osc.type="sine"; osc.frequency.value=900; gain.gain.setValueAtTime(.2,audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.3); }
+  if(type==="correct"){ osc.type="sine"; osc.frequency.setValueAtTime(523,audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(1046,audioCtx.currentTime+.18); gain.gain.setValueAtTime(.6,audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.35); }
+  if(type==="wrong"){ osc.type="sawtooth"; osc.frequency.setValueAtTime(180,audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(90,audioCtx.currentTime+.25); gain.gain.setValueAtTime(.5,audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.3); }
+  if(type==="timeout"){ osc.type="square"; osc.frequency.setValueAtTime(400,audioCtx.currentTime); osc.frequency.setValueAtTime(200,audioCtx.currentTime+.15); gain.gain.setValueAtTime(.4,audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.3); }
+  if(type==="beep"){ osc.type="triangle"; osc.frequency.value=700; gain.gain.setValueAtTime(.35,audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.1); }
+  if(type==="go"){ osc.type="sine"; osc.frequency.value=900; gain.gain.setValueAtTime(.55,audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.3); }
   osc.start(); osc.stop(audioCtx.currentTime+.4);
 }
 
@@ -1100,7 +1101,7 @@ function stopGame(){
   matchState.paused=false;
   if(matchState.p1.timer) clearInterval(matchState.p1.timer);
   if(matchState.p2.timer) clearInterval(matchState.p2.timer);
-  if(aiTimeout) clearTimeout(aiTimeout);
+  if(aiTimeout) clearInterval(aiTimeout);
 }
 
 function returnToMenu(){
@@ -1200,7 +1201,7 @@ function printWorksheet(){
   let printWindow=window.open("","","width=800,height=600");
   let html=`<html><head><title>Worksheet - ${key.toUpperCase()}</title>`;
   html+=`<style>body{font-family:sans-serif;padding:20px;} h2{text-align:center;} .q{margin-bottom:15px;} .options{margin-left:20px;}</style></head><body>`;
-  html+=`<h2>Vocabulary Worksheet (${key.toUpperCase()})</h2><hr><br>`;
+  html+=`## Vocabulary Worksheet (${key.toUpperCase()})\n\n<hr><br>`;
   pack.forEach((q,i)=>{
     const options=shuffleArray([q.correct,...q.wrongs]);
     html+=`<div class="q"><strong>${i+1}. Apa arti dari "${q.word}"?</strong><div class="options">`;
@@ -1211,17 +1212,8 @@ function printWorksheet(){
   printWindow.document.write(html);
   printWindow.document.close();
 }
-
-// Otomatis fullscreen saat player melakukan klik pertama di mana saja
-window.addEventListener('click', function autoFS() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  }
-  // Hapus listener supaya cuma jalan sekali saat klik pertama
-  window.removeEventListener('click', autoFS);
-}, { once: true });
-
 </script>
 
 </body>
 </html>
+```
