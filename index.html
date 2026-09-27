@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Vocabulary Battle - Ultimate Edition</title>
+<title>Vocabulary Battle - Emoji Edition</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -107,14 +107,30 @@ html.force-landscape body{
 </div>
 
 <div class="mt-4">
-<label class="text-xs font-bold text-slate-300 uppercase"><i class="fa-solid fa-layer-group"></i> Level</label>
-<select id="level-select" class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white">
-<option value="easy">🟢 Easy — Santai</option>
-<option value="medium" selected>🟡 Medium — Normal</option>
-<option value="hard">🔴 Hard — Challenging</option>
-<option value="extreme">🔥 Extreme — Advanced</option>
-<option value="emoji">🧩 Emoji Mode</option>
+<label class="text-xs font-bold text-slate-300 uppercase"><i class="fa-solid fa-layer-group"></i> Level / Mode Soal</label>
+<select id="level-select" onchange="handleLevelSelectChange()" class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white">
+<optgroup label="Teks Inggris">
+  <option value="easy">🟢 Easy — Santai</option>
+  <option value="medium" selected>🟡 Medium — Normal</option>
+  <option value="hard">🔴 Hard — Challenging</option>
+  <option value="extreme">🔥 Extreme — Advanced</option>
+</optgroup>
+<optgroup label="Mode Emoji (Jawaban Inggris)">
+  <option value="emoji_easy">🧩 Emoji — Easy</option>
+  <option value="emoji_medium">🧩 Emoji — Medium</option>
+  <option value="emoji_hard">🧩 Emoji — Hard</option>
+</optgroup>
 </select>
+</div>
+
+<!-- SECTION KUSUS EMOJI DIFFICULTY -->
+<div id="emoji-diff-section" class="mt-4 hidden bg-amber-950/30 border border-amber-500/40 p-3 rounded-xl">
+<label class="text-xs font-bold text-amber-300 uppercase"><i class="fa-solid fa-face-smile"></i> Emoji Difficulty Level</label>
+<div class="grid grid-cols-3 gap-2 mt-1.5">
+<button onclick="selectEmojiDiff('emoji_easy')" id="ediff-easy" class="ediff-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs font-bold">🟢 Easy</button>
+<button onclick="selectEmojiDiff('emoji_medium')" id="ediff-medium" class="ediff-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs font-bold">🟡 Medium</button>
+<button onclick="selectEmojiDiff('emoji_hard')" id="ediff-hard" class="ediff-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs font-bold">🔴 Hard</button>
+</div>
 </div>
 
 <div class="mt-4">
@@ -182,7 +198,7 @@ html.force-landscape body{
 <div class="h-2 bg-slate-800 rounded-full overflow-hidden"><div id="p1-timer-bar" class="h-full bg-red-500 transition-all duration-300" style="width:100%"></div></div>
 </div>
 <div class="flex-1 min-h-0 mt-2 bg-red-950/30 border border-red-500/30 rounded-xl flex flex-col items-center justify-center relative">
-<span id="p1-sub" class="text-[9px] uppercase tracking-widest text-red-300">Bahasa Inggris</span>
+<span id="p1-sub" class="text-[9px] uppercase tracking-widest text-red-300">English Word</span>
 <h2 id="p1-question" class="question-text text-3xl font-bold text-white text-center px-2 break-words">...</h2>
 <button onclick="speakWord('p1')" class="mt-2 bg-red-900/70 border border-red-500/50 rounded-full px-3 py-1 text-[9px] text-red-300"><i class="fa-solid fa-volume-high"></i> LISTEN</button>
 <button id="p1-hint-btn" onclick="useHint('p1')" class="mt-2 bg-amber-900/60 border border-amber-500/50 rounded-full px-3 py-1 text-[9px] text-amber-300">💡 HINT</button>
@@ -202,7 +218,7 @@ html.force-landscape body{
 <div class="h-2 bg-slate-800 rounded-full overflow-hidden"><div id="p2-timer-bar" class="h-full bg-blue-500 transition-all duration-300" style="width:100%"></div></div>
 </div>
 <div class="flex-1 min-h-0 mt-2 bg-blue-950/30 border border-blue-500/30 rounded-xl flex flex-col items-center justify-center relative">
-<span id="p2-sub" class="text-[9px] uppercase tracking-widest text-blue-300">Bahasa Inggris</span>
+<span id="p2-sub" class="text-[9px] uppercase tracking-widest text-blue-300">English Word</span>
 <h2 id="p2-question" class="question-text text-3xl font-bold text-white text-center px-2 break-words">...</h2>
 <button onclick="speakWord('p2')" class="mt-2 bg-blue-900/70 border border-blue-500/50 rounded-full px-3 py-1 text-[9px] text-blue-300"><i class="fa-solid fa-volume-high"></i> LISTEN</button>
 <button id="p2-hint-btn" onclick="useHint('p2')" class="mt-2 bg-amber-900/60 border border-amber-500/50 rounded-full px-3 py-1 text-[9px] text-amber-300">💡 HINT</button>
@@ -326,7 +342,7 @@ html.force-landscape body{
 <button onclick="deleteCustomPack()" class="w-full bg-red-900/40 border border-red-700 rounded-xl p-2 text-xs">Hapus Paket Kustom Terpilih</button>
 
 <input id="teacher-word-en" placeholder="Kata Inggris / Emoji" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
-<input id="teacher-ans-correct" placeholder="Jawaban benar" class="w-full bg-slate-800 border border-green-600/50 rounded-xl p-3 text-sm">
+<input id="teacher-ans-correct" placeholder="Jawaban benar (Bahasa Inggris)" class="w-full bg-slate-800 border border-green-600/50 rounded-xl p-3 text-sm">
 <input id="teacher-ans-wrong1" placeholder="Pengecoh 1" class="w-full bg-slate-800 border border-red-600/50 rounded-xl p-3 text-sm">
 <input id="teacher-ans-wrong2" placeholder="Pengecoh 2" class="w-full bg-slate-800 border border-red-600/50 rounded-xl p-3 text-sm">
 <input id="teacher-ans-wrong3" placeholder="Pengecoh 3" class="w-full bg-slate-800 border border-red-600/50 rounded-xl p-3 text-sm">
@@ -404,12 +420,12 @@ function playSound(type){
   osc.start(); osc.stop(audioCtx.currentTime+.4);
 }
 
-/* ================= QUESTION DATABASE (40 SOAL PER LEVEL) ================= */
+/* ================= QUESTION DATABASE (ENGLISH CHOICES FOR EMOJI MODE) ================= */
 const defaultQuestions={
 easy:[
   ["Cat","Kucing",["Anjing","Burung","Kelinci"]],["Book","Buku",["Pensil","Tas","Meja"]],["Red","Merah",["Biru","Hijau","Kuning"]],["Mother","Ibu",["Ayah","Nenek","Kakak"]],
   ["Water","Air",["Susu","Teh","Jus"]],["Sun","Matahari",["Bulan","Awan","Bintang"]],["Apple","Apel",["Pisang","Jeruk","Anggur"]],["Dog","Anjing",["Kucing","Kuda","Burung"]],
-  ["Milk","Susu",["Air","Teh","Kopi"]],["Chair","Kursi",["Meja","Pintu","Jendela"]],["Door","Pintu",["Jendela","Atap","Dinding"]],["Fish","Ikan",["Ayam","Bebek","Kelinci"]],
+  ["Milk","Susu",["Air","Teh","Kopi"]],["Chair","Kursi",["Meja","Pintu","Lemari"]],["Door","Pintu",["Jendela","Atap","Dinding"]],["Fish","Ikan",["Ayam","Bebek","Kelinci"]],
   ["Bird","Burung",["Ikan","Kucing","Kuda"]],["Pen","Pulpen",["Pensil","Buku","Penggaris"]],["Bag","Tas",["Buku","Sepatu","Baju"]],["Shoe","Sepatu",["Sandal","Topi","Kaos Kaki"]],
   ["Hat","Topi",["Baju","Celana","Sepatu"]],["Father","Ayah",["Ibu","Paman","Kakek"]],["Blue","Biru",["Merah","Hijau","Kuning"]],["Green","Hijau",["Kuning","Hitam","Putih"]],
   ["Yellow","Kuning",["Merah","Ungu","Cokelat"]],["Black","Hitam",["Putih","Abu-abu","Cokelat"]],["White","Putih",["Hitam","Merah","Kuning"]],["House","Rumah",["Sekolah","Taman","Toko"]],
@@ -451,26 +467,36 @@ extreme:[
   ["Gregarious","Suka Bersosialisasi",["Penyendiri","Pemalu","Pendiam"]],["Lucid","Mudah Dipahami",["Rumit","Gelap","Sulit"]],["Nonchalant","Acuh Tak Acuh",["Peduli","Panik","Semangat"]],["Ostentatious","Suka Pamer",["Sederhana","Rendah Hati","Pendiam"]],
   ["Adaptable","Mudah Menyesuaikan",["Kaku","Lambat","Lemah"]],["Altruistic","Mementingkan Orang Lain",["Egois","Jahat","Sombong"]],["Cognitive","Berhubungan Kognitif",["Fisik","Emosi","Spiritual"]],["Diligent","Tekun dan Rajin",["Pemalas","Lalai","Ceroboh"]],
   ["Equanimity","Ketenangan Pikiran",["Kepanikan","Kemarahan","Kecemasan"]],["Formidable","Sangat Tangguh",["Lemah","Kecil","Mudah"]],["Inquisitive","Sangat Ingin Tahu",["Apatis","Cuek","Pendiam"]],["Juxtapose","Menyejajarkan",["Mempisahkan","Menghancurkan","Menyembunyikan"]],
-  ["Magnanimous","Bermurah Hati",["Dendam","Kikir","Iri"]],["Perseverance","Ketekunan",["Keputusasaan","Kelemahan","Mogok"]],["Quixotic","Terlalu Idealistis",["Praktis","Realistis","Logis"]],["Serendipity","Keberuntungan Tak Terduga",["Kesialan","Rencana","Pola"]],["Tantamount","Sama Artimya",["Berbeda","Jauh","Bertentangan"]],["Unprecedented","Belum Pernah Ada",["Biasa","Rutin","Umum"]],["Vehement","Sangat المتحمس/Kuat",["Lemah","Ragu","Dingin"]],["Zealous","Sangat Semangat",["Apatis","Lesu","Takut"]]
+  ["Magnanimous","Bermurah Hati",["Dendam","Kikir","Iri"]],["Perseverance","Ketekunan",["Keputusasaan","Kelemahan","Mogok"]],["Quixotic","Terlalu Idealistis",["Praktis","Realistis","Logis"]],["Serendipity","Keberuntungan Tak Terduga",["Kesialan","Rencana","Pola"]],["Tantamount","Sama Artimya",["Berbeda","Jauh","Bertentangan"]],["Unprecedented","Belum Pernah Ada",["Biasa","Rutin","Umum"]],["Vehement","Sangat Strong",["Lemah","Ragu","Dingin"]],["Zealous","Sangat Semangat",["Apatis","Lesu","Takut"]]
 ],
-emoji:[
-  ["🐶","Anjing",["Kucing","Burung","Singa"],"Dog"],["🐱","Kucing",["Anjing","Kelinci","Sapi"],"Cat"],["🍎","Apel",["Pisang","Jeruk","Anggur"],"Apple"],["🚗","Mobil",["Motor","Sepeda","Pesawat"],"Car"],
-  ["🚀","Roket",["Mobil","Kapal","Kereta"],"Rocket"],["🍕","Piza",["Roti","Kue","Burger"],"Pizza"],["⚽","Bola Sepak",["Basket","Voli","Tenis"],"Soccer Ball"],["📚","Buku",["Pensil","Tas","Penggaris"],"Books"],
-  ["🌧️","Hujan",["Matahari","Awan","Angin"],"Rain"],["🔥","Api",["Air","Es","Tanah"],"Fire"],["🍌","Pisang",["Apel","Jeruk","Nanas"],"Banana"],["🐸","Katak",["Ular","Ikan","Kura-kura"],"Frog"],
-  ["🦁","Singa",["Harimau","Serigala","Beruang"],"Lion"],["✈️","Pesawat",["Helikopter","Kapal","Mobil"],"Airplane"],["🚲","Sepeda",["Motor","Mobil","Kereta"],"Bicycle"],["🍦","Es Krim",["Cokelat","Permen","Kue"],"Ice Cream"],
-  ["🎸","Gitar",["Drum","Piano","Biola"],"Guitar"],["☀️","Matahari",["Bulan","Bintang","Awan"],"Sun"],["🌙","Bulan",["Matahari","Bintang","Awan"],"Moon"],["🍔","Burger",["Piza","Roti","Kentang"],"Burger"],
-  ["🏀","Basket",["Bola Sepak","Voli","Tenis"],"Basketball"],["🎈","Balon",["Bola","Lampu","Mainan"],"Balloon"],["🔑","Kunci",["Pintu","Gembok","Rumah"],"Key"],["⏰","Jam Weker",["Jam Tangan","HP","Kalender"],"Alarm Clock"],
-  ["🎁","Hadiah",["Uang","Surat","Tas"],"Gift"],["🥑","Alpukat",["Apel","Pisang","Jeruk"],"Avocado"],["🐼","Panda",["Beruang","Kucing","Anjing"],"Panda"],["🍩","Donat",["Kue","Roti","Permen"],"Donut"],
-  ["🌋","Gunung Berapi",["Gunung","Laut","Awan"],"Volcano"],["Rainbow","Pelangi",["Awan","Hujan","Matahari"],"Rainbow"],["🌵","Kaktus",["Pohon","Bunga","Rumput"],"Cactus"],["🍓","Stroberi",["Apel","Ceri","Anggur"],"Strawberry"],
-  ["🍿","Popcorn",["Keripik","Permen","Cokelat"],"Popcorn"],["🐬","Lumba-lumba",["Ikan","Paus","Hiu"],"Dolphin"],["👑","Mahkota",["Topi","Cincin","Baju"],"Crown"],["🎓","Toga Kelulusan",["Topi","Buku","Tas"],"Graduation Cap"],
-  ["🎨","Papan Lukis",["Buku","Pensil","Kamera"],"Palette"],["🎯","Papan Panah",["Bola","Gitar","Jam"],"Target"],["🎧","Headphone",["HP","Kamera","Lampu"],"Headphones"],["🔮","Bola Kristal",["Kaca","Jam","Bintang"],"Crystal Ball"]
-].map(x=>({word:x[0],correct:x[1],wrongs:x[2],listenWord:x[3]}))
+
+/* EMOJI MODE - EASY (PILIKAN JAWABAN BAHASA INGGRIS) */
+emoji_easy:[
+  ["🐶","Dog",["Cat","Bird","Lion"]],["🐱","Cat",["Dog","Rabbit","Cow"]],["🍎","Apple",["Banana","Orange","Grape"]],["🚗","Car",["Motorcycle","Bicycle","Airplane"]],
+  ["🚀","Rocket",["Car","Ship","Train"]],["🍕","Pizza",["Bread","Cake","Burger"]],["⚽","Soccer Ball",["Basketball","Volleyball","Tennis"]],["📚","Books",["Pencil","Bag","Ruler"]],
+  ["🌧️","Rain",["Sun","Cloud","Wind"]],["🔥","Fire",["Water","Ice","Earth"]],["🍌","Banana",["Apple","Orange","Pineapple"]],["🐸","Frog",["Snake","Fish","Turtle"]],["🦁","Lion",["Tiger","Wolf","Bear"]],
+  ["✈️","Airplane",["Helicopter","Ship","Car"]],["🚲","Bicycle",["Motorcycle","Car","Train"]],["🍦","Ice Cream",["Chocolate","Candy","Cake"]],["🎸","Guitar",["Drum","Piano","Violin"]],["☀️","Sun",["Moon","Star","Cloud"]]
+].map(x=>({word:x[0],correct:x[1],wrongs:x[2],listenWord:x[1]})),
+
+/* EMOJI MODE - MEDIUM (PILIHAN JAWABAN BAHASA INGGRIS) */
+emoji_medium:[
+  ["🌙","Moon",["Sun","Star","Cloud"]],["🍔","Burger",["Pizza","Bread","Fries"]],["🏀","Basketball",["Soccer Ball","Volleyball","Tennis"]],["🎈","Balloon",["Ball","Lamp","Toy"]],
+  ["🔑","Key",["Door","Lock","House"]],["⏰","Alarm Clock",["Watch","Phone","Calendar"]],["🎁","Gift",["Money","Letter","Bag"]],["🥑","Avocado",["Apple","Banana","Orange"]],
+  ["🐼","Panda",["Bear","Cat","Dog"]],["🍩","Donut",["Cake","Bread","Candy"]],["🌋","Volcano",["Mountain","Sea","Cloud"]],["🌈","Rainbow",["Cloud","Rain","Sun"]],
+  ["🌵","Cactus",["Tree","Flower","Grass"]],["🍓","Strawberry",["Apple","Cherry","Grape"]]
+].map(x=>({word:x[0],correct:x[1],wrongs:x[2],listenWord:x[1]})),
+
+/* EMOJI MODE - HARD (PILIHAN JAWABAN BAHASA INGGRIS) */
+emoji_hard:[
+  ["🍿","Popcorn",["Chips","Candy","Chocolate"]],["🐬","Dolphin",["Fish","Whale","Shark"]],["👑","Crown",["Hat","Ring","Shirt"]],["🎓","Graduation Cap",["Hat","Book","Bag"]],
+  ["🎨","Palette",["Book","Pencil","Camera"]],["🎯","Target",["Ball","Guitar","Clock"]],["🎧","Headphones",["Phone","Camera","Lamp"]],["🔮","Crystal Ball",["Glass","Clock","Star"]]
+].map(x=>({word:x[0],correct:x[1],wrongs:x[2],listenWord:x[1]}))
 };
 
 function normalizeDatabase(){
   const result={};
   Object.keys(defaultQuestions).forEach(level=>{
-    result[level]=defaultQuestions[level].map(q=>Array.isArray(q)?{word:q[0],correct:q[1],wrongs:q[2],listenWord:q[3]}:q);
+    result[level]=defaultQuestions[level].map(q=>Array.isArray(q)?{word:q[0],correct:q[1],wrongs:q[2],listenWord:q[3]||q[0]}:q);
   });
   return result;
 }
@@ -498,7 +524,33 @@ function createPlayer(){
 
 let matchState={ p1:createPlayer(), p2:createPlayer(), questionSets:{p1:[],p2:[]}, started:false, ended:false, paused:false };
 
-/* ================= MENU ================= */
+/* ================= MENU CONTROL & EMOJI DIFFICULTY ================= */
+function handleLevelSelectChange(){
+  const val=document.getElementById("level-select").value;
+  const emojiSection=document.getElementById("emoji-diff-section");
+  if(val.startsWith("emoji_")){
+    emojiSection.classList.remove("hidden");
+    highlightEmojiDiffButton(val);
+  }else{
+    emojiSection.classList.add("hidden");
+  }
+}
+
+function selectEmojiDiff(levelKey){
+  document.getElementById("level-select").value=levelKey;
+  highlightEmojiDiffButton(levelKey);
+}
+
+function highlightEmojiDiffButton(levelKey){
+  document.querySelectorAll(".ediff-btn").forEach(btn=>{
+    btn.className="ediff-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs font-bold";
+  });
+  const map={ emoji_easy:"ediff-easy", emoji_medium:"ediff-medium", emoji_hard:"ediff-hard" };
+  if(map[levelKey]){
+    document.getElementById(map[levelKey]).className="ediff-btn p-2 rounded-lg border-2 border-amber-400 bg-amber-900/60 text-amber-200 text-xs font-bold";
+  }
+}
+
 function selectGameMode(mode){
   gameConfig.mode=mode;
   document.querySelectorAll(".mode-btn").forEach(btn=>{
@@ -533,7 +585,6 @@ function withShuffledOptions(q){
   return { ...q, shuffledOptions:options };
 }
 
-/* PERBAIKAN LOGIKA RANDOMIZE DAN SOAL KEDUA PEMAIN */
 function buildQuestionSets(){
   let pool=activeQuestionPacks[gameConfig.packKey]||activeQuestionPacks.medium;
   let targetCount=gameConfig.questionCount>0?Math.min(gameConfig.questionCount, pool.length):pool.length;
@@ -570,8 +621,10 @@ function launchArena(){
   document.getElementById("p1-name").innerText="TIM MERAH";
   document.getElementById("p2-name").innerText=gameConfig.mode==="ai"?"BOT AI":"TIM BIRU";
   document.getElementById("p2-icon").className=gameConfig.mode==="ai"?"fa-solid fa-robot":"fa-solid fa-user";
-  document.getElementById("p1-sub").innerText=gameConfig.packKey==="emoji"?"Mode Emoji":"Bahasa Inggris";
-  document.getElementById("p2-sub").innerText=gameConfig.packKey==="emoji"?"Mode Emoji":"Bahasa Inggris";
+  
+  const isEmoji=gameConfig.packKey.startsWith("emoji");
+  document.getElementById("p1-sub").innerText=isEmoji?"Emoji Mode":"English Word";
+  document.getElementById("p2-sub").innerText=isEmoji?"Emoji Mode":"English Word";
   document.getElementById("global-question-info").innerText=`1 / ${Math.max(p1Questions.length,p2Questions.length)}`;
 
   document.getElementById("main-menu").classList.add("hidden");
@@ -813,7 +866,7 @@ function useHint(player){
   const wrongs=q.shuffledOptions.filter(x=>x!==q.correct);
   const remove=wrongs[Math.floor(Math.random()*wrongs.length)];
   const hint=document.getElementById(`${player}-hint`);
-  hint.innerText=`💡 Salah satu jawaban "${remove}" pasti BUKAN jawaban.`;
+  hint.innerText=`💡 Jawaban "${remove}" pasti BUKAN jawaban benar.`;
   hint.classList.remove("hidden");
   if(gameConfig.timerLimit>0 && p.timerLeft>2){ p.timerLeft=Math.max(2,p.timerLeft-2); updateTimerUI(player); }
 }
@@ -1110,7 +1163,7 @@ function addQuestionFromTeacher(){
   if(!word||!correct||!w1||!w2||!w3){ alert("Isi semua kolom soal terlebih dahulu."); return; }
   if(!activeQuestionPacks[key]){ activeQuestionPacks[key]=[]; }
 
-  activeQuestionPacks[key].push({ word, correct, wrongs:[w1,w2,w3], listenWord:word });
+  activeQuestionPacks[key].push({ word, correct, wrongs:[w1,w2,w3], listenWord:correct });
   persistCustomPacks();
 
   document.getElementById("teacher-word-en").value="";
