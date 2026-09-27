@@ -64,6 +64,20 @@ body.big-text{font-size:1.12em;}
   .answer-btn{font-size:.7rem!important;}
   .menu-title{font-size:2.5rem!important;}
 }
+
+/* Force landscape layout on phones when fullscreen can't rotate natively */
+html.force-landscape{
+  overflow:hidden;
+}
+html.force-landscape body{
+  position:fixed;
+  top:0;
+  left:100%;
+  width:100vh;
+  height:100vw;
+  transform-origin:top left;
+  transform:rotate(90deg);
+}
 </style>
 </head>
 
@@ -343,10 +357,32 @@ function toggleBigText(){
   document.body.classList.toggle("big-text");
 }
 
+function applyOrientationFix(){
+  const isFullscreen=!!document.fullscreenElement;
+  const isPortrait=window.innerHeight>window.innerWidth;
+  const isPhone=Math.min(window.innerWidth,window.innerHeight)<=900;
+  if(isFullscreen && isPortrait && isPhone){
+    document.documentElement.classList.add("force-landscape");
+  }else{
+    document.documentElement.classList.remove("force-landscape");
+  }
+}
+
+document.addEventListener("fullscreenchange",applyOrientationFix);
+window.addEventListener("resize",applyOrientationFix);
+window.addEventListener("orientationchange",applyOrientationFix);
+
 function toggleFullscreen(){
   if(!document.fullscreenElement){
-    document.documentElement.requestFullscreen().catch(()=>{});
+    document.documentElement.requestFullscreen().then(()=>{
+      if(screen.orientation && screen.orientation.lock){
+        screen.orientation.lock("landscape").catch(()=>{ applyOrientationFix(); });
+      }else{
+        applyOrientationFix();
+      }
+    }).catch(()=>{});
   }else{
+    if(screen.orientation && screen.orientation.unlock){ try{ screen.orientation.unlock(); }catch(e){} }
     document.exitFullscreen().catch(()=>{});
   }
 }
@@ -650,6 +686,7 @@ function handleAnswer(player,selected,correct){
   p.index++;
   p.answered=false;
   renderPlayer(player);
+  startPlayerTimer(player);
 
   if(gameConfig.mode==="ai" && player==="p1"){ scheduleAI(); }
 }
@@ -672,6 +709,7 @@ function handleTimeout(player){
   p.index++;
   p.answered=false;
   renderPlayer(player);
+  startPlayerTimer(player);
   if(gameConfig.mode==="ai" && player==="p2"){ scheduleAI(); }
 }
 
