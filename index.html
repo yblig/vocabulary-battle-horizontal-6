@@ -2,15 +2,16 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Vocabulary Battle - Ultimate Edition</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<title>Vocabulary Battle - Ultimate</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Fredoka:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Teko:wght@500;600;700&display=swap');
 
 *{
     box-sizing:border-box;
@@ -19,15 +20,18 @@
 }
 
 html,body{
-    margin:0;
     width:100%;
     height:100%;
+    margin:0;
     overflow:hidden;
 }
 
 body{
     font-family:'Fredoka',sans-serif;
-    background:#080c16;
+    background:
+        radial-gradient(circle at 20% 20%,#172554 0,transparent 30%),
+        radial-gradient(circle at 80% 80%,#3b0764 0,transparent 30%),
+        #050816;
     color:white;
 }
 
@@ -35,129 +39,142 @@ body{
     font-family:'Teko',sans-serif;
 }
 
+button,
+select,
+input{
+    font-family:inherit;
+}
+
+button{
+    -webkit-tap-highlight-color:transparent;
+}
+
 ::-webkit-scrollbar{
     width:6px;
 }
 
-::-webkit-scrollbar-track{
-    background:#111827;
-}
-
 ::-webkit-scrollbar-thumb{
     background:#475569;
-    border-radius:5px;
+    border-radius:99px;
 }
 
-/* ================= ANIMATIONS ================= */
+/* ================= ANIMATION ================= */
 
 @keyframes pop{
     0%{transform:scale(.7);opacity:0}
-    60%{transform:scale(1.15)}
+    70%{transform:scale(1.08)}
     100%{transform:scale(1);opacity:1}
+}
+
+@keyframes slide{
+    from{
+        transform:translateY(18px);
+        opacity:0;
+    }
+    to{
+        transform:translateY(0);
+        opacity:1;
+    }
+}
+
+@keyframes shake{
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-9px)}
+    40%{transform:translateX(9px)}
+    60%{transform:translateX(-7px)}
+    80%{transform:translateX(7px)}
 }
 
 @keyframes correct{
     0%{transform:scale(1)}
-    40%{
-        transform:scale(1.03);
-        box-shadow:0 0 35px rgba(34,197,94,.9);
-    }
-    100%{transform:scale(1)}
-}
-
-@keyframes wrong{
-    0%,100%{transform:translateX(0)}
-    20%{transform:translateX(-10px)}
-    40%{transform:translateX(10px)}
-    60%{transform:translateX(-8px)}
-    80%{transform:translateX(8px)}
-}
-
-@keyframes timeout{
-    0%{transform:scale(.95)}
     50%{
-        transform:scale(1.04);
-        box-shadow:0 0 30px rgba(245,158,11,.8);
+        transform:scale(1.025);
+        box-shadow:0 0 40px rgba(34,197,94,.75);
     }
     100%{transform:scale(1)}
 }
 
-@keyframes floatUp{
+@keyframes danger{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.08)}
+}
+
+@keyframes float{
     0%{
         transform:translate(-50%,0) scale(.7);
         opacity:1;
     }
     100%{
-        transform:translate(-50%,-70px) scale(1.3);
+        transform:translate(-50%,-75px) scale(1.2);
         opacity:0;
     }
 }
 
-@keyframes timerDanger{
-    0%,100%{transform:scale(1)}
-    50%{transform:scale(1.08)}
+@keyframes glow{
+    0%,100%{
+        box-shadow:0 0 8px rgba(99,102,241,.15);
+    }
+    50%{
+        box-shadow:0 0 28px rgba(99,102,241,.65);
+    }
 }
 
-@keyframes pulseGlow{
-    0%,100%{box-shadow:0 0 8px rgba(99,102,241,.2)}
-    50%{box-shadow:0 0 25px rgba(99,102,241,.7)}
+@keyframes gradientMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }
 
-@keyframes slideIn{
-    from{transform:translateY(15px);opacity:0}
-    to{transform:translateY(0);opacity:1}
+.pop{
+    animation:pop .35s ease;
 }
 
-.animate-pop{
-    animation:pop .35s ease forwards;
+.slide{
+    animation:slide .3s ease;
 }
 
-.card-correct{
+.shake{
+    animation:shake .45s ease;
+}
+
+.correctAnim{
     animation:correct .45s ease;
 }
 
-.card-wrong{
-    animation:wrong .45s ease;
+.timerDanger{
+    animation:danger .65s infinite;
 }
 
-.card-timeout{
-    animation:timeout .5s ease;
+.glow{
+    animation:glow 2s infinite;
 }
 
-.timer-danger{
-    animation:timerDanger .7s infinite;
-}
-
-.question-enter{
-    animation:slideIn .25s ease;
+.gradient-title{
+    background-size:200% 200%;
+    animation:gradientMove 4s ease infinite;
 }
 
 .feedback{
     position:absolute;
-    z-index:50;
-    top:42%;
     left:50%;
-    transform:translate(-50%,0);
+    top:42%;
+    z-index:100;
+    pointer-events:none;
     font-family:'Teko',sans-serif;
     font-size:3rem;
-    font-weight:bold;
-    pointer-events:none;
-    animation:floatUp .7s ease forwards;
-    text-shadow:0 4px 15px #000;
+    font-weight:700;
+    transform:translate(-50%,0);
+    animation:float .75s ease forwards;
+    text-shadow:0 5px 20px #000;
 }
 
-.glow{
-    animation:pulseGlow 2s infinite;
-}
-
-/* ================= ANSWERS ================= */
-
-.answer-btn{
+.answer{
     position:relative;
     overflow:hidden;
+    transition:.15s;
 }
 
-.answer-btn::after{
+.answer::before{
     content:"";
     position:absolute;
     inset:0;
@@ -167,32 +184,70 @@ body{
         rgba(255,255,255,.12),
         transparent 80%
     );
-    transform:translateX(-100%);
-    transition:.4s;
+    transform:translateX(-120%);
+    transition:.45s;
 }
 
-.answer-btn:hover::after{
-    transform:translateX(100%);
+.answer:hover::before{
+    transform:translateX(120%);
 }
 
-.answer-btn:disabled{
-    opacity:.55;
+.answer:active{
+    transform:scale(.96);
+}
+
+.answer:disabled{
     cursor:not-allowed;
+}
+
+.selected-correct{
+    background:#166534!important;
+    border-color:#22c55e!important;
+}
+
+.selected-wrong{
+    background:#7f1d1d!important;
+    border-color:#ef4444!important;
+}
+
+.correct-answer{
+    background:#14532d!important;
+    border-color:#22c55e!important;
+}
+
+/* ================= GLASS ================= */
+
+.glass{
+    background:rgba(15,23,42,.88);
+    border:1px solid rgba(148,163,184,.16);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+}
+
+.menu-card{
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.55),
+        inset 0 1px rgba(255,255,255,.04);
 }
 
 /* ================= MOBILE ================= */
 
 @media(max-width:700px){
-    .question-text{
-        font-size:1.25rem!important;
-    }
-
-    .answer-btn{
-        font-size:.7rem!important;
-    }
 
     .menu-title{
-        font-size:2.5rem!important;
+        font-size:2.8rem!important;
+    }
+
+    .question-text{
+        font-size:1.35rem!important;
+    }
+
+    .answer{
+        font-size:.72rem!important;
+    }
+
+    .arena-title{
+        font-size:1.1rem!important;
     }
 }
 </style>
@@ -204,19 +259,26 @@ body{
                          MAIN MENU
 ========================================================= -->
 
-<div id="main-menu"
-class="fixed inset-0 z-[100] bg-slate-950/97 backdrop-blur-xl overflow-y-auto p-4">
+<section id="menu"
+class="fixed inset-0 z-[100] overflow-y-auto p-3">
 
 <div class="min-h-full flex items-center justify-center">
 
-<div class="max-w-xl w-full bg-slate-900 border-2 border-slate-700 rounded-3xl p-5 shadow-2xl">
+<div class="menu-card glass w-full max-w-xl rounded-[28px] p-5">
 
-<div class="flex justify-between items-start">
+<!-- HEADER -->
+
+<div class="flex items-center gap-3">
 
 <div class="flex-1 text-center">
 
-<h1 class="menu-title text-5xl font-teko tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500">
+<h1 class="menu-title font-teko text-6xl tracking-wide
+text-transparent bg-clip-text
+bg-gradient-to-r from-red-500 via-yellow-400 to-cyan-400
+gradient-title">
+
 VOCABULARY BATTLE
+
 </h1>
 
 <p class="text-xs text-slate-400">
@@ -226,10 +288,13 @@ Ultimate Classroom Edition
 </div>
 
 <button
-onclick="toggleAudioMute()"
-id="audio-toggle-btn"
-class="text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2">
-<i id="audio-icon" class="fa-solid fa-volume-high text-indigo-400"></i>
+onclick="toggleMute()"
+id="muteButton"
+class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700">
+
+<i id="muteIcon"
+class="fa-solid fa-volume-high text-indigo-400"></i>
+
 </button>
 
 </div>
@@ -238,30 +303,30 @@ class="text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2">
 
 <div class="mt-5">
 
-<label class="text-xs font-bold text-slate-300 uppercase">
+<div class="text-xs font-bold text-slate-300 uppercase mb-2">
 <i class="fa-solid fa-gamepad"></i>
-Mode Permainan
-</label>
+Mode
+</div>
 
-<div class="grid grid-cols-2 gap-2 mt-1">
+<div class="grid grid-cols-2 gap-2">
 
 <button
-id="btn-mode-2p"
-onclick="selectGameMode('2p')"
-class="mode-btn p-3 rounded-xl border-2 border-red-500 bg-red-950/40 text-red-400 font-bold text-sm">
+id="mode2p"
+onclick="setMode('2p')"
+class="mode-button p-3 rounded-xl border-2 border-red-500 bg-red-950/40 text-red-300 font-bold">
 
 <i class="fa-solid fa-users"></i>
-2 Player
+2 PLAYER
 
 </button>
 
 <button
-id="btn-mode-ai"
-onclick="selectGameMode('ai')"
-class="mode-btn p-3 rounded-xl border-2 border-slate-700 bg-slate-800 text-slate-400 font-bold text-sm">
+id="modeAI"
+onclick="setMode('ai')"
+class="mode-button p-3 rounded-xl border-2 border-slate-700 bg-slate-800 text-slate-400 font-bold">
 
 <i class="fa-solid fa-robot"></i>
-Vs AI
+VS AI
 
 </button>
 
@@ -269,23 +334,22 @@ Vs AI
 
 </div>
 
-<!-- DIFFICULTY -->
+<!-- LEVEL -->
 
 <div class="mt-4">
 
-<label class="text-xs font-bold text-slate-300 uppercase">
-<i class="fa-solid fa-layer-group"></i>
-Level
+<label class="text-xs font-bold text-slate-300">
+LEVEL
 </label>
 
 <select
-id="level-select"
-class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm text-white">
+id="level"
+class="w-full mt-1 rounded-xl bg-slate-800 border border-slate-700 p-3 text-sm outline-none">
 
-<option value="easy">🟢 Easy — Santai</option>
-<option value="medium" selected>🟡 Medium — Normal</option>
-<option value="hard">🔴 Hard — Challenging</option>
-<option value="extreme">🔥 Extreme — Advanced</option>
+<option value="easy">🟢 Easy</option>
+<option value="medium" selected>🟡 Medium</option>
+<option value="hard">🔴 Hard</option>
+<option value="extreme">🔥 Extreme</option>
 <option value="emoji">🧩 Emoji Mode</option>
 
 </select>
@@ -296,24 +360,18 @@ class="w-full mt-1 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm t
 
 <div class="mt-4">
 
-<label class="text-xs font-bold text-slate-300 uppercase">
-<i class="fa-solid fa-list-ol"></i>
-Jumlah Soal
+<label class="text-xs font-bold text-slate-300">
+JUMLAH SOAL
 </label>
 
 <div class="grid grid-cols-6 gap-1.5 mt-1">
 
-<button onclick="selectQuestionCount(5)" id="qcount-5" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700">5</button>
-
-<button onclick="selectQuestionCount(10)" id="qcount-10" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700">10</button>
-
-<button onclick="selectQuestionCount(15)" id="qcount-15" class="qcount-btn p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300">15</button>
-
-<button onclick="selectQuestionCount(20)" id="qcount-20" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700">20</button>
-
-<button onclick="selectQuestionCount(25)" id="qcount-25" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700">25</button>
-
-<button onclick="selectQuestionCount(0)" id="qcount-0" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">Semua</button>
+<button onclick="setQuestions(5)" id="q5" class="qbtn">5</button>
+<button onclick="setQuestions(10)" id="q10" class="qbtn">10</button>
+<button onclick="setQuestions(15)" id="q15" class="qbtn active">15</button>
+<button onclick="setQuestions(20)" id="q20" class="qbtn">20</button>
+<button onclick="setQuestions(25)" id="q25" class="qbtn">25</button>
+<button onclick="setQuestions(0)" id="q0" class="qbtn">ALL</button>
 
 </div>
 
@@ -323,22 +381,19 @@ Jumlah Soal
 
 <div class="mt-4">
 
-<label class="text-xs font-bold text-slate-300 uppercase">
-<i class="fa-solid fa-clock"></i>
-Waktu Per Soal
+<label class="text-xs font-bold text-slate-300">
+WAKTU PER SOAL
 </label>
 
 <div class="grid grid-cols-3 gap-2 mt-1">
 
-<button onclick="selectTimer(10)" id="timer-10" class="timer-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">
-10 Detik
+<button onclick="setTimer(10)" id="t10" class="tbtn">10 DETIK</button>
+
+<button onclick="setTimer(15)" id="t15" class="tbtn active">
+15 DETIK
 </button>
 
-<button onclick="selectTimer(15)" id="timer-15" class="timer-btn p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300 text-xs">
-15 Detik
-</button>
-
-<button onclick="selectTimer(0)" id="timer-0" class="timer-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">
+<button onclick="setTimer(0)" id="t0" class="tbtn">
 ∞
 </button>
 
@@ -346,147 +401,180 @@ Waktu Per Soal
 
 </div>
 
-<!-- BONUS SETTINGS -->
+<!-- OPTIONS -->
 
-<div class="mt-4 grid grid-cols-2 gap-2">
+<div class="grid grid-cols-2 gap-2 mt-4">
 
-<label class="bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs flex items-center gap-2 cursor-pointer">
-
-<input id="bonus-enabled" type="checkbox" checked>
-
-⚡ Bonus Kecepatan
-
+<label class="bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs flex gap-2 items-center">
+<input id="bonus" type="checkbox" checked>
+⚡ Speed Bonus
 </label>
 
-<label class="bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs flex items-center gap-2 cursor-pointer">
-
-<input id="hint-enabled" type="checkbox" checked>
-
+<label class="bg-slate-800 border border-slate-700 rounded-xl p-3 text-xs flex gap-2 items-center">
+<input id="hint" type="checkbox" checked>
 💡 Hint
-
 </label>
 
 </div>
 
 <!-- BUTTONS -->
 
-<div class="flex gap-2 mt-5">
+<div class="grid grid-cols-3 gap-2 mt-5">
 
 <button
-onclick="openTeacherModal()"
-class="w-1/3 bg-amber-600 hover:bg-amber-500 rounded-xl p-3 text-xs font-bold">
+onclick="openTeacher()"
+class="bg-amber-600 hover:bg-amber-500 rounded-xl p-3 text-xs font-bold">
 
 <i class="fa-solid fa-chalkboard-user"></i>
-Guru
+GURU
 
 </button>
 
 <button
-onclick="initiateGameSetup()"
-class="w-2/3 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-3 font-bold shadow-lg">
+onclick="showHighScores()"
+class="bg-purple-600 hover:bg-purple-500 rounded-xl p-3 text-xs font-bold">
+
+<i class="fa-solid fa-trophy"></i>
+SCORE
+
+</button>
+
+<button
+onclick="startGame()"
+class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-3 font-bold">
 
 <i class="fa-solid fa-play"></i>
-MULAI ARENA
+MULAI
 
 </button>
 
 </div>
 
+<div class="text-center text-[10px] text-slate-500 mt-3">
+Keyboard: 1-4 Jawaban • P Pause • R Restart • ESC Keluar
+</div>
+
 </div>
 </div>
-</div>
+</section>
+
 
 <!-- =========================================================
-                         ARENA
+                           ARENA
 ========================================================= -->
 
-<div
+<section
 id="arena"
-class="hidden h-screen w-screen flex flex-col p-2">
+class="hidden fixed inset-0 z-[50] p-2">
 
-<!-- TOP INFO -->
+<!-- TOP -->
 
-<div class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 mb-2">
+<div class="glass rounded-xl p-2 mb-2 flex items-center gap-2">
 
-<div class="text-xs">
-<span class="text-slate-400">Soal:</span>
-<strong id="global-question-info">1</strong>
+<div class="text-xs flex-1">
+Soal:
+<strong id="questionNumber">1</strong>
+<span class="text-slate-500">/</span>
+<span id="questionTotal">15</span>
 </div>
 
 <div
-id="round-message"
-class="font-teko text-xl text-yellow-400">
-READY
+id="roundMessage"
+class="arena-title font-teko text-2xl text-yellow-400">
+
+BATTLE
+
 </div>
 
 <button
-onclick="confirmExitGame()"
-class="text-xs bg-red-900/40 hover:bg-red-700 border border-red-700 rounded-lg px-3 py-2">
+onclick="togglePause()"
+id="pauseButton"
+class="w-10 h-9 rounded-lg bg-yellow-700/40 border border-yellow-600">
 
-<i class="fa-solid fa-door-open"></i>
-Keluar
+<i class="fa-solid fa-pause"></i>
 
 </button>
+
+<button
+onclick="restartGame()"
+class="w-10 h-9 rounded-lg bg-indigo-700/40 border border-indigo-600">
+
+<i class="fa-solid fa-rotate"></i>
+
+</button>
+
+<button
+onclick="exitGame()"
+class="px-3 h-9 rounded-lg bg-red-900/50 border border-red-700 text-xs">
+
+<i class="fa-solid fa-door-open"></i>
+
+</button>
+
+</div>
+
+<!-- PROGRESS -->
+
+<div class="glass rounded-xl p-2 mb-2">
+
+<div id="progressDots" class="flex gap-1 overflow-hidden"></div>
 
 </div>
 
 <!-- PLAYERS -->
 
-<div class="grid grid-cols-2 gap-2 flex-1 min-h-0">
+<div class="grid grid-cols-2 gap-2 h-[calc(100vh-126px)] min-h-0">
 
 <!-- P1 -->
 
 <div
-id="p1-card"
-class="bg-slate-900/90 border-2 border-red-500/50 rounded-2xl p-2 flex flex-col min-h-0 relative overflow-hidden">
+id="p1Card"
+class="glass rounded-2xl p-2 flex flex-col min-h-0 relative overflow-hidden border-2 border-red-500/40">
 
-<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
 
-<div class="font-bold text-red-400 text-xs">
+<div class="flex-1">
 
+<div class="text-red-400 font-bold text-xs">
 <i class="fa-solid fa-user"></i>
-
-<span id="p1-name">
 TIM MERAH
-</span>
+</div>
+
+<div class="text-[10px] text-slate-500">
+Skor:
+<strong id="p1ScoreTop" class="text-white">0</strong>
+</div>
 
 </div>
 
-<div
-id="p1-streak"
-class="hidden text-[10px] bg-gradient-to-r from-yellow-400 to-red-500 text-black px-2 py-1 rounded-full font-black">
-🔥 0
+<div id="p1Streak"
+class="hidden text-[9px] bg-yellow-400 text-black px-2 py-1 rounded-full font-black">
+🔥 2
 </div>
 
 <div class="text-red-400 text-xs font-bold">
-
-<span id="p1-progress">
-1/15
-</span>
-
+<span id="p1Progress">1/15</span>
 </div>
 
 </div>
 
-<!-- TIMER P1 -->
+<!-- TIMER -->
 
 <div class="mt-1">
 
-<div class="flex justify-between text-[9px] text-slate-400">
+<div class="flex justify-between text-[9px] text-slate-500">
 
-<span>WAKTU P1</span>
+<span>TIME</span>
 
-<span id="p1-timer-text">
-15s
-</span>
+<span id="p1TimerText">15s</span>
 
 </div>
 
 <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
 
 <div
-id="p1-timer-bar"
-class="h-full bg-red-500 transition-all duration-300"
+id="p1TimerBar"
+class="h-full bg-red-500 transition-all"
 style="width:100%">
 </div>
 
@@ -497,107 +585,107 @@ style="width:100%">
 <!-- QUESTION -->
 
 <div
-class="flex-1 min-h-0 mt-2 bg-red-950/30 border border-red-500/30 rounded-xl flex flex-col items-center justify-center relative">
+id="p1QuestionBox"
+class="flex-1 min-h-0 mt-2 rounded-xl
+bg-red-950/30 border border-red-500/30
+flex flex-col items-center justify-center relative">
 
-<span
-id="p1-sub"
-class="text-[9px] uppercase tracking-widest text-red-300">
-Bahasa Inggris
-</span>
+<div class="text-[9px] uppercase tracking-widest text-red-300">
+ENGLISH WORD
+</div>
 
 <h2
-id="p1-question"
-class="question-text text-3xl font-bold text-white text-center px-2 break-words">
-...
+id="p1Question"
+class="question-text text-3xl font-bold text-white text-center px-2 break-words mt-1">
+-
 </h2>
 
+<div class="flex gap-1 mt-2">
+
 <button
-onclick="speakWord('p1')"
-class="mt-2 bg-red-900/70 border border-red-500/50 rounded-full px-3 py-1 text-[9px] text-red-300">
+onclick="speak('p1')"
+class="rounded-full px-3 py-1 text-[9px]
+bg-red-900/70 border border-red-500/50">
 
 <i class="fa-solid fa-volume-high"></i>
 LISTEN
-
 </button>
 
 <button
-id="p1-hint-btn"
 onclick="useHint('p1')"
-class="mt-2 bg-amber-900/60 border border-amber-500/50 rounded-full px-3 py-1 text-[9px] text-amber-300">
+id="p1HintButton"
+class="rounded-full px-3 py-1 text-[9px]
+bg-amber-900/60 border border-amber-500/50">
 
 💡 HINT
-
 </button>
 
-<div
-id="p1-hint"
-class="hidden text-[10px] text-yellow-300 mt-2 text-center px-2">
 </div>
+
+<div id="p1Hint" class="hidden text-[9px] text-yellow-300 mt-2 text-center px-2"></div>
 
 </div>
 
 <!-- ANSWERS -->
 
-<div
-id="p1-options"
-class="grid grid-cols-2 gap-1.5 h-[42%] mt-2">
+<div id="p1Options"
+class="grid grid-cols-2 gap-1.5 h-[40%] mt-2">
 </div>
 
 </div>
+
 
 <!-- P2 -->
 
 <div
-id="p2-card"
-class="bg-slate-900/90 border-2 border-blue-500/50 rounded-2xl p-2 flex flex-col min-h-0 relative overflow-hidden">
+id="p2Card"
+class="glass rounded-2xl p-2 flex flex-col min-h-0 relative overflow-hidden border-2 border-blue-500/40">
 
-<div class="flex justify-between items-center">
+<div class="flex items-center gap-2">
 
-<div class="font-bold text-blue-400 text-xs">
+<div class="flex-1">
 
-<i id="p2-icon" class="fa-solid fa-user"></i>
+<div class="text-blue-400 font-bold text-xs">
 
-<span id="p2-name">
-TIM BIRU
-</span>
+<i id="p2Icon" class="fa-solid fa-user"></i>
+
+<span id="p2Name">TIM BIRU</span>
 
 </div>
 
-<div
-id="p2-streak"
-class="hidden text-[10px] bg-gradient-to-r from-cyan-400 to-blue-500 text-black px-2 py-1 rounded-full font-black">
-🔥 0
+<div class="text-[10px] text-slate-500">
+Skor:
+<strong id="p2ScoreTop" class="text-white">0</strong>
+</div>
+
+</div>
+
+<div id="p2Streak"
+class="hidden text-[9px] bg-yellow-400 text-black px-2 py-1 rounded-full font-black">
+🔥 2
 </div>
 
 <div class="text-blue-400 text-xs font-bold">
-
-<span id="p2-progress">
-1/15
-</span>
-
+<span id="p2Progress">1/15</span>
 </div>
 
 </div>
-
-<!-- TIMER P2 -->
 
 <div class="mt-1">
 
-<div class="flex justify-between text-[9px] text-slate-400">
+<div class="flex justify-between text-[9px] text-slate-500">
 
-<span>WAKTU P2</span>
+<span>TIME</span>
 
-<span id="p2-timer-text">
-15s
-</span>
+<span id="p2TimerText">15s</span>
 
 </div>
 
 <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
 
 <div
-id="p2-timer-bar"
-class="h-full bg-blue-500 transition-all duration-300"
+id="p2TimerBar"
+class="h-full bg-blue-500 transition-all"
 style="width:100%">
 </div>
 
@@ -605,252 +693,312 @@ style="width:100%">
 
 </div>
 
-<!-- QUESTION -->
-
 <div
-class="flex-1 min-h-0 mt-2 bg-blue-950/30 border border-blue-500/30 rounded-xl flex flex-col items-center justify-center relative">
+id="p2QuestionBox"
+class="flex-1 min-h-0 mt-2 rounded-xl
+bg-blue-950/30 border border-blue-500/30
+flex flex-col items-center justify-center relative">
 
-<span
-id="p2-sub"
-class="text-[9px] uppercase tracking-widest text-blue-300">
-Bahasa Inggris
-</span>
+<div class="text-[9px] uppercase tracking-widest text-blue-300">
+ENGLISH WORD
+</div>
 
 <h2
-id="p2-question"
-class="question-text text-3xl font-bold text-white text-center px-2 break-words">
-...
+id="p2Question"
+class="question-text text-3xl font-bold text-white text-center px-2 break-words mt-1">
+-
 </h2>
 
+<div class="flex gap-1 mt-2">
+
 <button
-onclick="speakWord('p2')"
-class="mt-2 bg-blue-900/70 border border-blue-500/50 rounded-full px-3 py-1 text-[9px] text-blue-300">
+onclick="speak('p2')"
+class="rounded-full px-3 py-1 text-[9px]
+bg-blue-900/70 border border-blue-500/50">
 
 <i class="fa-solid fa-volume-high"></i>
 LISTEN
+</button>
+
+<button
+onclick="useHint('p2')"
+id="p2HintButton"
+class="rounded-full px-3 py-1 text-[9px]
+bg-amber-900/60 border border-amber-500/50">
+
+💡 HINT
+</button>
+
+</div>
+
+<div id="p2Hint" class="hidden text-[9px] text-yellow-300 mt-2 text-center px-2"></div>
+
+</div>
+
+<div id="p2Options"
+class="grid grid-cols-2 gap-1.5 h-[40%] mt-2">
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+                         PAUSE MODAL
+========================================================= -->
+
+<div
+id="pauseModal"
+class="hidden fixed inset-0 z-[400] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+
+<div class="glass max-w-sm w-full rounded-3xl p-6 text-center">
+
+<div class="text-5xl">⏸️</div>
+
+<h2 class="font-teko text-4xl text-yellow-400 mt-2">
+GAME PAUSED
+</h2>
+
+<p class="text-xs text-slate-400 mt-2">
+Pertandingan sedang dijeda.
+</p>
+
+<button
+onclick="togglePause()"
+class="w-full mt-5 bg-green-600 rounded-xl p-3 font-bold">
+
+<i class="fa-solid fa-play"></i>
+LANJUTKAN
 
 </button>
 
 <button
-id="p2-hint-btn"
-onclick="useHint('p2')"
-class="mt-2 bg-amber-900/60 border border-amber-500/50 rounded-full px-3 py-1 text-[9px] text-amber-300">
+onclick="exitGame()"
+class="w-full mt-2 bg-red-900/60 border border-red-700 rounded-xl p-3 text-sm">
 
-💡 HINT
+Keluar
 
 </button>
 
-<div
-id="p2-hint"
-class="hidden text-[10px] text-yellow-300 mt-2 text-center px-2">
+</div>
 </div>
 
-</div>
-
-<div
-id="p2-options"
-class="grid grid-cols-2 gap-1.5 h-[42%] mt-2">
-</div>
-
-</div>
-
-</div>
-
-<!-- BOTTOM SCORE -->
-
-<div class="bg-slate-900 border border-slate-800 rounded-xl mt-2 p-2 grid grid-cols-3 items-center text-center">
-
-<div class="text-red-400 text-xs font-bold">
-P1:
-<span id="p1-score">0</span>
-</div>
-
-<div
-id="speed-bonus-display"
-class="text-yellow-400 font-bold text-xs">
-⚡ +0
-</div>
-
-<div class="text-blue-400 text-xs font-bold">
-P2:
-<span id="p2-score">0</span>
-</div>
-
-</div>
-
-</div>
 
 <!-- =========================================================
-                        RECAP
+                         RESULT
 ========================================================= -->
 
 <div
-id="recap-modal"
-class="hidden fixed inset-0 z-[200] bg-slate-950/97 backdrop-blur-xl overflow-y-auto p-4">
+id="resultModal"
+class="hidden fixed inset-0 z-[300] bg-slate-950/97 backdrop-blur-xl overflow-y-auto p-3">
 
 <div class="min-h-full flex items-center justify-center">
 
-<div class="max-w-2xl w-full bg-slate-900 border-2 border-indigo-500 rounded-3xl p-5 shadow-2xl">
+<div class="glass max-w-3xl w-full rounded-3xl p-5">
 
 <div class="text-center">
 
-<p class="text-xs text-indigo-400 uppercase tracking-widest">
+<div class="text-xs text-indigo-400 uppercase tracking-widest">
 HASIL PERTANDINGAN
-</p>
+</div>
 
 <h1
-id="winner-banner"
-class="text-5xl font-teko text-yellow-400">
+id="winner"
+class="font-teko text-5xl text-yellow-400">
 SERI!
 </h1>
 
 </div>
 
+<!-- STATS -->
+
 <div class="grid grid-cols-2 gap-3 mt-4">
 
 <div class="bg-red-950/40 border border-red-500/40 rounded-xl p-3">
 
-<h3 id="recap-p1-name" class="font-bold text-red-400">
+<h3 class="text-red-400 font-bold text-sm">
 TIM MERAH
 </h3>
 
-<div class="text-xs mt-2 space-y-2">
+<div class="space-y-2 text-xs mt-3">
 
 <div class="flex justify-between">
 <span>Skor</span>
-<strong id="r1-score">0</strong>
+<strong id="r1Score">0</strong>
 </div>
 
 <div class="flex justify-between">
 <span>Benar</span>
-<strong id="r1-correct" class="text-green-400">0</strong>
+<strong id="r1Correct" class="text-green-400">0</strong>
 </div>
 
 <div class="flex justify-between">
 <span>Salah</span>
-<strong id="r1-wrong" class="text-red-400">0</strong>
+<strong id="r1Wrong" class="text-red-400">0</strong>
 </div>
 
 <div class="flex justify-between">
 <span>Timeout</span>
-<strong id="r1-timeout" class="text-yellow-400">0</strong>
+<strong id="r1Timeout" class="text-yellow-400">0</strong>
 </div>
 
 <div class="flex justify-between">
-<span>Max Streak</span>
-<strong id="r1-streak" class="text-orange-400">0</strong>
+<span>Bonus</span>
+<strong id="r1Bonus" class="text-cyan-400">0</strong>
+</div>
+
+<div class="flex justify-between">
+<span>Streak</span>
+<strong id="r1Streak">0</strong>
 </div>
 
 <div class="flex justify-between">
 <span>Akurasi</span>
-<strong id="r1-accuracy">0%</strong>
+<strong id="r1Accuracy">0%</strong>
 </div>
 
 <div class="flex justify-between">
-<span>Avg Time</span>
-<strong id="r1-time">0s</strong>
+<span>Rata-rata</span>
+<strong id="r1Time">0s</strong>
 </div>
 
 </div>
-
 </div>
+
 
 <div class="bg-blue-950/40 border border-blue-500/40 rounded-xl p-3">
 
-<h3 id="recap-p2-name" class="font-bold text-blue-400">
+<h3 id="resultP2Name" class="text-blue-400 font-bold text-sm">
 TIM BIRU
 </h3>
 
-<div class="text-xs mt-2 space-y-2">
+<div class="space-y-2 text-xs mt-3">
 
 <div class="flex justify-between">
 <span>Skor</span>
-<strong id="r2-score">0</strong>
+<strong id="r2Score">0</strong>
 </div>
 
 <div class="flex justify-between">
 <span>Benar</span>
-<strong id="r2-correct" class="text-green-400">0</strong>
+<strong id="r2Correct" class="text-green-400">0</strong>
 </div>
 
 <div class="flex justify-between">
 <span>Salah</span>
-<strong id="r2-wrong" class="text-red-400">0</strong>
+<strong id="r2Wrong" class="text-red-400">0</strong>
 </div>
 
 <div class="flex justify-between">
 <span>Timeout</span>
-<strong id="r2-timeout" class="text-yellow-400">0</strong>
+<strong id="r2Timeout" class="text-yellow-400">0</strong>
 </div>
 
 <div class="flex justify-between">
-<span>Max Streak</span>
-<strong id="r2-streak" class="text-orange-400">0</strong>
+<span>Bonus</span>
+<strong id="r2Bonus" class="text-cyan-400">0</strong>
+</div>
+
+<div class="flex justify-between">
+<span>Streak</span>
+<strong id="r2Streak">0</strong>
 </div>
 
 <div class="flex justify-between">
 <span>Akurasi</span>
-<strong id="r2-accuracy">0%</strong>
+<strong id="r2Accuracy">0%</strong>
 </div>
 
 <div class="flex justify-between">
-<span>Avg Time</span>
-<strong id="r2-time">0s</strong>
+<span>Rata-rata</span>
+<strong id="r2Time">0s</strong>
+</div>
+
+</div>
 </div>
 
 </div>
 
-</div>
+<!-- PERFORMANCE -->
 
-</div>
-
-<!-- MVP -->
-
-<div class="mt-4 bg-gradient-to-r from-indigo-950 to-purple-950 border border-indigo-500/50 rounded-xl p-4 text-center">
+<div class="mt-4 rounded-xl p-4 text-center
+bg-gradient-to-r from-indigo-950 to-purple-950
+border border-indigo-500/40">
 
 <div class="text-xs text-indigo-300">
-🏆 PERFORMANCE HIGHLIGHT
+📊 PERFORMANCE
 </div>
 
-<div
-id="mvp-text"
-class="font-teko text-3xl text-yellow-400 mt-1">
+<div id="performanceText"
+class="font-teko text-3xl text-yellow-400">
 -
 </div>
 
 </div>
 
-<!-- WORDS -->
+<!-- WRONG WORDS -->
 
-<div
-id="weakness-section"
-class="hidden mt-3 bg-amber-950/30 border border-amber-500/40 rounded-xl p-3">
+<div id="weakSection"
+class="hidden mt-3 rounded-xl p-3
+bg-amber-950/30 border border-amber-500/40">
 
 <div class="text-xs font-bold text-amber-300">
-💡 Kosa Kata yang Perlu Dipelajari
+💡 KOSA KATA YANG PERLU DIPELAJARI
 </div>
 
-<div id="weakness-list" class="flex flex-wrap gap-1.5 mt-2"></div>
+<div id="weakList" class="flex flex-wrap gap-1.5 mt-2"></div>
 
 </div>
 
-<div class="grid grid-cols-2 gap-2 mt-4">
+<!-- HISTORY -->
+
+<div class="mt-3">
 
 <button
-onclick="downloadCSVReport()"
-class="bg-emerald-600 hover:bg-emerald-500 rounded-xl p-3 text-xs font-bold">
+onclick="toggleHistory()"
+class="w-full rounded-xl p-3 bg-slate-800 border border-slate-700 text-xs font-bold">
+
+📊 LIHAT RIWAYAT SOAL
+
+</button>
+
+<div id="historyBox"
+class="hidden mt-2 max-h-60 overflow-y-auto space-y-1">
+</div>
+
+</div>
+
+<!-- BUTTONS -->
+
+<div class="grid grid-cols-3 gap-2 mt-4">
+
+<button
+onclick="downloadCSV()"
+class="bg-emerald-600 rounded-xl p-3 text-xs font-bold">
 
 <i class="fa-solid fa-file-csv"></i>
-Download CSV
+CSV
 
 </button>
 
 <button
-onclick="returnToMenu()"
-class="bg-indigo-600 hover:bg-indigo-500 rounded-xl p-3 text-xs font-bold">
+onclick="restartFromResult()"
+class="bg-indigo-600 rounded-xl p-3 text-xs font-bold">
+
+<i class="fa-solid fa-rotate"></i>
+ULANG
+
+</button>
+
+<button
+onclick="backMenu()"
+class="bg-slate-700 rounded-xl p-3 text-xs font-bold">
 
 <i class="fa-solid fa-house"></i>
-Menu Utama
+MENU
 
 </button>
 
@@ -859,180 +1007,134 @@ Menu Utama
 </div>
 </div>
 </div>
+
+
+<!-- =========================================================
+                         HIGH SCORE
+========================================================= -->
+
+<div
+id="scoreModal"
+class="hidden fixed inset-0 z-[500] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+
+<div class="glass max-w-md w-full rounded-3xl p-5">
+
+<div class="flex justify-between items-center">
+
+<h2 class="font-teko text-4xl text-yellow-400">
+🏆 HIGH SCORES
+</h2>
+
+<button onclick="closeScores()">
+<i class="fa-solid fa-xmark"></i>
+</button>
+
+</div>
+
+<div id="scoreList" class="mt-4 space-y-2"></div>
+
+<button
+onclick="clearScores()"
+class="w-full mt-4 bg-red-900/60 border border-red-700 rounded-xl p-3 text-xs">
+
+Hapus High Score
+
+</button>
+
+</div>
+</div>
+
 
 <!-- =========================================================
                        TEACHER MODAL
 ========================================================= -->
 
 <div
-id="teacher-modal"
-class="hidden fixed inset-0 z-[300] bg-slate-950/97 backdrop-blur-xl p-4 overflow-y-auto">
+id="teacherModal"
+class="hidden fixed inset-0 z-[450] bg-black/80 backdrop-blur-md overflow-y-auto p-4">
 
 <div class="min-h-full flex items-center justify-center">
 
-<div class="max-w-2xl w-full bg-slate-900 border-2 border-amber-500 rounded-3xl p-5">
+<div class="glass max-w-xl w-full rounded-3xl p-5">
 
 <div class="flex justify-between">
 
-<h2 class="font-teko text-3xl text-amber-400">
+<h2 class="font-teko text-4xl text-amber-400">
 MODE GURU
 </h2>
 
-<button onclick="closeTeacherModal()">
+<button onclick="closeTeacher()">
 <i class="fa-solid fa-xmark"></i>
 </button>
 
 </div>
 
-<div class="mt-4 space-y-3">
-
 <input
-id="custom-pack-name"
-placeholder="Nama paket..."
-class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+id="packName"
+placeholder="Nama paket baru"
+class="w-full mt-4 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
 
 <button
-onclick="createCustomPack()"
-class="w-full bg-amber-600 rounded-xl p-3 font-bold">
-+ Buat Paket
+onclick="createPack()"
+class="w-full mt-2 bg-amber-600 rounded-xl p-3 font-bold">
+
++ BUAT PAKET
+
 </button>
 
 <select
-id="teacher-target-pack"
-class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+id="packSelect"
+class="w-full mt-3 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
 </select>
 
 <input
-id="teacher-word-en"
+id="wordInput"
 placeholder="Kata Inggris / Emoji"
-class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
+class="w-full mt-3 bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm">
 
 <input
-id="teacher-ans-correct"
+id="correctInput"
 placeholder="Jawaban benar"
-class="w-full bg-slate-800 border border-green-600/50 rounded-xl p-3 text-sm">
+class="w-full mt-2 bg-slate-800 border border-green-700 rounded-xl p-3 text-sm">
 
 <input
-id="teacher-ans-wrong1"
+id="wrong1"
 placeholder="Pengecoh 1"
-class="w-full bg-slate-800 border border-red-600/50 rounded-xl p-3 text-sm">
+class="w-full mt-2 bg-slate-800 border border-red-700 rounded-xl p-3 text-sm">
 
 <input
-id="teacher-ans-wrong2"
+id="wrong2"
 placeholder="Pengecoh 2"
-class="w-full bg-slate-800 border border-red-600/50 rounded-xl p-3 text-sm">
+class="w-full mt-2 bg-slate-800 border border-red-700 rounded-xl p-3 text-sm">
 
 <input
-id="teacher-ans-wrong3"
+id="wrong3"
 placeholder="Pengecoh 3"
-class="w-full bg-slate-800 border border-red-600/50 rounded-xl p-3 text-sm">
+class="w-full mt-2 bg-slate-800 border border-red-700 rounded-xl p-3 text-sm">
 
 <button
-onclick="addQuestionFromTeacher()"
-class="w-full bg-green-600 rounded-xl p-3 font-bold">
-+ Simpan Soal
+onclick="addTeacherQuestion()"
+class="w-full mt-3 bg-green-600 rounded-xl p-3 font-bold">
+
++ SIMPAN SOAL
+
 </button>
 
-<button
-onclick="printWorksheet()"
-class="w-full bg-indigo-600 rounded-xl p-3 font-bold">
-<i class="fa-solid fa-print"></i>
-Cetak Worksheet
-</button>
-
-</div>
+<div id="teacherStatus"
+class="text-xs text-green-400 text-center mt-3"></div>
 
 </div>
 </div>
 </div>
+
 
 <script>
 
 /* =========================================================
-                        AUDIO
+                         DATABASE
 ========================================================= */
 
-let isMuted=false;
-
-const audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-
-function toggleAudioMute(){
-
-    isMuted=!isMuted;
-
-    document.getElementById("audio-icon").className=
-        isMuted
-        ?"fa-solid fa-volume-xmark text-red-400"
-        :"fa-solid fa-volume-high text-indigo-400";
-}
-
-function playSound(type){
-
-    if(isMuted)return;
-
-    if(audioCtx.state==="suspended"){
-        audioCtx.resume();
-    }
-
-    const osc=audioCtx.createOscillator();
-    const gain=audioCtx.createGain();
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    if(type==="correct"){
-        osc.type="sine";
-        osc.frequency.setValueAtTime(523,audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(1046,audioCtx.currentTime+.18);
-
-        gain.gain.setValueAtTime(.22,audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.35);
-    }
-
-    if(type==="wrong"){
-        osc.type="sawtooth";
-        osc.frequency.setValueAtTime(180,audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(90,audioCtx.currentTime+.25);
-
-        gain.gain.setValueAtTime(.18,audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.3);
-    }
-
-    if(type==="timeout"){
-        osc.type="square";
-        osc.frequency.setValueAtTime(400,audioCtx.currentTime);
-        osc.frequency.setValueAtTime(200,audioCtx.currentTime+.15);
-
-        gain.gain.setValueAtTime(.15,audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.3);
-    }
-
-    if(type==="beep"){
-        osc.type="triangle";
-        osc.frequency.value=700;
-
-        gain.gain.setValueAtTime(.12,audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.1);
-    }
-
-    if(type==="go"){
-        osc.type="sine";
-        osc.frequency.value=900;
-
-        gain.gain.setValueAtTime(.2,audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.3);
-    }
-
-    osc.start();
-    osc.stop(audioCtx.currentTime+.4);
-}
-
-/* =========================================================
-                      QUESTION DATABASE
-   DIFFICULTY SUDAH DINERF
-========================================================= */
-
-const defaultQuestions={
+const QUESTIONS={
 
 easy:[
 ["Cat","Kucing",["Anjing","Burung","Kelinci"]],
@@ -1089,9 +1191,6 @@ medium:[
 ["Bridge","Jembatan",["Jalan","Gedung","Stasiun"]],
 ["Important","Penting",["Mudah","Cepat","Lambat"]]
 ],
-
-/* HARD DINERF:
-   kata lebih umum + pengecoh lebih mudah */
 
 hard:[
 ["Knowledge","Pengetahuan",["Pengalaman","Pendidikan","Informasi"]],
@@ -1175,661 +1274,616 @@ emoji:[
 ["🔑","Kunci",["Pintu","Gembok","Rumah"],"Key"],
 ["⏰","Jam Weker",["Jam Tangan","HP","Kalender"],"Alarm Clock"],
 ["🎁","Hadiah",["Uang","Surat","Tas"],"Gift"]
-].map(x=>({
-    word:x[0],
-    correct:x[1],
-    wrongs:x[2],
-    listenWord:x[3]
-}))
+]
 
 };
 
-function normalizeDatabase(){
+function convertDB(){
 
-    const result={};
+    const db={};
 
-    Object.keys(defaultQuestions).forEach(level=>{
+    for(const level in QUESTIONS){
 
-        result[level]=defaultQuestions[level].map(q=>{
+        db[level]=QUESTIONS[level].map(q=>{
 
-            if(Array.isArray(q)){
-
-                return {
-                    word:q[0],
-                    correct:q[1],
-                    wrongs:q[2],
-                    listenWord:q[3]
-                };
-
-            }
-
-            return q;
+            return {
+                word:q[0],
+                correct:q[1],
+                wrongs:q[2],
+                listenWord:q[3]||q[0]
+            };
 
         });
 
-    });
+    }
 
-    return result;
+    return db;
 }
 
+
 /* =========================================================
-                       CUSTOM PACKS
+                    CUSTOM PACK STORAGE
 ========================================================= */
 
-let savedCustom={};
+let customPacks={};
 
 try{
-    savedCustom=JSON.parse(
-        localStorage.getItem("vocab_custom_packs")||"{}"
-    );
+    customPacks=
+        JSON.parse(
+            localStorage.getItem("vocabCustomPacks")||"{}"
+        );
 }catch(e){
-    savedCustom={};
+    customPacks={};
 }
 
-let activeQuestionPacks={
-    ...normalizeDatabase(),
-    ...savedCustom
+let database={
+    ...convertDB(),
+    ...customPacks
 };
 
+
 /* =========================================================
-                       CONFIG
+                         CONFIG
 ========================================================= */
 
-let gameConfig={
+let config={
     mode:"2p",
-    packKey:"medium",
-    timerLimit:15,
-    questionCount:15,
+    level:"medium",
+    questions:15,
+    timer:15,
     bonus:true,
     hint:true
 };
 
+
 /* =========================================================
-                       PLAYER STATE
-   PENTING:
-   TIMER P1 DAN P2 TERPISAH TOTAL
+                          STATE
 ========================================================= */
 
-function createPlayer(){
+function player(){
 
     return {
+        index:0,
         score:0,
-        baseCorrect:0,
-        bonusPoints:0,
+        correct:0,
         wrong:0,
         timeout:0,
-
-        times:[],
+        bonus:0,
 
         streak:0,
         maxStreak:0,
 
-        index:0,
-
+        times:[],
         wrongWords:[],
 
         timer:null,
         timerLeft:0,
 
-        questionStartTime:0,
+        startTime:0,
 
         answered:false,
-
         hintUsed:false,
-
         finished:false
     };
 
 }
 
-let matchState={
-    p1:createPlayer(),
-    p2:createPlayer(),
-
+let state={
     questions:[],
+    p1:player(),
+    p2:player(),
 
     started:false,
-    ended:false
+    paused:false,
+    ended:false,
+
+    aiTimeout:null
 };
 
+
 /* =========================================================
-                       MENU
+                           AUDIO
 ========================================================= */
 
-function selectGameMode(mode){
+let muted=false;
+let audio=null;
 
-    gameConfig.mode=mode;
+function initAudio(){
 
-    document.querySelectorAll(".mode-btn").forEach(btn=>{
+    if(!audio){
 
-        btn.classList.remove(
+        audio=
+            new(
+                window.AudioContext||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    if(audio.state==="suspended"){
+        audio.resume();
+    }
+
+}
+
+function toggleMute(){
+
+    muted=!muted;
+
+    document.getElementById("muteIcon").className=
+        muted
+        ?"fa-solid fa-volume-xmark text-red-400"
+        :"fa-solid fa-volume-high text-indigo-400";
+
+}
+
+function sound(type){
+
+    if(muted)return;
+
+    initAudio();
+
+    const osc=audio.createOscillator();
+    const gain=audio.createGain();
+
+    osc.connect(gain);
+    gain.connect(audio.destination);
+
+    let freq=500;
+
+    if(type==="correct")freq=800;
+    if(type==="wrong")freq=180;
+    if(type==="timeout")freq=250;
+    if(type==="go")freq=1000;
+    if(type==="click")freq=500;
+
+    osc.frequency.value=freq;
+
+    gain.gain.setValueAtTime(.12,audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audio.currentTime+.25
+    );
+
+    osc.start();
+    osc.stop(audio.currentTime+.25);
+
+}
+
+
+/* =========================================================
+                          MENU
+========================================================= */
+
+function buttonStyle(active){
+
+    return active
+    ?"p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300 text-xs"
+    :"p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs";
+
+}
+
+document.querySelectorAll(".qbtn,.tbtn").forEach(btn=>{
+    btn.className=buttonStyle(false);
+});
+
+function setMode(mode){
+
+    config.mode=mode;
+
+    document.querySelectorAll(".mode-button").forEach(b=>{
+        b.classList.remove(
             "border-red-500",
             "bg-red-950/40",
-            "text-red-400"
+            "text-red-300"
         );
 
-        btn.classList.add(
+        b.classList.add(
             "border-slate-700",
             "bg-slate-800",
             "text-slate-400"
         );
-
     });
 
-    const btn=document.getElementById(`btn-mode-${mode}`);
+    const target=
+        mode==="2p"
+        ?document.getElementById("mode2p")
+        :document.getElementById("modeAI");
 
-    btn.classList.remove(
+    target.classList.remove(
         "border-slate-700",
         "bg-slate-800",
         "text-slate-400"
     );
 
-    btn.classList.add(
+    target.classList.add(
         "border-red-500",
         "bg-red-950/40",
-        "text-red-400"
+        "text-red-300"
     );
+
 }
 
-function selectTimer(sec){
+function setQuestions(n){
 
-    gameConfig.timerLimit=sec;
+    config.questions=n;
 
-    document.querySelectorAll(".timer-btn").forEach(btn=>{
-        btn.className=
-        "timer-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs";
-    });
+    document.querySelectorAll(".qbtn")
+        .forEach(b=>b.className=buttonStyle(false));
 
-    const active=document.getElementById(`timer-${sec}`);
+    document.getElementById(
+        "q"+n
+    ).className=buttonStyle(true);
 
-    active.className=
-    "timer-btn p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300 text-xs";
 }
 
-function selectQuestionCount(count){
+function setTimer(n){
 
-    gameConfig.questionCount=count;
+    config.timer=n;
 
-    document.querySelectorAll(".qcount-btn").forEach(btn=>{
-        btn.className=
-        "qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs";
-    });
+    document.querySelectorAll(".tbtn")
+        .forEach(b=>b.className=buttonStyle(false));
 
-    const active=document.getElementById(`qcount-${count}`);
+    document.getElementById(
+        "t"+n
+    ).className=buttonStyle(true);
 
-    active.className=
-    "qcount-btn p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300 text-xs";
 }
+
 
 /* =========================================================
-                       START GAME
+                         START GAME
 ========================================================= */
 
-function initiateGameSetup(){
+function startGame(){
 
-    gameConfig.packKey=
-        document.getElementById("level-select").value;
+    initAudio();
 
-    gameConfig.bonus=
-        document.getElementById("bonus-enabled").checked;
+    config.level=
+        document.getElementById("level").value;
 
-    gameConfig.hint=
-        document.getElementById("hint-enabled").checked;
+    config.bonus=
+        document.getElementById("bonus").checked;
 
-    let pool=
-        activeQuestionPacks[gameConfig.packKey]||
-        activeQuestionPacks.medium;
+    config.hint=
+        document.getElementById("hint").checked;
 
-    pool=[...pool];
+    let pool=[
+        ...(database[config.level]||database.medium)
+    ];
 
-    /* Fisher-Yates */
-    for(let i=pool.length-1;i>0;i--){
-
-        const j=Math.floor(Math.random()*(i+1));
-
-        [pool[i],pool[j]]=
-        [pool[j],pool[i]];
-
-    }
+    shuffle(pool);
 
     if(
-        gameConfig.questionCount>0 &&
-        gameConfig.questionCount<pool.length
+        config.questions>0 &&
+        config.questions<pool.length
     ){
-        pool=pool.slice(
-            0,
-            gameConfig.questionCount
-        );
+
+        pool=
+            pool.slice(
+                0,
+                config.questions
+            );
+
     }
 
-    matchState.questions=pool.map(q=>{
+    state.questions=
+        pool.map(q=>{
 
-        const options=[
-            q.correct,
-            ...q.wrongs
-        ];
+            const options=[
+                q.correct,
+                ...q.wrongs
+            ];
 
-        for(let i=options.length-1;i>0;i--){
+            shuffle(options);
 
-            const j=Math.floor(Math.random()*(i+1));
+            return {
+                ...q,
+                options
+            };
 
-            [options[i],options[j]]=
-            [options[j],options[i]];
+        });
 
-        }
+    state.p1=player();
+    state.p2=player();
 
-        return{
-            ...q,
-            shuffledOptions:options
-        };
+    state.started=false;
+    state.paused=false;
+    state.ended=false;
 
-    });
+    document.getElementById("questionTotal")
+        .innerText=state.questions.length;
 
-    matchState.p1=createPlayer();
-    matchState.p2=createPlayer();
-
-    matchState.p1.timerLeft=gameConfig.timerLimit;
-    matchState.p2.timerLeft=gameConfig.timerLimit;
-
-    matchState.started=false;
-    matchState.ended=false;
-
-    document.getElementById("p1-name").innerText="TIM MERAH";
-
-    document.getElementById("p2-name").innerText=
-        gameConfig.mode==="ai"
+    document.getElementById("p2Name")
+        .innerText=
+        config.mode==="ai"
         ?"BOT AI"
         :"TIM BIRU";
 
-    document.getElementById("p2-icon").className=
-        gameConfig.mode==="ai"
+    document.getElementById("p2Icon")
+        .className=
+        config.mode==="ai"
         ?"fa-solid fa-robot"
         :"fa-solid fa-user";
 
-    document.getElementById("p1-sub").innerText=
-    gameConfig.packKey==="emoji"
-    ?"Mode Emoji"
-    :"Bahasa Inggris";
+    document.getElementById("menu")
+        .classList.add("hidden");
 
-    document.getElementById("p2-sub").innerText=
-    gameConfig.packKey==="emoji"
-    ?"Mode Emoji"
-    :"Bahasa Inggris";
+    document.getElementById("resultModal")
+        .classList.add("hidden");
 
-    document.getElementById("main-menu").classList.add("hidden");
-    document.getElementById("arena").classList.remove("hidden");
+    document.getElementById("arena")
+        .classList.remove("hidden");
 
-    renderPlayer("p1");
-    renderPlayer("p2");
+    render("p1");
+    render("p2");
 
-    setPlayerButtonsDisabled("p1",true);
-    setPlayerButtonsDisabled("p2",true);
+    makeDots();
 
-    startCountdown();
+    countdown();
+
 }
 
+
 /* =========================================================
-                       COUNTDOWN
+                        COUNTDOWN
 ========================================================= */
 
-function startCountdown(){
+function countdown(){
 
-    let count=3;
+    const msg=
+        document.getElementById("roundMessage");
 
-    const msg=document.getElementById("round-message");
+    let n=3;
 
-    msg.innerText=count;
+    msg.innerText=n;
 
-    playSound("beep");
+    sound("click");
 
-    const interval=setInterval(()=>{
+    const timer=setInterval(()=>{
 
-        count--;
+        n--;
 
-        if(count>0){
+        if(n>0){
 
-            msg.innerText=count;
-            playSound("beep");
+            msg.innerText=n;
+            sound("click");
 
-        }else if(count===0){
+        }else if(n===0){
 
             msg.innerText="GO!";
-            playSound("go");
+            sound("go");
 
         }else{
 
-            clearInterval(interval);
+            clearInterval(timer);
 
             msg.innerText="BATTLE!";
 
-            matchState.started=true;
+            state.started=true;
 
-            setPlayerButtonsDisabled("p1",false);
-            setPlayerButtonsDisabled(
-                "p2",
-                gameConfig.mode==="ai"
-            );
+            startTimer("p1");
+            startTimer("p2");
 
-            startPlayerTimer("p1");
-            startPlayerTimer("p2");
-
-            if(gameConfig.mode==="ai"){
+            if(config.mode==="ai"){
                 scheduleAI();
             }
 
         }
 
-    },800);
+    },700);
 
 }
 
+
 /* =========================================================
-                  INDEPENDENT PLAYER TIMER
+                       SHUFFLE
 ========================================================= */
 
-function startPlayerTimer(player){
+function shuffle(arr){
 
-    const p=matchState[player];
+    for(let i=arr.length-1;i>0;i--){
 
-    if(p.timer){
-        clearInterval(p.timer);
-        p.timer=null;
+        const j=
+            Math.floor(
+                Math.random()*(i+1)
+            );
+
+        [arr[i],arr[j]]=
+        [arr[j],arr[i]];
+
     }
 
-    if(
-        !matchState.started||
-        matchState.ended||
-        p.index>=matchState.questions.length
-    ){
-        return;
-    }
-
-    if(gameConfig.timerLimit===0){
-
-        p.timerLeft=0;
-
-        updateTimerUI(player);
-
-        return;
-    }
-
-    p.timerLeft=gameConfig.timerLimit;
-
-    p.questionStartTime=Date.now();
-
-    updateTimerUI(player);
-
-    p.timer=setInterval(()=>{
-
-        if(
-            matchState.ended||
-            p.index>=matchState.questions.length
-        ){
-            clearInterval(p.timer);
-            p.timer=null;
-            return;
-        }
-
-        p.timerLeft--;
-
-        updateTimerUI(player);
-
-        if(p.timerLeft<=0){
-
-            clearInterval(p.timer);
-            p.timer=null;
-
-            handleTimeout(player);
-
-        }
-
-    },1000);
+    return arr;
 
 }
 
-/* =========================================================
-                    TIMER UI
-========================================================= */
-
-function updateTimerUI(player){
-
-    const p=matchState[player];
-
-    const text=
-        document.getElementById(`${player}-timer-text`);
-
-    const bar=
-        document.getElementById(`${player}-timer-bar`);
-
-    if(gameConfig.timerLimit===0){
-
-        text.innerText="∞";
-
-        bar.style.width="100%";
-
-        bar.classList.remove("bg-yellow-400");
-
-        return;
-    }
-
-    text.innerText=`${p.timerLeft}s`;
-
-    const percentage=
-        Math.max(
-            0,
-            Math.min(
-                100,
-                p.timerLeft/gameConfig.timerLimit*100
-            )
-        );
-
-    bar.style.width=`${percentage}%`;
-
-    bar.classList.remove("bg-yellow-400");
-
-    if(p.timerLeft<=5){
-
-        text.classList.add("text-red-400");
-        text.classList.add("timer-danger");
-
-        bar.className=
-        "h-full bg-yellow-400 transition-all duration-300";
-
-    }else{
-
-        text.classList.remove("text-red-400");
-        text.classList.remove("timer-danger");
-
-        bar.className=
-        `h-full ${
-            player==="p1"
-            ?"bg-red-500"
-            :"bg-blue-500"
-        } transition-all duration-300`;
-
-    }
-
-}
 
 /* =========================================================
-                    RENDER PLAYER
+                         RENDER
 ========================================================= */
 
-function renderPlayer(player){
+function render(playerName){
 
-    const p=matchState[player];
-    const total=matchState.questions.length;
+    const p=state[playerName];
+    const total=state.questions.length;
 
     if(p.index>=total){
 
-        document.getElementById(
-            `${player}-question`
-        ).innerText="SELESAI!";
-
-        document.getElementById(
-            `${player}-progress`
-        ).innerText=`${total}/${total}`;
-
-        document.getElementById(
-            `${player}-options`
-        ).innerHTML=
-        `<div class="col-span-2 flex items-center justify-center text-green-400 font-bold text-sm">
-        <i class="fa-solid fa-circle-check mr-2"></i>
-        SELESAI
-        </div>`;
-
-        if(p.timer){
-
-            clearInterval(p.timer);
-            p.timer=null;
-
-        }
-
-        p.finished=true;
-
-        updateScoreUI();
-
-        checkEndMatch();
-
+        finishPlayer(playerName);
         return;
+
     }
 
-    const q=matchState.questions[p.index];
+    p.answered=false;
+    p.hintUsed=false;
 
-    const questionElement=
-        document.getElementById(`${player}-question`);
+    const q=
+        state.questions[p.index];
 
-    questionElement.classList.remove("question-enter");
+    const question=
+        document.getElementById(
+            playerName+"Question"
+        );
 
-    void questionElement.offsetWidth;
+    question.classList.remove("slide");
 
-    questionElement.classList.add("question-enter");
+    void question.offsetWidth;
 
-    questionElement.innerText=q.word;
+    question.classList.add("slide");
+
+    question.innerText=q.word;
 
     document.getElementById(
-        `${player}-progress`
+        playerName+"Progress"
     ).innerText=
-    `${p.index+1}/${total}`;
-
-    renderOptions(player,q);
+        `${p.index+1}/${total}`;
 
     document.getElementById(
-        `${player}-hint`
+        "questionNumber"
+    ).innerText=
+        Math.min(
+            Math.max(
+                state.p1.index,
+                state.p2.index
+            )+1,
+            total
+        );
+
+    document.getElementById(
+        playerName+"Hint"
     ).classList.add("hidden");
 
     document.getElementById(
-        `${player}-hint`
+        playerName+"Hint"
     ).innerText="";
 
-    const hintBtn=
-        document.getElementById(`${player}-hint-btn`);
+    const hintButton=
+        document.getElementById(
+            playerName+"HintButton"
+        );
 
-    hintBtn.disabled=
-        !gameConfig.hint||
-        p.hintUsed;
+    hintButton.disabled=!config.hint;
 
-    hintBtn.style.opacity=
-        p.hintUsed
-        ?".4"
-        :"1";
+    hintButton.style.opacity=
+        config.hint
+        ?"1"
+        :".4";
 
-    updateStreakUI(player);
-    updateScoreUI();
-    updateTimerUI(player);
+    renderOptions(playerName,q);
+
+    updateUI(playerName);
 
 }
 
+
 /* =========================================================
-                     ANSWER BUTTONS
+                      OPTIONS
 ========================================================= */
 
-function renderOptions(player,q){
+function renderOptions(playerName,q){
 
     const grid=
-        document.getElementById(`${player}-options`);
+        document.getElementById(
+            playerName+"Options"
+        );
 
     grid.innerHTML="";
 
-    q.shuffledOptions.forEach(option=>{
+    q.options.forEach((option,index)=>{
 
-        const button=document.createElement("button");
+        const btn=
+            document.createElement("button");
 
-        button.className=
-        "answer-btn w-full h-full min-h-[45px] bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 text-white rounded-xl p-1 font-bold text-xs md:text-sm transition flex items-center justify-center text-center";
+        btn.className=
+            "answer w-full h-full min-h-[42px] rounded-xl "+
+            "bg-slate-800 border border-slate-700 "+
+            "text-white font-bold text-xs md:text-sm "+
+            "p-1 transition flex items-center "+
+            "justify-center text-center";
 
-        button.innerText=option;
+        btn.innerHTML=
+            `<span class="absolute top-1 left-2 text-[9px] text-slate-500">
+                ${index+1}
+            </span>
+            ${escapeHTML(option)}`;
 
-        button.onclick=()=>{
-            handleAnswer(
-                player,
+        btn.onclick=()=>{
+            answer(
+                playerName,
                 option,
-                q.correct
+                btn
             );
         };
 
-        grid.appendChild(button);
+        grid.appendChild(btn);
 
     });
 
 }
 
+
 /* =========================================================
-                       ANSWER
+                         ANSWER
 ========================================================= */
 
-function handleAnswer(player,selected,correct){
+function answer(playerName,selected,button){
 
     if(
-        matchState.ended||
-        !matchState.started
+        !state.started||
+        state.paused||
+        state.ended
     )return;
 
-    const p=matchState[player];
+    const p=state[playerName];
 
-    if(p.answered)return;
-
-    if(p.index>=matchState.questions.length)return;
+    if(
+        p.answered||
+        p.index>=state.questions.length
+    )return;
 
     p.answered=true;
 
-    if(p.timer){
-
-        clearInterval(p.timer);
-        p.timer=null;
-
-    }
-
-    const timeTaken=
-        Math.max(
-            0,
-            (Date.now()-p.questionStartTime)/1000
-        );
-
-    p.times.push(timeTaken);
+    stopTimer(playerName);
 
     const q=
-        matchState.questions[p.index];
+        state.questions[p.index];
 
-    if(selected===correct){
+    const elapsed=
+        Math.max(
+            0,
+            (Date.now()-p.startTime)/1000
+        );
 
-        p.baseCorrect++;
+    p.times.push(elapsed);
 
-        let gained=1;
+    const buttons=
+        document.querySelectorAll(
+            `#${playerName}Options .answer`
+        );
 
-        /* SPEED BONUS */
+    buttons.forEach(b=>b.disabled=true);
+
+    if(selected===q.correct){
+
+        button.classList.add("selected-correct");
+
+        p.correct++;
+
+        let points=1;
 
         if(
-            gameConfig.bonus &&
-            gameConfig.timerLimit>0 &&
-            p.timerLeft>=Math.ceil(gameConfig.timerLimit*.6)
+            config.bonus &&
+            config.timer>0 &&
+            p.timerLeft>=Math.ceil(config.timer*.6)
         ){
 
-            gained++;
-            p.bonusPoints++;
+            points=2;
+            p.bonus++;
+
         }
 
-        p.score+=gained;
+        p.score+=points;
 
         p.streak++;
 
@@ -1839,22 +1893,41 @@ function handleAnswer(player,selected,correct){
                 p.streak
             );
 
-        playSound("correct");
+        sound("correct");
 
-        triggerFeedback(
-            player,
-            gained>1
+        feedback(
+            playerName,
+            points===2
             ?"+2 PERFECT!"
             :"+1 BENAR!",
             "text-green-400"
         );
 
-        triggerCardAnimation(
-            player,
+        animateCard(
+            playerName,
             "correct"
         );
 
     }else{
+
+        button.classList.add("selected-wrong");
+
+        buttons.forEach(b=>{
+
+            if(
+                b.innerText
+                    .replace(/^\d/,"")
+                    .trim()
+                ===q.correct
+            ){
+
+                b.classList.add(
+                    "correct-answer"
+                );
+
+            }
+
+        });
 
         p.wrong++;
 
@@ -1864,219 +1937,424 @@ function handleAnswer(player,selected,correct){
             q.listenWord||q.word
         );
 
-        playSound("wrong");
+        sound("wrong");
 
-        triggerFeedback(
-            player,
+        feedback(
+            playerName,
             "SALAH!",
-            "text-red-500"
+            "text-red-400"
         );
 
-        triggerCardAnimation(
-            player,
+        animateCard(
+            playerName,
             "wrong"
         );
 
     }
 
-    p.index++;
-    p.answered=false;
+    updateUI(playerName);
 
-    renderPlayer(player);
+    setTimeout(()=>{
 
-    /* AI */
+        p.index++;
 
-    if(
-        gameConfig.mode==="ai" &&
-        player==="p1"
-    ){
+        if(
+            p.index>=state.questions.length
+        ){
 
-        scheduleAI();
+            finishPlayer(playerName);
 
-    }
+        }else{
+
+            render(playerName);
+
+            startTimer(playerName);
+
+        }
+
+        checkEnd();
+
+    },550);
 
 }
 
+
 /* =========================================================
-                      TIMEOUT
+                         TIMEOUT
 ========================================================= */
 
-function handleTimeout(player){
+function timeout(playerName){
 
-    if(matchState.ended)return;
+    if(state.ended)return;
 
-    const p=matchState[player];
+    const p=state[playerName];
 
     if(
-        p.index>=matchState.questions.length||
-        p.answered
+        p.answered||
+        p.index>=state.questions.length
     )return;
 
     p.answered=true;
 
+    stopTimer(playerName);
+
     const q=
-        matchState.questions[p.index];
+        state.questions[p.index];
 
     p.timeout++;
-
     p.streak=0;
 
     p.wrongWords.push(
         q.listenWord||q.word
     );
 
-    p.times.push(
-        gameConfig.timerLimit
-    );
+    p.times.push(config.timer);
 
-    playSound("timeout");
+    document.querySelectorAll(
+        `#${playerName}Options .answer`
+    ).forEach(b=>b.disabled=true);
 
-    triggerFeedback(
-        player,
+    sound("timeout");
+
+    feedback(
+        playerName,
         "WAKTU HABIS!",
         "text-yellow-400"
     );
 
-    triggerCardAnimation(
-        player,
+    animateCard(
+        playerName,
         "timeout"
     );
 
-    p.index++;
+    setTimeout(()=>{
 
-    p.answered=false;
+        p.index++;
 
-    renderPlayer(player);
+        if(
+            p.index>=state.questions.length
+        ){
+            finishPlayer(playerName);
+        }else{
+            render(playerName);
+            startTimer(playerName);
+        }
+
+        checkEnd();
+
+    },550);
+
+}
+
+
+/* =========================================================
+                          TIMER
+========================================================= */
+
+function startTimer(playerName){
+
+    const p=state[playerName];
+
+    stopTimer(playerName);
 
     if(
-        gameConfig.mode==="ai" &&
-        player==="p2"
-    ){
+        !state.started||
+        state.paused||
+        state.ended||
+        p.index>=state.questions.length
+    )return;
 
-        scheduleAI();
+    if(config.timer===0){
+
+        p.timerLeft=0;
+
+        p.startTime=Date.now();
+
+        updateTimer(playerName);
+
+        return;
+
+    }
+
+    p.timerLeft=config.timer;
+    p.startTime=Date.now();
+
+    updateTimer(playerName);
+
+    p.timer=
+        setInterval(()=>{
+
+            if(
+                state.paused||
+                state.ended
+            )return;
+
+            p.timerLeft--;
+
+            updateTimer(playerName);
+
+            if(p.timerLeft<=0){
+
+                stopTimer(playerName);
+
+                timeout(playerName);
+
+            }
+
+        },1000);
+
+}
+
+function stopTimer(playerName){
+
+    const p=state[playerName];
+
+    if(p.timer){
+
+        clearInterval(p.timer);
+        p.timer=null;
 
     }
 
 }
 
+function updateTimer(playerName){
+
+    const p=state[playerName];
+
+    const text=
+        document.getElementById(
+            playerName+"TimerText"
+        );
+
+    const bar=
+        document.getElementById(
+            playerName+"TimerBar"
+        );
+
+    if(config.timer===0){
+
+        text.innerText="∞";
+        bar.style.width="100%";
+
+        return;
+
+    }
+
+    text.innerText=
+        `${Math.max(0,p.timerLeft)}s`;
+
+    bar.style.width=
+        `${Math.max(
+            0,
+            Math.min(
+                100,
+                p.timerLeft/config.timer*100
+            )
+        )}%`;
+
+    if(p.timerLeft<=5){
+
+        text.classList.add("text-red-400");
+        text.classList.add("timerDanger");
+
+        bar.className=
+            "h-full bg-yellow-400 transition-all";
+
+    }else{
+
+        text.classList.remove("text-red-400");
+        text.classList.remove("timerDanger");
+
+        bar.className=
+            `h-full ${
+                playerName==="p1"
+                ?"bg-red-500"
+                :"bg-blue-500"
+            } transition-all`;
+
+    }
+
+}
+
+
 /* =========================================================
-                       AI
+                      FINISH PLAYER
 ========================================================= */
 
-let aiTimeout=null;
+function finishPlayer(playerName){
+
+    const p=state[playerName];
+
+    p.finished=true;
+
+    stopTimer(playerName);
+
+    document.getElementById(
+        playerName+"Question"
+    ).innerText="SELESAI!";
+
+    document.getElementById(
+        playerName+"Progress"
+    ).innerText=
+        `${state.questions.length}/${state.questions.length}`;
+
+    document.getElementById(
+        playerName+"Options"
+    ).innerHTML=
+        `<div class="col-span-2 flex items-center justify-center text-green-400 font-bold text-xs">
+            <i class="fa-solid fa-circle-check mr-2"></i>
+            SELESAI
+        </div>`;
+
+    updateUI(playerName);
+
+}
+
+
+/* =========================================================
+                         CHECK END
+========================================================= */
+
+function checkEnd(){
+
+    if(
+        state.p1.finished &&
+        state.p2.finished
+    ){
+
+        endGame();
+
+    }
+
+}
+
+
+/* =========================================================
+                          AI
+========================================================= */
 
 function scheduleAI(){
 
-    if(gameConfig.mode!=="ai")return;
-
-    if(matchState.ended)return;
-
-    const p=matchState.p2;
-
     if(
-        p.index>=matchState.questions.length
+        config.mode!=="ai"||
+        state.ended||
+        state.paused
     )return;
 
-    if(aiTimeout){
-        clearTimeout(aiTimeout);
-    }
+    const p=state.p2;
 
-    const q=
-        matchState.questions[p.index];
+    if(
+        p.finished||
+        p.answered
+    )return;
+
+    if(state.aiTimeout)
+        clearTimeout(state.aiTimeout);
 
     const delay=
-        700+
+        800+
         Math.random()*1800;
 
-    aiTimeout=setTimeout(()=>{
+    state.aiTimeout=
+        setTimeout(()=>{
 
-        aiTimeout=null;
+            state.aiTimeout=null;
 
-        if(matchState.ended)return;
+            if(
+                state.ended||
+                state.paused||
+                p.answered
+            )return;
 
-        if(p.index>=matchState.questions.length)return;
+            const q=
+                state.questions[p.index];
 
-        const correct=
-            Math.random()<.72;
+            const isCorrect=
+                Math.random()<.72;
 
-        const selected=
-            correct
-            ?q.correct
-            :q.wrongs[
-                Math.floor(
-                    Math.random()*q.wrongs.length
-                )
-            ];
+            const selected=
+                isCorrect
+                ?q.correct
+                :q.wrongs[
+                    Math.floor(
+                        Math.random()*
+                        q.wrongs.length
+                    )
+                ];
 
-        /* AI punya "waktu jawab" sendiri */
+            const buttons=
+                document.querySelectorAll(
+                    "#p2Options .answer"
+                );
 
-        const fakeTime=
-            Math.max(
-                .4,
-                Math.min(
-                    gameConfig.timerLimit||3,
-                    delay/1000
-                )
-            );
+            buttons.forEach(b=>{
 
-        p.questionStartTime=
-            Date.now()-fakeTime*1000;
+                if(
+                    b.innerText
+                        .replace(/^\d/,"")
+                        .trim()
+                    ===selected
+                ){
+                    b.click();
+                }
 
-        handleAnswer(
-            "p2",
-            selected,
-            q.correct
-        );
+            });
 
-    },delay);
+        },delay);
 
 }
 
+
 /* =========================================================
-                        HINT
+                           HINT
 ========================================================= */
 
-function useHint(player){
+function useHint(playerName){
 
-    if(!gameConfig.hint)return;
+    if(!config.hint)return;
 
-    const p=matchState[player];
-
-    if(p.hintUsed)return;
+    const p=state[playerName];
 
     if(
-        p.index>=matchState.questions.length
+        p.hintUsed||
+        p.finished
     )return;
+
+    const q=
+        state.questions[p.index];
+
+    if(!q)return;
 
     p.hintUsed=true;
 
-    const q=
-        matchState.questions[p.index];
-
-    const wrongs=
-        q.shuffledOptions.filter(
+    const wrong=
+        q.options.filter(
             x=>x!==q.correct
         );
 
-    const remove=
-        wrongs[
+    const removed=
+        wrong[
             Math.floor(
-                Math.random()*wrongs.length
+                Math.random()*wrong.length
             )
         ];
 
-    const hint=
-        document.getElementById(`${player}-hint`);
+    document.getElementById(
+        playerName+"Hint"
+    ).innerText=
+        `💡 "${removed}" bukan jawaban yang benar.`;
 
-    hint.innerText=
-        `💡 Salah satu jawaban "${remove}" pasti BUKAN jawaban.`;
+    document.getElementById(
+        playerName+"Hint"
+    ).classList.remove("hidden");
 
-    hint.classList.remove("hidden");
-
-    /* Hint mengurangi waktu sedikit */
+    document.getElementById(
+        playerName+"HintButton"
+    ).disabled=true;
 
     if(
-        gameConfig.timerLimit>0 &&
+        config.timer>0 &&
         p.timerLeft>2
     ){
 
@@ -2086,198 +2364,328 @@ function useHint(player){
                 p.timerLeft-2
             );
 
-        updateTimerUI(player);
+        updateTimer(playerName);
 
     }
 
 }
 
+
 /* =========================================================
-                    STREAK UI
+                       UI UPDATE
 ========================================================= */
 
-function updateStreakUI(player){
+function updateUI(playerName){
 
-    const p=matchState[player];
+    const p=state[playerName];
 
-    const badge=
-        document.getElementById(`${player}-streak`);
+    document.getElementById(
+        playerName+"ScoreTop"
+    ).innerText=p.score;
+
+    const streak=
+        document.getElementById(
+            playerName+"Streak"
+        );
 
     if(p.streak>=2){
 
-        badge.classList.remove("hidden");
+        streak.classList.remove("hidden");
 
-        badge.innerText=
-            `🔥 ${p.streak} STREAK`;
+        streak.innerText=
+            `🔥 ${p.streak}`;
 
     }else{
 
-        badge.classList.add("hidden");
+        streak.classList.add("hidden");
 
     }
 
-}
-
-/* =========================================================
-                      SCORE UI
-========================================================= */
-
-function updateScoreUI(){
-
-    document.getElementById("p1-score").innerText=
-        matchState.p1.score;
-
-    document.getElementById("p2-score").innerText=
-        matchState.p2.score;
-
-    document.getElementById("speed-bonus-display").innerText=
-        `⚡ +${matchState.p1.bonusPoints+matchState.p2.bonusPoints}`;
+    updateTimer(playerName);
 
 }
 
-/* =========================================================
-                    DISABLE BUTTONS
-========================================================= */
-
-function setPlayerButtonsDisabled(player,disabled){
-
-    document
-        .querySelectorAll(`#${player}-options .answer-btn`)
-        .forEach(button=>{
-            button.disabled=disabled;
-        });
-
-}
 
 /* =========================================================
-                      FEEDBACK
+                        ANIMATION
 ========================================================= */
 
-function triggerFeedback(
-    player,
-    text,
-    color
-){
+function animateCard(playerName,type){
 
     const card=
-        document.getElementById(`${player}-card`);
-
-    const element=
-        document.createElement("div");
-
-    element.className=
-        `feedback ${color}`;
-
-    element.innerText=text;
-
-    card.appendChild(element);
-
-    setTimeout(()=>{
-        element.remove();
-    },700);
-
-}
-
-function triggerCardAnimation(player,type){
-
-    const card=
-        document.getElementById(`${player}-card`);
+        document.getElementById(
+            playerName+"Card"
+        );
 
     card.classList.remove(
-        "card-correct",
-        "card-wrong",
-        "card-timeout"
+        "shake",
+        "correctAnim"
     );
 
     void card.offsetWidth;
 
-    card.classList.add(
-        type==="correct"
-        ?"card-correct"
-        :type==="wrong"
-        ?"card-wrong"
-        :"card-timeout"
+    if(type==="wrong")
+        card.classList.add("shake");
+
+    if(type==="correct")
+        card.classList.add("correctAnim");
+
+}
+
+function feedback(playerName,text,color){
+
+    const card=
+        document.getElementById(
+            playerName+"Card"
+        );
+
+    const el=
+        document.createElement("div");
+
+    el.className=
+        `feedback ${color}`;
+
+    el.innerText=text;
+
+    card.appendChild(el);
+
+    setTimeout(
+        ()=>el.remove(),
+        800
     );
 
 }
+
 
 /* =========================================================
-                       END MATCH
+                      PROGRESS DOTS
 ========================================================= */
 
-function checkEndMatch(){
+function makeDots(){
 
-    const total=
-        matchState.questions.length;
+    const box=
+        document.getElementById(
+            "progressDots"
+        );
+
+    box.innerHTML="";
+
+    state.questions.forEach((q,i)=>{
+
+        const dot=
+            document.createElement("div");
+
+        dot.id="dot-"+i;
+
+        dot.className=
+            "flex-1 min-w-[5px] h-1 rounded-full bg-slate-700";
+
+        box.appendChild(dot);
+
+    });
+
+}
+
+function updateDots(){
+
+    const current=
+        Math.max(
+            state.p1.index,
+            state.p2.index
+        );
+
+    state.questions.forEach((q,i)=>{
+
+        const dot=
+            document.getElementById(
+                "dot-"+i
+            );
+
+        if(!dot)return;
+
+        dot.className=
+            "flex-1 min-w-[5px] h-1 rounded-full "+
+            (
+                i<current
+                ?"bg-green-500"
+                :i===current
+                ?"bg-yellow-400"
+                :"bg-slate-700"
+            );
+
+    });
+
+}
+
+
+/* =========================================================
+                         PAUSE
+========================================================= */
+
+function togglePause(){
 
     if(
-        matchState.p1.index>=total &&
-        matchState.p2.index>=total
-    ){
+        !state.started||
+        state.ended
+    )return;
 
-        endMatch();
+    state.paused=!state.paused;
+
+    const modal=
+        document.getElementById(
+            "pauseModal"
+        );
+
+    const button=
+        document.getElementById(
+            "pauseButton"
+        );
+
+    if(state.paused){
+
+        modal.classList.remove("hidden");
+
+        button.innerHTML=
+            '<i class="fa-solid fa-play"></i>';
+
+        if(state.aiTimeout)
+            clearTimeout(state.aiTimeout);
+
+    }else{
+
+        modal.classList.add("hidden");
+
+        button.innerHTML=
+            '<i class="fa-solid fa-pause"></i>';
+
+        startTimer("p1");
+        startTimer("p2");
+
+        if(config.mode==="ai")
+            scheduleAI();
 
     }
 
 }
 
-function endMatch(){
 
-    if(matchState.ended)return;
+/* =========================================================
+                       RESTART
+========================================================= */
 
-    matchState.ended=true;
+function restartGame(){
 
-    if(matchState.p1.timer)
-        clearInterval(matchState.p1.timer);
+    if(
+        !confirm(
+            "Restart pertandingan sekarang?"
+        )
+    )return;
 
-    if(matchState.p2.timer)
-        clearInterval(matchState.p2.timer);
+    stopEverything();
 
-    if(aiTimeout)
-        clearTimeout(aiTimeout);
+    startGame();
 
-    const p1=matchState.p1;
-    const p2=matchState.p2;
+}
 
-    let winner;
+function restartFromResult(){
 
-    if(p1.score>p2.score){
-        winner="TIM MERAH MENANG! 🏆";
-    }else if(p2.score>p1.score){
-        winner=
-            gameConfig.mode==="ai"
-            ?"BOT AI MENANG! 🤖"
-            :"TIM BIRU MENANG! 🏆";
-    }else{
-        winner="PERTANDINGAN SERI! 🤝";
+    document.getElementById(
+        "resultModal"
+    ).classList.add("hidden");
+
+    startGame();
+
+}
+
+
+/* =========================================================
+                          EXIT
+========================================================= */
+
+function exitGame(){
+
+    if(
+        !confirm(
+            "Keluar dari pertandingan?"
+        )
+    )return;
+
+    stopEverything();
+
+    document.getElementById(
+        "arena"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "pauseModal"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "resultModal"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "menu"
+    ).classList.remove("hidden");
+
+}
+
+function stopEverything(){
+
+    stopTimer("p1");
+    stopTimer("p2");
+
+    if(state.aiTimeout){
+
+        clearTimeout(
+            state.aiTimeout
+        );
+
+        state.aiTimeout=null;
+
     }
 
+    state.ended=true;
+
+}
+
+
+/* =========================================================
+                         END GAME
+========================================================= */
+
+function endGame(){
+
+    if(state.ended)return;
+
+    state.ended=true;
+
+    stopTimer("p1");
+    stopTimer("p2");
+
+    if(state.aiTimeout)
+        clearTimeout(state.aiTimeout);
+
+    const p1=state.p1;
+    const p2=state.p2;
+
+    let title="PERTANDINGAN SERI! 🤝";
+
+    if(p1.score>p2.score)
+        title="TIM MERAH MENANG! 🏆";
+
+    if(p2.score>p1.score)
+        title=
+            config.mode==="ai"
+            ?"BOT AI MENANG! 🤖"
+            :"TIM BIRU MENANG! 🏆";
+
     document.getElementById(
-        "winner-banner"
-    ).innerText=winner;
+        "winner"
+    ).innerText=title;
 
-    fillRecap(
-        "p1",
-        p1
-    );
-
-    fillRecap(
-        "p2",
-        p2
-    );
-
-    const best=
-        p1.score===p2.score
-        ?"Kedua pemain seimbang!"
-        :p1.score>p2.score
-        ?"🔥 Tim Merah menjadi pencetak skor tertinggi!"
-        :"🔥 Tim Biru menjadi pencetak skor tertinggi!";
-
-    document.getElementById(
-        "mvp-text"
-    ).innerText=best;
-
-    /* WORDS */
+    fillResult("p1",p1);
+    fillResult("p2",p2);
 
     const words=[
         ...new Set([
@@ -2288,12 +2696,12 @@ function endMatch(){
 
     const section=
         document.getElementById(
-            "weakness-section"
+            "weakSection"
         );
 
     const list=
         document.getElementById(
-            "weakness-list"
+            "weakList"
         );
 
     list.innerHTML="";
@@ -2308,7 +2716,8 @@ function endMatch(){
                 document.createElement("span");
 
             span.className=
-            "bg-amber-900/60 border border-amber-500/50 text-amber-200 px-2 py-1 rounded-lg text-[10px]";
+                "bg-amber-900/60 border border-amber-500/50 "+
+                "text-amber-200 px-2 py-1 rounded-lg text-[10px]";
 
             span.innerText=word;
 
@@ -2322,33 +2731,53 @@ function endMatch(){
 
     }
 
-    document
-        .getElementById("recap-modal")
-        .classList.remove("hidden");
+    const performance=
+        p1.score===p2.score
+        ?"🔥 Keduanya bermain dengan skor yang sama!"
+        :p1.score>p2.score
+        ?"🔥 Tim Merah mencetak skor lebih tinggi!"
+        :"🔥 Tim Biru mencetak skor lebih tinggi!";
 
-    confetti({
-        particleCount:180,
-        spread:100,
-        origin:{y:.55}
-    });
+    document.getElementById(
+        "performanceText"
+    ).innerText=performance;
 
-    playSound("go");
+    createHistory();
+
+    saveHighScore();
+
+    document.getElementById(
+        "resultModal"
+    ).classList.remove("hidden");
+
+    try{
+
+        confetti({
+            particleCount:180,
+            spread:110,
+            origin:{y:.55}
+        });
+
+    }catch(e){}
+
+    sound("go");
 
 }
 
+
 /* =========================================================
-                       RECAP
+                      RESULT DATA
 ========================================================= */
 
-function fillRecap(player,p){
+function fillResult(playerName,p){
 
     const total=
-        matchState.questions.length;
+        state.questions.length;
 
     const accuracy=
         total
         ?Math.round(
-            p.baseCorrect/total*100
+            p.correct/total*100
         )
         :0;
 
@@ -2358,239 +2787,337 @@ function fillRecap(player,p){
             p.times.reduce(
                 (a,b)=>a+b,
                 0
-            )/
-            p.times.length
+            )/p.times.length
         ).toFixed(1)
         :0;
 
-    document.getElementById(
-        `${player==="p1"?"recap-p1-name":"recap-p2-name"}`
-    ).innerText=
-        player==="p1"
-        ?"TIM MERAH"
-        :gameConfig.mode==="ai"
-        ?"BOT AI"
-        :"TIM BIRU";
+    const prefix=
+        playerName==="p1"
+        ?"r1"
+        :"r2";
 
     document.getElementById(
-        player==="p1"
-        ?"r1-score"
-        :"r2-score"
+        prefix+"Score"
     ).innerText=p.score;
 
     document.getElementById(
-        player==="p1"
-        ?"r1-correct"
-        :"r2-correct"
-    ).innerText=p.baseCorrect;
+        prefix+"Correct"
+    ).innerText=p.correct;
 
     document.getElementById(
-        player==="p1"
-        ?"r1-wrong"
-        :"r2-wrong"
+        prefix+"Wrong"
     ).innerText=p.wrong;
 
     document.getElementById(
-        player==="p1"
-        ?"r1-timeout"
-        :"r2-timeout"
+        prefix+"Timeout"
     ).innerText=p.timeout;
 
     document.getElementById(
-        player==="p1"
-        ?"r1-streak"
-        :"r2-streak"
-    ).innerText=
-        `${p.maxStreak} 🔥`;
+        prefix+"Bonus"
+    ).innerText=p.bonus;
 
     document.getElementById(
-        player==="p1"
-        ?"r1-accuracy"
-        :"r2-accuracy"
-    ).innerText=
-        `${accuracy}%`;
+        prefix+"Streak"
+    ).innerText=p.maxStreak;
 
     document.getElementById(
-        player==="p1"
-        ?"r1-time"
-        :"r2-time"
+        prefix+"Accuracy"
     ).innerText=
-        `${avg}s`;
+        accuracy+"%";
+
+    document.getElementById(
+        prefix+"Time"
+    ).innerText=
+        avg+"s";
 
 }
 
+
 /* =========================================================
-                      SPEECH
+                     QUESTION HISTORY
 ========================================================= */
 
-function speakWord(player){
+function createHistory(){
 
-    const p=matchState[player];
+    const box=
+        document.getElementById(
+            "historyBox"
+        );
+
+    box.innerHTML="";
+
+    state.questions.forEach((q,i)=>{
+
+        const p1Result=
+            getQuestionResult(
+                state.p1,
+                q
+            );
+
+        const p2Result=
+            getQuestionResult(
+                state.p2,
+                q
+            );
+
+        const row=
+            document.createElement("div");
+
+        row.className=
+            "rounded-xl bg-slate-800 border border-slate-700 p-2 text-[10px]";
+
+        row.innerHTML=`
+            <div class="font-bold text-white">
+                ${i+1}. ${escapeHTML(q.word)}
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 mt-1">
+
+                <div class="text-red-300">
+                    P1:
+                    ${escapeHTML(p1Result)}
+                </div>
+
+                <div class="text-blue-300">
+                    P2:
+                    ${escapeHTML(p2Result)}
+                </div>
+
+            </div>
+        `;
+
+        box.appendChild(row);
+
+    });
+
+}
+
+function getQuestionResult(p,q){
 
     if(
-        p.index>=matchState.questions.length
-    )return;
+        p.wrongWords.includes(
+            q.listenWord||q.word
+        )
+    ){
 
-    const q=
-        matchState.questions[p.index];
+        return "❌ Salah/Timeout";
 
-    const text=
-        q.listenWord||
-        q.word;
+    }
 
-    window.speechSynthesis.cancel();
+    return "✅ Benar";
 
-    const utterance=
-        new SpeechSynthesisUtterance(text);
+}
 
-    utterance.lang="en-US";
+function toggleHistory(){
 
-    utterance.rate=.85;
+    document.getElementById(
+        "historyBox"
+    ).classList.toggle("hidden");
 
-    window.speechSynthesis.speak(
-        utterance
+}
+
+
+/* =========================================================
+                       HIGH SCORE
+========================================================= */
+
+function saveHighScore(){
+
+    let scores=[];
+
+    try{
+
+        scores=
+            JSON.parse(
+                localStorage.getItem(
+                    "vocabHighScores"
+                )||"[]"
+            );
+
+    }catch(e){
+        scores=[];
+    }
+
+    scores.push({
+
+        date:new Date().toLocaleString("id-ID"),
+
+        mode:
+            config.mode==="ai"
+            ?"VS AI"
+            :"2 PLAYER",
+
+        level:config.level,
+
+        p1:state.p1.score,
+
+        p2:state.p2.score,
+
+        winner:
+            state.p1.score===state.p2.score
+            ?"SERI"
+            :state.p1.score>state.p2.score
+            ?"TIM MERAH"
+            :"TIM BIRU"
+
+    });
+
+    scores.sort(
+        (a,b)=>
+            Math.max(b.p1,b.p2)-
+            Math.max(a.p1,a.p2)
+    );
+
+    scores=
+        scores.slice(0,10);
+
+    localStorage.setItem(
+        "vocabHighScores",
+        JSON.stringify(scores)
     );
 
 }
 
-/* =========================================================
-                     CSV REPORT
-========================================================= */
+function showHighScores(){
 
-function downloadCSVReport(){
-
-    const p1=matchState.p1;
-    const p2=matchState.p2;
-
-    let csv=
-`VOCABULARY BATTLE REPORT
-
-Pemain,Benar,Salah,Timeout,Bonus,Total Skor,Max Streak,Akurasi
-`;
-
-    csv+=
-`Tim Merah,${p1.baseCorrect},${p1.wrong},${p1.timeout},${p1.bonusPoints},${p1.score},${p1.maxStreak},${Math.round(p1.baseCorrect/matchState.questions.length*100)}%
-`;
-
-    csv+=
-`${gameConfig.mode==="ai"?"Bot AI":"Tim Biru"},${p2.baseCorrect},${p2.wrong},${p2.timeout},${p2.bonusPoints},${p2.score},${p2.maxStreak},${Math.round(p2.baseCorrect/matchState.questions.length*100)}%
-`;
-
-    const blob=
-        new Blob(
-            [csv],
-            {type:"text/csv;charset=utf-8"}
+    const box=
+        document.getElementById(
+            "scoreList"
         );
 
-    const url=
-        URL.createObjectURL(blob);
+    box.innerHTML="";
 
-    const a=
-        document.createElement("a");
+    let scores=[];
 
-    a.href=url;
+    try{
 
-    a.download=
-        `VocabularyBattle_${Date.now()}.csv`;
+        scores=
+            JSON.parse(
+                localStorage.getItem(
+                    "vocabHighScores"
+                )||"[]"
+            );
 
-    a.click();
+    }catch(e){
+        scores=[];
+    }
 
-    URL.revokeObjectURL(url);
+    if(!scores.length){
+
+        box.innerHTML=
+            `<div class="text-center text-slate-500 text-sm p-5">
+                Belum ada pertandingan.
+            </div>`;
+
+    }else{
+
+        scores.forEach((s,i)=>{
+
+            const row=
+                document.createElement("div");
+
+            row.className=
+                "bg-slate-800 border border-slate-700 rounded-xl p-3";
+
+            row.innerHTML=`
+                <div class="flex items-center gap-2">
+
+                    <div class="font-teko text-2xl text-yellow-400">
+                        #${i+1}
+                    </div>
+
+                    <div class="flex-1 text-xs">
+
+                        <div class="font-bold">
+                            ${escapeHTML(s.winner)}
+                        </div>
+
+                        <div class="text-slate-500">
+                            ${escapeHTML(s.mode)}
+                            •
+                            ${escapeHTML(s.level)}
+                        </div>
+
+                    </div>
+
+                    <div class="text-xs font-bold">
+                        ${s.p1} - ${s.p2}
+                    </div>
+
+                </div>
+            `;
+
+            box.appendChild(row);
+
+        });
+
+    }
+
+    document.getElementById(
+        "scoreModal"
+    ).classList.remove("hidden");
 
 }
 
-/* =========================================================
-                    EXIT / RETURN MENU
-========================================================= */
+function closeScores(){
 
-function confirmExitGame(){
+    document.getElementById(
+        "scoreModal"
+    ).classList.add("hidden");
+
+}
+
+function clearScores(){
 
     if(
         confirm(
-            "Keluar dari pertandingan?"
+            "Hapus semua high score?"
         )
     ){
 
-        stopGame();
+        localStorage.removeItem(
+            "vocabHighScores"
+        );
 
-        document
-            .getElementById("arena")
-            .classList.add("hidden");
-
-        document
-            .getElementById("main-menu")
-            .classList.remove("hidden");
+        showHighScores();
 
     }
 
 }
 
-function stopGame(){
-
-    matchState.ended=true;
-
-    if(matchState.p1.timer)
-        clearInterval(matchState.p1.timer);
-
-    if(matchState.p2.timer)
-        clearInterval(matchState.p2.timer);
-
-    if(aiTimeout)
-        clearTimeout(aiTimeout);
-
-}
-
-function returnToMenu(){
-
-    stopGame();
-
-    document
-        .getElementById("recap-modal")
-        .classList.add("hidden");
-
-    document
-        .getElementById("arena")
-        .classList.add("hidden");
-
-    document
-        .getElementById("main-menu")
-        .classList.remove("hidden");
-
-}
 
 /* =========================================================
                        TEACHER MODE
 ========================================================= */
 
-function openTeacherModal(){
+function openTeacher(){
 
-    updateTeacherPackDropdown();
+    refreshPacks();
 
-    document
-        .getElementById("teacher-modal")
-        .classList.remove("hidden");
-
-}
-
-function closeTeacherModal(){
-
-    document
-        .getElementById("teacher-modal")
-        .classList.add("hidden");
+    document.getElementById(
+        "teacherModal"
+    ).classList.remove("hidden");
 
 }
 
-function updateTeacherPackDropdown(){
+function closeTeacher(){
+
+    document.getElementById(
+        "teacherModal"
+    ).classList.add("hidden");
+
+}
+
+function refreshPacks(){
 
     const select=
         document.getElementById(
-            "teacher-target-pack"
+            "packSelect"
         );
 
     select.innerHTML="";
 
-    Object.keys(activeQuestionPacks)
-    .forEach(key=>{
+    Object.keys(database).forEach(key=>{
 
         const option=
             document.createElement("option");
@@ -2603,63 +3130,423 @@ function updateTeacherPackDropdown(){
 
     });
 
-    const level=
-        document.getElementById(
-            "level-select"
-        );
-
-    Object.keys(activeQuestionPacks)
-    .forEach(key=>{
-
-        if(
-            !Array.from(
-                level.options
-            ).some(
-                option=>option.value===key
-            )
-        ){
-
-            const option=
-                document.createElement(
-                    "option"
-                );
-
-            option.value=key;
-            option.innerText=
-                `⭐ Custom: ${key}`;
-
-            level.appendChild(option);
-
-        }
-
-    });
-
 }
 
-function createCustomPack(){
-
-    const input=
-        document.getElementById(
-            "custom-pack-name"
-        );
+function createPack(){
 
     const name=
-        input.value
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g,"_");
+        document.getElementById(
+            "packName"
+        ).value.trim();
 
     if(!name){
 
+        alert("Masukkan nama paket.");
+
+        return;
+
+    }
+
+    const key=
+        name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g,"_");
+
+    if(database[key]){
+
+        alert("Paket tersebut sudah ada.");
+
+        return;
+
+    }
+
+    database[key]=[];
+
+    customPacks[key]=[];
+
+    savePacks();
+
+    refreshPacks();
+
+    document.getElementById(
+        "packSelect"
+    ).value=key;
+
+    document.getElementById(
+        "packName"
+    ).value="";
+
+    document.getElementById(
+        "teacherStatus"
+    ).innerText=
+        "✅ Paket berhasil dibuat.";
+
+}
+
+function addTeacherQuestion(){
+
+    const pack=
+        document.getElementById(
+            "packSelect"
+        ).value;
+
+    const word=
+        document.getElementById(
+            "wordInput"
+        ).value.trim();
+
+    const correct=
+        document.getElementById(
+            "correctInput"
+        ).value.trim();
+
+    const wrongs=[
+        document.getElementById("wrong1").value.trim(),
+        document.getElementById("wrong2").value.trim(),
+        document.getElementById("wrong3").value.trim()
+    ];
+
+    if(
+        !word||
+        !correct||
+        wrongs.some(x=>!x)
+    ){
+
         alert(
-            "Masukkan nama paket!"
+            "Isi semua bagian soal."
         );
 
         return;
+
     }
 
+    database[pack].push({
+
+        word,
+        correct,
+        wrongs,
+        listenWord:word
+
+    });
+
+    customPacks[pack]=
+        database[pack];
+
+    savePacks();
+
+    [
+        "wordInput",
+        "correctInput",
+        "wrong1",
+        "wrong2",
+        "wrong3"
+    ].forEach(id=>{
+        document.getElementById(id).value="";
+    });
+
+    document.getElementById(
+        "teacherStatus"
+    ).innerText=
+        "✅ Soal berhasil disimpan ke paket.";
+
+}
+
+function savePacks(){
+
+    localStorage.setItem(
+        "vocabCustomPacks",
+        JSON.stringify(customPacks)
+    );
+
+}
+
+
+/* =========================================================
+                         SPEECH
+========================================================= */
+
+function speak(playerName){
+
+    const p=state[playerName];
+
     if(
-        activeQuestionPacks[name]
+        !p||
+        p.index>=state.questions.length
+    )return;
+
+    const q=
+        state.questions[p.index];
+
+    if(!("speechSynthesis" in window)){
+
+        alert(
+            "Browser kamu tidak mendukung text-to-speech."
+        );
+
+        return;
+
+    }
+
+    speechSynthesis.cancel();
+
+    const utterance=
+        new SpeechSynthesisUtterance(
+            q.listenWord||q.word
+        );
+
+    utterance.lang="en-US";
+    utterance.rate=.85;
+
+    speechSynthesis.speak(
+        utterance
+    );
+
+}
+
+
+/* =========================================================
+                       CSV
+========================================================= */
+
+function downloadCSV(){
+
+    const p1=state.p1;
+    const p2=state.p2;
+
+    const total=
+        state.questions.length;
+
+    let csv=
+`Vocabulary Battle Report
+
+Level,${config.level}
+Mode,${config.mode}
+Jumlah Soal,${total}
+
+Pemain,Benar,Salah,Timeout,Bonus,Skor,Max Streak,Akurasi
+`;
+
+    csv+=
+`Tim Merah,${p1.correct},${p1.wrong},${p1.timeout},${p1.bonus},${p1.score},${p1.maxStreak},${Math.round(p1.correct/total*100)}%
+`;
+
+    csv+=
+`${config.mode==="ai"?"Bot AI":"Tim Biru"},${p2.correct},${p2.wrong},${p2.timeout},${p2.bonus},${p2.score},${p2.maxStreak},${Math.round(p2.correct/total*100)}%
+`;
+
+    csv+="\n\nRiwayat Soal\n";
+    csv+="No,Kata,Jawaban Benar\n";
+
+    state.questions.forEach((q,i)=>{
+
+        csv+=
+            `${i+1},"${q.word}","${q.correct}"\n`;
+
+    });
+
+    const blob=
+        new Blob(
+            [csv],
+            {
+                type:
+                    "text/csv;charset=utf-8"
+            }
+        );
+
+    const url=
+        URL.createObjectURL(blob);
+
+    const a=
+        document.createElement("a");
+
+    a.href=url;
+
+    a.download=
+        "VocabularyBattle_Report.csv";
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =========================================================
+                       BACK MENU
+========================================================= */
+
+function backMenu(){
+
+    stopEverything();
+
+    document.getElementById(
+        "resultModal"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "arena"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "menu"
+    ).classList.remove("hidden");
+
+}
+
+
+/* =========================================================
+                    KEYBOARD CONTROLS
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    e=>{
+
+        if(
+            e.key==="p"||
+            e.key==="P"
+        ){
+
+            if(
+                state.started &&
+                !state.ended
+            ){
+
+                togglePause();
+
+            }
+
+            return;
+
+        }
+
+        if(
+            e.key==="r"||
+            e.key==="R"
+        ){
+
+            if(
+                state.started &&
+                !state.ended
+            ){
+
+                restartGame();
+
+            }
+
+            return;
+
+        }
+
+        if(e.key==="Escape"){
+
+            if(
+                !document
+                    .getElementById(
+                        "pauseModal"
+                    )
+                    .classList.contains("hidden")
+            ){
+
+                togglePause();
+                return;
+
+            }
+
+            if(state.started&&!state.ended){
+
+                exitGame();
+
+            }
+
+            return;
+
+        }
+
+        if(
+            !state.started||
+            state.paused||
+            state.ended
+        )return;
+
+        if(
+            !["1","2","3","4"].includes(e.key)
+        )return;
+
+        const number=
+            Number(e.key)-1;
+
+        const activePlayers=[
+            "p1",
+            ...(config.mode==="2p"?["p2"][])
+        ];
+
+        activePlayers.forEach(playerName=>{
+
+            const buttons=
+                document.querySelectorAll(
+                    `#${playerName}Options .answer`
+                );
+
+            if(buttons[number]&&!buttons[number].disabled){
+
+                buttons[number].click();
+
+            }
+
+        });
+
+    }
+);
+
+
+/* =========================================================
+                       UPDATE DOTS
+========================================================= */
+
+setInterval(()=>{
+
+    if(
+        state.started &&
+        !state.ended
     ){
 
-       
+        updateDots();
+
+    }
+
+},100);
+
+
+/* =========================================================
+                      ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+                       INITIAL SETUP
+========================================================= */
+
+setMode("2p");
+setQuestions(15);
+setTimer(15);
+
+</script>
+
+</body>
+    </html>
