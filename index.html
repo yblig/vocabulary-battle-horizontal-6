@@ -503,8 +503,8 @@ function buildQuestionSets(){
     return { p1:fallback, p2:shuffleArray([...fallback]) };
   }
 
-  const p1pool=pool.slice(0,perPlayer);
-  const p2pool=pool.slice(perPlayer,perPlayer*2);
+  const p1pool=shuffleArray(pool.slice(0,perPlayer));
+  const p2pool=shuffleArray(pool.slice(perPlayer,perPlayer*2));
 
   return { p1:p1pool.map(withShuffledOptions), p2:p2pool.map(withShuffledOptions) };
 }
