@@ -440,10 +440,10 @@ function persistCustomPacks(){
 let gameConfig={ mode:"2p", packKey:"medium", timerLimit:15, questionCount:15, bonus:true, hint:true };
 
 function createPlayer(){
-  return { score:0, baseCorrect:0, bonusPoints:0, wrong:0, timeout:0, times:[], streak:0, maxStreak:0, index:0, wrongWords:[], log:[], timer:null, timerLeft:0, questionStartTime:0, answered:false, hintUsed:false, finished:false };
+  return { score:0, baseCorrect:0, bonusPoints:0, wrong:0, timeout:0, times:[], streak:0, maxStreak:0, index:0, wrongWords:[], log:[], questions:[], timer:null, timerLeft:0, questionStartTime:0, answered:false, hintUsed:false, finished:false };
 }
 
-let matchState={ p1:createPlayer(), p2:createPlayer(), questions:[], started:false, ended:false, paused:false };
+let matchState={ p1:createPlayer(), p2:createPlayer(), questionSets:{p1:[],p2:[]}, started:false, ended:false, paused:false };
 let pausedTimeLeft={p1:null,p2:null};
 
 /* ================= MENU ================= */
@@ -471,16 +471,42 @@ function selectQuestionCount(count){
 }
 
 /* ================= START GAME ================= */
-function buildQuestionSet(){
+function shuffleArray(arr){
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+
+function withShuffledOptions(q){
+  const options=shuffleArray([q.correct,...q.wrongs]);
+  return { ...q, shuffledOptions:options };
+}
+
+/* Builds two DISJOINT question lists (one per team) so no word repeats
+   across the whole match, and each team gets different words. */
+function buildQuestionSets(){
   let pool=activeQuestionPacks[gameConfig.packKey]||activeQuestionPacks.medium;
-  pool=[...pool];
-  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]]; }
-  if(gameConfig.questionCount>0 && gameConfig.questionCount<pool.length){ pool=pool.slice(0,gameConfig.questionCount); }
-  return pool.map(q=>{
-    const options=[q.correct,...q.wrongs];
-    for(let i=options.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [options[i],options[j]]=[options[j],options[i]]; }
-    return { ...q, shuffledOptions:options };
-  });
+  pool=shuffleArray([...pool]);
+
+  let perPlayer;
+  if(gameConfig.questionCount>0){
+    perPlayer=Math.min(gameConfig.questionCount,Math.floor(pool.length/2));
+  }else{
+    perPlayer=Math.floor(pool.length/2);
+  }
+
+  if(perPlayer<1){
+    /* Pack too small to split into two unique halves — best effort fallback */
+    if(pool.length>0){
+      showToast("⚠️ Paket soal terlalu sedikit untuk dua set berbeda");
+    }
+    const fallback=pool.map(withShuffledOptions);
+    return { p1:fallback, p2:shuffleArray([...fallback]) };
+  }
+
+  const p1pool=pool.slice(0,perPlayer);
+  const p2pool=pool.slice(perPlayer,perPlayer*2);
+
+  return { p1:p1pool.map(withShuffledOptions), p2:p2pool.map(withShuffledOptions) };
 }
 
 function initiateGameSetup(){
@@ -488,13 +514,18 @@ function initiateGameSetup(){
   gameConfig.bonus=document.getElementById("bonus-enabled").checked;
   gameConfig.hint=document.getElementById("hint-enabled").checked;
 
-  matchState.questions=buildQuestionSet();
+  matchState.questionSets=buildQuestionSets();
   launchArena();
 }
 
 function launchArena(){
+  const p1Questions=matchState.questionSets.p1;
+  const p2Questions=matchState.questionSets.p2;
+
   matchState.p1=createPlayer();
   matchState.p2=createPlayer();
+  matchState.p1.questions=p1Questions;
+  matchState.p2.questions=p2Questions;
   matchState.p1.timerLeft=gameConfig.timerLimit;
   matchState.p2.timerLeft=gameConfig.timerLimit;
   matchState.started=false;
@@ -506,7 +537,7 @@ function launchArena(){
   document.getElementById("p2-icon").className=gameConfig.mode==="ai"?"fa-solid fa-robot":"fa-solid fa-user";
   document.getElementById("p1-sub").innerText=gameConfig.packKey==="emoji"?"Mode Emoji":"Bahasa Inggris";
   document.getElementById("p2-sub").innerText=gameConfig.packKey==="emoji"?"Mode Emoji":"Bahasa Inggris";
-  document.getElementById("global-question-info").innerText=`1 / ${matchState.questions.length}`;
+  document.getElementById("global-question-info").innerText=`1 / ${Math.max(p1Questions.length,p2Questions.length)}`;
 
   document.getElementById("main-menu").classList.add("hidden");
   document.getElementById("recap-modal").classList.add("hidden");
@@ -521,6 +552,7 @@ function launchArena(){
 }
 
 function rematch(){
+  /* Reuses the exact same two question sets already stored in matchState.questionSets */
   document.getElementById("recap-modal").classList.add("hidden");
   launchArena();
 }
@@ -552,14 +584,14 @@ function startCountdown(){
 function startPlayerTimer(player){
   const p=matchState[player];
   if(p.timer){ clearInterval(p.timer); p.timer=null; }
-  if(!matchState.started||matchState.ended||p.index>=matchState.questions.length){ return; }
+  if(!matchState.started||matchState.ended||p.index>=p.questions.length){ return; }
   if(gameConfig.timerLimit===0){ p.timerLeft=0; updateTimerUI(player); return; }
   p.timerLeft=gameConfig.timerLimit;
   p.questionStartTime=Date.now();
   updateTimerUI(player);
   p.timer=setInterval(()=>{
     if(matchState.paused)return;
-    if(matchState.ended||p.index>=matchState.questions.length){ clearInterval(p.timer); p.timer=null; return; }
+    if(matchState.ended||p.index>=p.questions.length){ clearInterval(p.timer); p.timer=null; return; }
     p.timerLeft--;
     updateTimerUI(player);
     if(p.timerLeft<=0){ clearInterval(p.timer); p.timer=null; handleTimeout(player); }
@@ -597,7 +629,7 @@ function togglePause(){
 /* ================= RENDER PLAYER ================= */
 function renderPlayer(player){
   const p=matchState[player];
-  const total=matchState.questions.length;
+  const total=p.questions.length;
 
   if(p.index>=total){
     document.getElementById(`${player}-question`).innerText="SELESAI!";
@@ -610,7 +642,7 @@ function renderPlayer(player){
     return;
   }
 
-  const q=matchState.questions[p.index];
+  const q=p.questions[p.index];
   const questionElement=document.getElementById(`${player}-question`);
   questionElement.classList.remove("question-enter");
   void questionElement.offsetWidth;
@@ -619,7 +651,8 @@ function renderPlayer(player){
   document.getElementById(`${player}-progress`).innerText=`${p.index+1}/${total}`;
 
   const combinedDone=Math.min(matchState.p1.index,matchState.p2.index);
-  document.getElementById("global-question-info").innerText=`${combinedDone+1} / ${total}`;
+  const overallTotal=Math.max(matchState.p1.questions.length,matchState.p2.questions.length);
+  document.getElementById("global-question-info").innerText=`${combinedDone+1} / ${overallTotal}`;
 
   renderOptions(player,q);
   document.getElementById(`${player}-hint`).classList.add("hidden");
@@ -651,13 +684,13 @@ function handleAnswer(player,selected,correct){
   if(matchState.ended||!matchState.started||matchState.paused)return;
   const p=matchState[player];
   if(p.answered)return;
-  if(p.index>=matchState.questions.length)return;
+  if(p.index>=p.questions.length)return;
   p.answered=true;
   if(p.timer){ clearInterval(p.timer); p.timer=null; }
 
   const timeTaken=Math.max(0,(Date.now()-p.questionStartTime)/1000);
   p.times.push(timeTaken);
-  const q=matchState.questions[p.index];
+  const q=p.questions[p.index];
 
   if(selected===correct){
     p.baseCorrect++;
@@ -694,9 +727,9 @@ function handleAnswer(player,selected,correct){
 function handleTimeout(player){
   if(matchState.ended)return;
   const p=matchState[player];
-  if(p.index>=matchState.questions.length||p.answered)return;
+  if(p.index>=p.questions.length||p.answered)return;
   p.answered=true;
-  const q=matchState.questions[p.index];
+  const q=p.questions[p.index];
   p.timeout++;
   p.streak=0;
   p.wrongWords.push(q.listenWord||q.word);
@@ -719,14 +752,14 @@ function scheduleAI(){
   if(gameConfig.mode!=="ai")return;
   if(matchState.ended)return;
   const p=matchState.p2;
-  if(p.index>=matchState.questions.length)return;
+  if(p.index>=p.questions.length)return;
   if(aiTimeout){ clearTimeout(aiTimeout); }
-  const q=matchState.questions[p.index];
+  const q=p.questions[p.index];
   const delay=700+Math.random()*1800;
   aiTimeout=setTimeout(()=>{
     aiTimeout=null;
     if(matchState.ended||matchState.paused)return;
-    if(p.index>=matchState.questions.length)return;
+    if(p.index>=p.questions.length)return;
     const correct=Math.random()<.72;
     const selected=correct?q.correct:q.wrongs[Math.floor(Math.random()*q.wrongs.length)];
     const fakeTime=Math.max(.4,Math.min(gameConfig.timerLimit||3,delay/1000));
@@ -740,9 +773,9 @@ function useHint(player){
   if(!gameConfig.hint)return;
   const p=matchState[player];
   if(p.hintUsed)return;
-  if(p.index>=matchState.questions.length)return;
+  if(p.index>=p.questions.length)return;
   p.hintUsed=true;
-  const q=matchState.questions[p.index];
+  const q=p.questions[p.index];
   const wrongs=q.shuffledOptions.filter(x=>x!==q.correct);
   const remove=wrongs[Math.floor(Math.random()*wrongs.length)];
   const hint=document.getElementById(`${player}-hint`);
@@ -796,8 +829,7 @@ function showToast(text){
 
 /* ================= END MATCH ================= */
 function checkEndMatch(){
-  const total=matchState.questions.length;
-  if(matchState.p1.index>=total && matchState.p2.index>=total){ endMatch(); }
+  if(matchState.p1.index>=matchState.p1.questions.length && matchState.p2.index>=matchState.p2.questions.length){ endMatch(); }
 }
 
 function endMatch(){
@@ -850,21 +882,20 @@ function toggleReview(){
 function buildReviewPanel(p1,p2){
   const panel=document.getElementById("review-panel");
   panel.innerHTML="";
-  const total=matchState.questions.length;
+  const total=Math.max(p1.log.length,p2.log.length);
   for(let i=0;i<total;i++){
     const a=p1.log[i], b=p2.log[i];
     const row=document.createElement("div");
     row.className="border-b border-slate-700/60 pb-1.5";
-    const word=(a&&a.word)||(b&&b.word)||"-";
-    row.innerHTML=`<div class="font-bold text-slate-300">${i+1}. ${word}</div>
-    <div class="flex justify-between text-red-300"><span>P1: ${a?a.given:"-"}</span><span>${a?(a.result==="correct"?"✅":"❌"):""}</span></div>
-    <div class="flex justify-between text-blue-300"><span>P2: ${b?b.given:"-"}</span><span>${b?(b.result==="correct"?"✅":"❌"):""}</span></div>`;
+    row.innerHTML=`<div class="font-bold text-slate-300">${i+1}.</div>
+    <div class="flex justify-between text-red-300"><span>P1 (${a?a.word:"-"}): ${a?a.given:"-"}</span><span>${a?(a.result==="correct"?"✅":"❌"):""}</span></div>
+    <div class="flex justify-between text-blue-300"><span>P2 (${b?b.word:"-"}): ${b?b.given:"-"}</span><span>${b?(b.result==="correct"?"✅":"❌"):""}</span></div>`;
     panel.appendChild(row);
   }
 }
 
 function fillRecap(player,p){
-  const total=matchState.questions.length;
+  const total=p.questions.length;
   const accuracy=total?Math.round(p.baseCorrect/total*100):0;
   const avg=p.times.length?(p.times.reduce((a,b)=>a+b,0)/p.times.length).toFixed(1):0;
 
@@ -881,8 +912,8 @@ function fillRecap(player,p){
 /* ================= SPEECH ================= */
 function speakWord(player){
   const p=matchState[player];
-  if(p.index>=matchState.questions.length)return;
-  const q=matchState.questions[p.index];
+  if(p.index>=p.questions.length)return;
+  const q=p.questions[p.index];
   const text=q.listenWord||q.word;
   window.speechSynthesis.cancel();
   const utterance=new SpeechSynthesisUtterance(text);
@@ -894,10 +925,9 @@ function speakWord(player){
 /* ================= CSV REPORT ================= */
 function downloadCSVReport(){
   const p1=matchState.p1, p2=matchState.p2;
-  const total=matchState.questions.length;
   let csv=`VOCABULARY BATTLE REPORT\n\nPemain,Benar,Salah,Timeout,Bonus,Total Skor,Max Streak,Akurasi\n`;
-  csv+=`Tim Merah,${p1.baseCorrect},${p1.wrong},${p1.timeout},${p1.bonusPoints},${p1.score},${p1.maxStreak},${Math.round(p1.baseCorrect/total*100)}%\n`;
-  csv+=`${gameConfig.mode==="ai"?"Bot AI":"Tim Biru"},${p2.baseCorrect},${p2.wrong},${p2.timeout},${p2.bonusPoints},${p2.score},${p2.maxStreak},${Math.round(p2.baseCorrect/total*100)}%\n`;
+  csv+=`Tim Merah,${p1.baseCorrect},${p1.wrong},${p1.timeout},${p1.bonusPoints},${p1.score},${p1.maxStreak},${Math.round(p1.baseCorrect/p1.questions.length*100)}%\n`;
+  csv+=`${gameConfig.mode==="ai"?"Bot AI":"Tim Biru"},${p2.baseCorrect},${p2.wrong},${p2.timeout},${p2.bonusPoints},${p2.score},${p2.maxStreak},${Math.round(p2.baseCorrect/p2.questions.length*100)}%\n`;
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
