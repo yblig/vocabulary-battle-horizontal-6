@@ -1211,6 +1211,16 @@ function printWorksheet(){
   printWindow.document.write(html);
   printWindow.document.close();
 }
+
+// Otomatis fullscreen saat player melakukan klik pertama di mana saja
+window.addEventListener('click', function autoFS() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+  // Hapus listener supaya cuma jalan sekali saat klik pertama
+  window.removeEventListener('click', autoFS);
+}, { once: true });
+
 </script>
 
 </body>
