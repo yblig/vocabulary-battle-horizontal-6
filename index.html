@@ -275,6 +275,7 @@ html.force-landscape body{
 <h3 id="recap-p1-name" class="font-bold text-red-400">TIM MERAH</h3>
 <div class="text-xs mt-2 space-y-2">
 <div class="flex justify-between bg-red-900/30 -mx-1 px-1 py-1 rounded"><span>⭐ Skor Kemampuan</span><strong id="r1-ability" class="text-yellow-300 text-sm">0</strong></div>
+<div class="text-center text-[10px] text-amber-300 font-bold" id="r1-level">-</div>
 <div class="flex justify-between"><span>Skor</span><strong id="r1-score">0</strong></div>
 <div class="flex justify-between"><span>Benar</span><strong id="r1-correct" class="text-green-400">0</strong></div>
 <div class="flex justify-between"><span>Salah</span><strong id="r1-wrong" class="text-red-400">0</strong></div>
@@ -288,6 +289,7 @@ html.force-landscape body{
 <h3 id="recap-p2-name" class="font-bold text-blue-400">TIM BIRU</h3>
 <div class="text-xs mt-2 space-y-2">
 <div class="flex justify-between bg-blue-900/30 -mx-1 px-1 py-1 rounded"><span>⭐ Skor Kemampuan</span><strong id="r2-ability" class="text-yellow-300 text-sm">0</strong></div>
+<div class="text-center text-[10px] text-amber-300 font-bold" id="r2-level">-</div>
 <div class="flex justify-between"><span>Skor</span><strong id="r2-score">0</strong></div>
 <div class="flex justify-between"><span>Benar</span><strong id="r2-correct" class="text-green-400">0</strong></div>
 <div class="flex justify-between"><span>Salah</span><strong id="r2-wrong" class="text-red-400">0</strong></div>
@@ -940,16 +942,32 @@ function endMatch(){
   if(aiTimeout) clearTimeout(aiTimeout);
 
   const p1=matchState.p1, p2=matchState.p2;
+
+  /* Penentuan pemenang: jawaban BENAR paling banyak menang duluan (paling adil,
+     tidak terganggu waktu habis). Kalau sama, baru skor (termasuk bonus
+     kecepatan) yang menentukan. Kalau masih sama juga, siapa yang rata-rata
+     menjawab lebih cepat yang menang. Baru dianggap seri kalau benar-benar
+     identik di ketiganya. */
+  function avgTime(p){ return p.times.length?p.times.reduce((a,b)=>a+b,0)/p.times.length:Infinity; }
+
+  let winnerKey="seri";
+  if(p1.baseCorrect!==p2.baseCorrect){ winnerKey=p1.baseCorrect>p2.baseCorrect?"p1":"p2"; }
+  else if(p1.score!==p2.score){ winnerKey=p1.score>p2.score?"p1":"p2"; }
+  else{
+    const t1=avgTime(p1), t2=avgTime(p2);
+    if(t1!==t2){ winnerKey=t1<t2?"p1":"p2"; }
+  }
+
   let winner;
-  if(p1.score>p2.score){ winner=`${gameConfig.p1Name.toUpperCase()} MENANG! 🏆`; }
-  else if(p2.score>p1.score){ winner=`${gameConfig.p2Name.toUpperCase()} MENANG! 🏆`; }
+  if(winnerKey==="p1"){ winner=`${gameConfig.p1Name.toUpperCase()} MENANG! 🏆`; }
+  else if(winnerKey==="p2"){ winner=`${gameConfig.p2Name.toUpperCase()} MENANG! 🏆`; }
   else{ winner="PERTANDINGAN SERI! 🤝"; }
 
   document.getElementById("winner-banner").innerText=winner;
   fillRecap("p1",p1);
   fillRecap("p2",p2);
 
-  const best=p1.score===p2.score?"Kedua pemain seimbang!":p1.score>p2.score?`🔥 ${gameConfig.p1Name} menjadi pencetak skor tertinggi!`:`🔥 ${gameConfig.p2Name} menjadi pencetak skor tertinggi!`;
+  const best=winnerKey==="seri"?"Kedua pemain benar-benar seimbang!":winnerKey==="p1"?`🔥 ${gameConfig.p1Name} menjawab paling banyak benar & jadi pemenang!`:`🔥 ${gameConfig.p2Name} menjawab paling banyak benar & jadi pemenang!`;
   document.getElementById("mvp-text").innerText=best;
 
   const words=[...new Set([...p1.wrongWords,...p2.wrongWords])];
@@ -1012,6 +1030,34 @@ function computeAbilityScore(p){
   return Math.max(0,Math.round(raw));
 }
 
+/* ================= PROFICIENCY LEVEL =================
+   Perkiraan level kemampuan kosakata anak berdasarkan akurasi jawaban
+   (bukan sekadar skor), dibobot dengan tingkat kesulitan paket yang
+   dimainkan, plus catatan kecepatan reaksi. Ini murni mengukur pengenalan
+   & pemahaman kosakata (reseptif) — bukan kecakapan berbicara/pelafalan,
+   karena itu perlu input suara (speech recognition) yang belum ada di sini. */
+function estimateProficiencyLevel(p){
+  const total=p.questions.length;
+  const accuracy=total?(p.baseCorrect/total)*100:0;
+  const weight=DIFFICULTY_WEIGHT[gameConfig.packKey]||1;
+  const levelScore=accuracy*weight;
+
+  let tier;
+  if(levelScore>=150) tier="🏆 Mahir";
+  else if(levelScore>=110) tier="🥇 Menengah Atas";
+  else if(levelScore>=75) tier="🥈 Menengah";
+  else if(levelScore>=45) tier="🥉 Dasar";
+  else tier="🌱 Pemula";
+
+  let speedNote="";
+  if(gameConfig.timerLimit>0 && p.times.length){
+    const avg=p.times.reduce((a,b)=>a+b,0)/p.times.length;
+    if(avg<=gameConfig.timerLimit*0.4) speedNote=" • Reaksi Cepat";
+    else if(avg>=gameConfig.timerLimit*0.8) speedNote=" • Perlu Latih Kecepatan";
+  }
+  return tier+speedNote;
+}
+
 function fillRecap(player,p){
   const total=p.questions.length;
   const accuracy=total?Math.round(p.baseCorrect/total*100):0;
@@ -1020,6 +1066,7 @@ function fillRecap(player,p){
 
   document.getElementById(player==="p1"?"recap-p1-name":"recap-p2-name").innerText=(player==="p1"?gameConfig.p1Name:gameConfig.p2Name).toUpperCase();
   document.getElementById(player==="p1"?"r1-ability":"r2-ability").innerText=ability;
+  document.getElementById(player==="p1"?"r1-level":"r2-level").innerText=estimateProficiencyLevel(p);
   document.getElementById(player==="p1"?"r1-score":"r2-score").innerText=p.score;
   document.getElementById(player==="p1"?"r1-correct":"r2-correct").innerText=p.baseCorrect;
   document.getElementById(player==="p1"?"r1-wrong":"r2-wrong").innerText=p.wrong;
