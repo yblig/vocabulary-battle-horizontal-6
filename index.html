@@ -56,7 +56,7 @@ select,.field{width:100%;padding:15px;border-radius:15px;border:1px solid #33436
 .answer{border-radius:16px;background:linear-gradient(145deg,#151f3b,#0c1429);border:2px solid #29395f;padding:10px;font-size:clamp(13px,2vw,17px);font-weight:700;box-shadow:0 7px 15px #0005;min-height:58px}
 .answer.correct{background:#064e3b;border-color:#22c55e}.answer.wrong{background:#651d2b;border-color:#fb3156}.answer:disabled{opacity:.65}
 .bottom{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-top:9px;padding:10px 15px;border-radius:17px;background:#0c142c;border:1px solid #26365d;text-align:center}
-.progress{height:7px;background:#17213b;border-radius:99px;overflow:hidden;margin-top:4px}.progress>i{display:block;height:100%;background:linear-gradient(90deg,#00eaff,#8b5cf6);width:0;transition:width .3s}
+.progress{height:7px;background:#17213b;border-radius:99px;overflow:hidden;margin-top:4px}.progress>i{display:block;height:100%;background:linear-gradient(90deg,#00eaff,#8b5cf6);width:0;transition:width .3s}.mini-progress-label{display:flex;justify-content:space-between;margin-top:3px;font-size:9px;color:#7182a5}.mini-progress-label b{color:#dbeafe}
 #modal{position:fixed;inset:0;background:#02040dcc;backdrop-filter:blur(14px);z-index:50;display:flex;align-items:center;justify-content:center;padding:18px}
 .modalbox{width:min(620px,100%);max-height:90vh;overflow:auto;border-radius:25px;padding:22px}
 .result-title{font-family:Orbitron;text-align:center;font-size:clamp(25px,6vw,46px);color:#ffe45c}
@@ -149,13 +149,13 @@ select,.field{width:100%;padding:15px;border-radius:15px;border:1px solid #33436
 <div class="players">
 <div id="p1" class="player glass red">
 <div class="phead"><span class="name redt">🔴 TIM MERAH</span><span class="score" id="score1">0</span></div>
-<div class="timer"><div class="timertext"><span>WAKTU</span><b id="time1">15s</b></div><div class="timerline"><div id="bar1" class="timerbar"></div></div></div>
+<div class="timer"><div class="timertext"><span>WAKTU</span><b id="time1">15s</b></div><div class="timerline"><div id="bar1" class="timerbar"></div></div><div class="progress"><i id="progress1"></i></div><div class="mini-progress-label"><span>PROGRESS SOAL</span><b id="progressText1">1/15</b></div></div>
 <div class="question"><span class="tag">PLAYER 1</span><h2 id="q1">...</h2><div class="qtools"><button class="smallbtn" onclick="speak('p1')">🔊 LISTEN</button><button id="hint1" class="smallbtn" onclick="useHint('p1')">💡 HINT</button></div><div id="hintText1" style="color:#fde047;font-size:11px;margin-top:5px"></div></div>
 <div id="answers1" class="answers"></div>
 </div>
 <div id="p2" class="player glass blue">
 <div class="phead"><span class="name bluet" id="p2name">🔵 TIM BIRU</span><span class="score" id="score2">0</span></div>
-<div class="timer"><div class="timertext"><span>WAKTU</span><b id="time2">15s</b></div><div class="timerline"><div id="bar2" class="timerbar"></div></div></div>
+<div class="timer"><div class="timertext"><span>WAKTU</span><b id="time2">15s</b></div><div class="timerline"><div id="bar2" class="timerbar"></div></div><div class="progress"><i id="progress2"></i></div><div class="mini-progress-label"><span>PROGRESS SOAL</span><b id="progressText2">1/15</b></div></div>
 <div class="question"><span class="tag">PLAYER 2</span><h2 id="q2">...</h2><div class="qtools"><button class="smallbtn" onclick="speak('p2')">🔊 LISTEN</button><button id="hint2" class="smallbtn" onclick="useHint('p2')">💡 HINT</button></div><div id="hintText2" style="color:#fde047;font-size:11px;margin-top:5px"></div></div>
 <div id="answers2" class="answers"></div>
 </div>
@@ -168,6 +168,41 @@ select,.field{width:100%;padding:15px;border-radius:15px;border:1px solid #33436
 </div>
 
 <script>
+
+/* =========================================================
+   TOUCHSCREEN SFX ENGINE
+   All sounds are synthesized locally: no external audio files.
+========================================================= */
+const SFX = {
+  ctx: null,
+  muted: false,
+  ready() {
+    if (!this.ctx) {
+      const C = window.AudioContext || window.webkitAudioContext;
+      if (C) this.ctx = new C();
+    }
+    if (this.ctx?.state === "suspended") this.ctx.resume();
+  },
+  tone(freq, duration=.12, type="sine", volume=.08, delay=0) {
+    if (this.muted) return;
+    this.ready();
+    if (!this.ctx) return;
+    const t=this.ctx.currentTime+delay, o=this.ctx.createOscillator(), g=this.ctx.createGain();
+    o.type=type; o.frequency.setValueAtTime(freq,t);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(volume,t+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+duration);
+    o.connect(g); g.connect(this.ctx.destination); o.start(t); o.stop(t+duration+.02);
+  },
+  correct(){this.tone(660,.12,"sine",.11);this.tone(880,.18,"sine",.09,.08)},
+  wrong(){this.tone(180,.16,"sawtooth",.08);this.tone(120,.20,"sawtooth",.06,.09)},
+  timeout(){this.tone(440,.10,"square",.07);this.tone(260,.25,"square",.06,.12)},
+  tick(){this.tone(900,.055,"triangle",.045)},
+  go(){this.tone(523,.10,"sine",.08);this.tone(784,.18,"sine",.08,.09)},
+  next(){this.tone(520,.07,"triangle",.055);this.tone(700,.10,"triangle",.05,.07)}
+};
+document.addEventListener("pointerdown",()=>SFX.ready(),{once:true});
+
 const DB={
 easy:[["Cat","Kucing",["Anjing","Burung","Kelinci"]],["Book","Buku",["Pensil","Tas","Meja"]],["Red","Merah",["Biru","Hijau","Kuning"]],["Mother","Ibu",["Ayah","Nenek","Kakak"]],["Water","Air",["Susu","Teh","Jus"]],["Sun","Matahari",["Bulan","Awan","Bintang"]],["Apple","Apel",["Pisang","Jeruk","Anggur"]],["Dog","Anjing",["Kucing","Kuda","Burung"]],["Milk","Susu",["Air","Teh","Kopi"]],["Chair","Kursi",["Meja","Pintu","Jendela"]],["Door","Pintu",["Jendela","Atap","Dinding"]],["Fish","Ikan",["Ayam","Bebek","Kelinci"]],["Bird","Burung",["Ikan","Kucing","Kuda"]],["Pen","Pulpen",["Pensil","Buku","Penggaris"]],["Bag","Tas",["Buku","Sepatu","Baju"]],["Shoe","Sepatu",["Sandal","Topi","Kaos Kaki"]],["Hat","Topi",["Baju","Celana","Sepatu"]],["Father","Ayah",["Ibu","Paman","Kakek"]],["Blue","Biru",["Merah","Hijau","Kuning"]],["Green","Hijau",["Kuning","Hitam","Putih"]],["Yellow","Kuning",["Merah","Ungu","Cokelat"]],["Black","Hitam",["Putih","Abu-abu","Cokelat"]],["White","Putih",["Hitam","Merah","Kuning"]],["House","Rumah",["Sekolah","Taman","Toko"]],["Car","Mobil",["Motor","Sepeda","Bus"]]],
 medium:[["Teacher","Guru",["Dokter","Polisi","Petani"]],["Kitchen","Dapur",["Kamar","Taman","Garasi"]],["Always","Selalu",["Jarang","Kadang-kadang","Tidak Pernah"]],["Library","Perpustakaan",["Kantin","Pasar","Rumah Sakit"]],["Delicious","Lezat",["Pahit","Asin","Pedas"]],["Mountain","Gunung",["Pantai","Danau","Sungai"]],["Doctor","Dokter",["Guru","Pilot","Petani"]],["Hospital","Rumah Sakit",["Sekolah","Pasar","Bank"]],["Market","Pasar",["Toko","Kantin","Sekolah"]],["Window","Jendela",["Pintu","Dinding","Atap"]],["Garden","Taman",["Hutan","Sawah","Dapur"]],["Breakfast","Sarapan",["Makan Siang","Makan Malam","Camilan"]],["Bicycle","Sepeda",["Motor","Mobil","Kereta"]],["River","Sungai",["Laut","Danau","Kolam"]],["Friend","Teman",["Musuh","Tetangga","Guru"]],["Pencil","Pensil",["Pulpen","Spidol","Kapur"]],["Student","Murid",["Guru","Satpam","Kepala Sekolah"]],["Village","Desa",["Kota","Negara","Hutan"]],["Weather","Cuaca",["Iklim","Musim","Suhu"]],["Island","Pulau",["Laut","Gunung","Pantai"]],["Clock","Jam",["Kalender","Kamera","Kaca"]],["Mirror","Cermin",["Jendela","Jam","Lampu"]],["Umbrella","Payung",["Topi","Handuk","Jas Hujan"]],["Bridge","Jembatan",["Jalan","Gedung","Stasiun"]],["Important","Penting",["Mudah","Cepat","Lambat"]]],
@@ -206,10 +241,12 @@ function render(pl){
  let q=state.questions[p.index];document.getElementById("q"+num).textContent=q.word;
  document.getElementById("globalQ").textContent=Math.min(Math.max(state.p1.index,state.p2.index)+1,total)+"/"+total;
  document.getElementById("globalProgress").style.width=(Math.max(state.p1.index,state.p2.index)/total*100)+"%";
+ document.getElementById("progress"+num).style.width=(p.index/total*100)+"%";
+ document.getElementById("progressText"+num).textContent=Math.min(p.index+1,total)+"/"+total;
  let box=document.getElementById("answers"+num);box.innerHTML="";
  q.opts.forEach(o=>{let b=document.createElement("button");b.className="answer";b.textContent=o;b.onclick=()=>answer(pl,o);box.appendChild(b)});
  document.getElementById("hintText"+num).textContent="";document.getElementById("hint"+num).disabled=!cfg.hint||p.hintUsed;
- updateTimer(pl);updateBonus()
+ updateTimer(pl);updateBonus();if(state.started&&!state.ended)startTimer(pl)
 }
 function disable(pl,v){document.querySelectorAll("#answers"+(pl==="p1"?1:2)+" .answer").forEach(b=>b.disabled=v)}
 function startTimer(pl){
@@ -254,7 +291,7 @@ function confetti(){for(let i=0;i<45;i++){let e=document.createElement("i");e.st
 function downloadCSV(){let rows=[["Pemain","Skor","Benar","Salah","Timeout","Bonus","Max Streak"],["Tim Merah",state.p1.score,state.p1.correct,state.p1.wrong,state.p1.timeout,state.p1.bonus,state.p1.maxStreak],[cfg.mode==="ai"?"Bot AI":"Tim Biru",state.p2.score,state.p2.correct,state.p2.wrong,state.p2.timeout,state.p2.bonus,state.p2.maxStreak]];let blob=new Blob([rows.map(r=>r.join(",")).join("\\n")],{type:"text/csv"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="VocabularyBattle_Report.csv";a.click();URL.revokeObjectURL(u)}
 function exitGame(){if(confirm("Keluar dari pertandingan?"))returnMenu()}
 function returnMenu(){if(state){state.ended=true;if(state.p1.timer)clearInterval(state.p1.timer);if(state.p2.timer)clearInterval(state.p2.timer)}modal.classList.add("hidden");game.classList.add("hidden");menu.classList.remove("hidden")}
-function openUpdates(){modal.classList.remove("hidden");modalBox.innerHTML=`<div class="result-title" style="font-size:30px">🔒 UPDATE VAULT</div><p class="unlock">Tombol ini hanya menampilkan daftar fitur yang sedang dikunci/direncanakan. Tidak ada fitur gameplay yang dikunci.</p><div class="grid two">${["⚔️ Tournament Mode","🌐 Local Network Battle","🎨 Custom Themes","🏆 Achievement System","🗺️ Question Map","🎁 Daily Challenge","👤 Player Profiles","📚 Teacher Question Bank","📺 TV Remote Mode","🔐 Classroom Admin Panel","📡 QR Join Battle","🎵 Music Pack"].map(x=>`<div class="feature-card">🔒 <b>${x}</b><small>UPDATE TERKUNCI</small></div>`).join("")}</div><button class="start" onclick="modal.classList.add('hidden')">TUTUP</button>`}
+function openUpdates(){modal.classList.remove("hidden");const features=["⚔️ Tournament Mode","🌐 Local Network Battle","🎨 Custom Themes","🏆 Achievement System","🗺️ Question Map","🎁 Daily Challenge","📚 Teacher Question Bank","📺 TV Presentation Mode","🔊 Advanced Sound Pack","🎮 Combo Challenge Mode","🎯 Precision Bonus Mode","🧩 Word Puzzle Round","🌀 Sudden Death Round","🏁 Best-of Series","📊 Live Classroom Statistics","🌈 Animated Themes","🎲 Random Event Round","🛡️ Comeback Shield","🚀 Turbo Round","🏅 Trophy Collection"];modalBox.innerHTML=`<div class="result-title" style="font-size:30px">🔒 UPDATE VAULT</div><p class="unlock">20 fitur tambahan di bawah ini hanya ditampilkan sebagai daftar update. Tidak ada fitur gameplay utama yang dikunci.</p><div class="grid two">${features.map((x,i)=>`<div class="feature-card"><b>🔒 ${x}</b><small>UPDATE ${String(i+1).padStart(2,"0")} • TERKUNCI</small></div>`).join("")}</div><button class="start" onclick="modal.classList.add('hidden')">TUTUP</button>`}
 </script>
 </body>
-    </html>
+</html>
