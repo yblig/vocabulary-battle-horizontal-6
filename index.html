@@ -65,7 +65,6 @@ body.big-text{font-size:1.12em;}
   .menu-title{font-size:2.5rem!important;}
 }
 
-/* Force landscape layout on phones when fullscreen can't rotate natively */
 html.force-landscape{
   overflow:hidden;
 }
@@ -121,12 +120,12 @@ html.force-landscape body{
 <div class="mt-4">
 <label class="text-xs font-bold text-slate-300 uppercase"><i class="fa-solid fa-list-ol"></i> Jumlah Soal</label>
 <div class="grid grid-cols-6 gap-1.5 mt-1">
-<button onclick="selectQuestionCount(5)" id="qcount-5" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700">5</button>
-<button onclick="selectQuestionCount(10)" id="qcount-10" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700">10</button>
-<button onclick="selectQuestionCount(15)" id="qcount-15" class="qcount-btn p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300">15</button>
-<button onclick="selectQuestionCount(20)" id="qcount-20" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700">20</button>
-<button onclick="selectQuestionCount(25)" id="qcount-25" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700">25</button>
-<button onclick="selectQuestionCount(0)" id="qcount-0" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">Semua</button>
+<button onclick="selectQuestionCount(5)" id="qcount-5" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">5</button>
+<button onclick="selectQuestionCount(10)" id="qcount-10" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">10</button>
+<button onclick="selectQuestionCount(15)" id="qcount-15" class="qcount-btn p-2 rounded-lg border-2 border-indigo-500 bg-indigo-950/50 text-indigo-300 text-xs">15</button>
+<button onclick="selectQuestionCount(20)" id="qcount-20" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">20</button>
+<button onclick="selectQuestionCount(25)" id="qcount-25" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">25</button>
+<button onclick="selectQuestionCount(40)" id="qcount-40" class="qcount-btn p-2 rounded-lg bg-slate-800 border border-slate-700 text-xs">40</button>
 </div>
 </div>
 
@@ -405,13 +404,67 @@ function playSound(type){
   osc.start(); osc.stop(audioCtx.currentTime+.4);
 }
 
-/* ================= QUESTION DATABASE ================= */
+/* ================= QUESTION DATABASE (40 SOAL PER LEVEL) ================= */
 const defaultQuestions={
-easy:[["Cat","Kucing",["Anjing","Burung","Kelinci"]],["Book","Buku",["Pensil","Tas","Meja"]],["Red","Merah",["Biru","Hijau","Kuning"]],["Mother","Ibu",["Ayah","Nenek","Kakak"]],["Water","Air",["Susu","Teh","Jus"]],["Sun","Matahari",["Bulan","Awan","Bintang"]],["Apple","Apel",["Pisang","Jeruk","Anggur"]],["Dog","Anjing",["Kucing","Kuda","Burung"]],["Milk","Susu",["Air","Teh","Kopi"]],["Chair","Kursi",["Meja","Pintu","Jendela"]],["Door","Pintu",["Jendela","Atap","Dinding"]],["Fish","Ikan",["Ayam","Bebek","Kelinci"]],["Bird","Burung",["Ikan","Kucing","Kuda"]],["Pen","Pulpen",["Pensil","Buku","Penggaris"]],["Bag","Tas",["Buku","Sepatu","Baju"]],["Shoe","Sepatu",["Sandal","Topi","Kaos Kaki"]],["Hat","Topi",["Baju","Celana","Sepatu"]],["Father","Ayah",["Ibu","Paman","Kakek"]],["Blue","Biru",["Merah","Hijau","Kuning"]],["Green","Hijau",["Kuning","Hitam","Putih"]],["Yellow","Kuning",["Merah","Ungu","Cokelat"]],["Black","Hitam",["Putih","Abu-abu","Cokelat"]],["White","Putih",["Hitam","Merah","Kuning"]],["House","Rumah",["Sekolah","Taman","Toko"]],["Car","Mobil",["Motor","Sepeda","Bus"]]],
-medium:[["Teacher","Guru",["Dokter","Polisi","Petani"]],["Kitchen","Dapur",["Kamar","Taman","Garasi"]],["Always","Selalu",["Jarang","Kadang-kadang","Tidak Pernah"]],["Library","Perpustakaan",["Kantin","Pasar","Rumah Sakit"]],["Delicious","Lezat",["Pahit","Asin","Pedas"]],["Mountain","Gunung",["Pantai","Danau","Sungai"]],["Doctor","Dokter",["Guru","Pilot","Petani"]],["Hospital","Rumah Sakit",["Sekolah","Pasar","Bank"]],["Market","Pasar",["Toko","Kantin","Sekolah"]],["Window","Jendela",["Pintu","Dinding","Atap"]],["Garden","Taman",["Hutan","Sawah","Dapur"]],["Breakfast","Sarapan",["Makan Siang","Makan Malam","Camilan"]],["Bicycle","Sepeda",["Motor","Mobil","Kereta"]],["River","Sungai",["Laut","Danau","Kolam"]],["Friend","Teman",["Musuh","Tetangga","Guru"]],["Pencil","Pensil",["Pulpen","Spidol","Kapur"]],["Student","Murid",["Guru","Satpam","Kepala Sekolah"]],["Village","Desa",["Kota","Negara","Hutan"]],["Weather","Cuaca",["Iklim","Musim","Suhu"]],["Island","Pulau",["Laut","Gunung","Pantai"]],["Clock","Jam",["Kalender","Kamera","Kaca"]],["Mirror","Cermin",["Jendela","Jam","Lampu"]],["Umbrella","Payung",["Topi","Handuk","Jas Hujan"]],["Bridge","Jembatan",["Jalan","Gedung","Stasiun"]],["Important","Penting",["Mudah","Cepat","Lambat"]]],
-hard:[["Knowledge","Pengetahuan",["Pengalaman","Pendidikan","Informasi"]],["Environment","Lingkungan",["Masyarakat","Pembangunan","Sekolah"]],["Dangerous","Berbahaya",["Aman","Sulit","Cepat"]],["Improve","Meningkatkan",["Mengurangi","Menghentikan","Melupakan"]],["Government","Pemerintah",["Masyarakat","Sekolah","Perusahaan"]],["Century","Abad",["Tahun","Bulan","Hari"]],["Challenge","Tantangan",["Bantuan","Hadiah","Kesempatan"]],["Opportunity","Kesempatan",["Masalah","Bahaya","Kegagalan"]],["Behavior","Tingkah Laku",["Perasaan","Pikiran","Wajah"]],["Education","Pendidikan",["Pekerjaan","Permainan","Olahraga"]],["Protect","Melindungi",["Menyerang","Merusak","Meninggalkan"]],["Discover","Menemukan",["Kehilangan","Menghapus","Menutup"]],["Population","Populasi",["Wilayah","Pendapatan","Bangunan"]],["Structure","Struktur",["Fungsi","Tujuan","Bahan"]],["Technology","Teknologi",["Tradisi","Sejarah","Seni"]],["Advantage","Keuntungan",["Kerugian","Bahaya","Masalah"]],["Experience","Pengalaman",["Rencana","Harapan","Pertanyaan"]],["Decision","Keputusan",["Pertanyaan","Masalah","Nasihat"]],["Solution","Solusi",["Masalah","Alasan","Sebab"]],["Patience","Kesabaran",["Kemarahan","Keberanian","Kecepatan"]],["Honesty","Kejujuran",["Kebohongan","Kebaikan","Kemarahan"]],["Invention","Penemuan",["Pembelian","Penjualan","Pencurian"]],["Musician","Musisi",["Aktor","Penulis","Pelukis"]],["Journey","Perjalanan",["Tujuan","Peta","Rumah"]],["Responsible","Bertanggung Jawab",["Ceroboh","Marah","Lambat"]]],
-extreme:[["Ambiguous","Bermakna Ganda",["Jelas","Singkat","Sederhana"]],["Benevolent","Baik Hati",["Kejam","Marah","Egois"]],["Meticulous","Sangat Teliti",["Ceroboh","Lambat","Bingung"]],["Pragmatic","Praktis",["Teoretis","Emosional","Sulit"]],["Ubiquitous","Ada Di Mana-mana",["Langka","Jauh","Tersembunyi"]],["Ephemeral","Sesaat",["Abadi","Lama","Kuat"]],["Resilient","Tahan Banting",["Rapuh","Lemah","Takut"]],["Superfluous","Berlebihan",["Penting","Kurang","Sedikit"]],["Candid","Jujur Apa Adanya",["Palsu","Rahasia","Bohong"]],["Aesthetic","Keindahan",["Kekuatan","Kecepatan","Kebersihan"]],["Elusive","Sulit Ditangkap",["Mudah","Jelas","Dekat"]],["Ineffable","Sulit Diungkapkan",["Jelas","Biasa","Mudah"]],["Nostalgia","Kerinduan Masa Lalu",["Kemarahan","Kebosanan","Kegembiraan"]],["Scrutinize","Memeriksa Dengan Cermat",["Mengabaikan","Melupakan","Meninggalkan"]],["Tenacious","Gigih",["Pemalas","Penakut","Lemah"]],["Vindicate","Membuktikan Benar",["Menyalahkan","Menghukum","Menuduh"]],["Anachronism","Ketidaksesuaian Zaman",["Kesesuaian","Masa Depan","Perubahan"]],["Capricious","Suka Berubah",["Konsisten","Tenang","Tetap"]],["Exacerbate","Memperburuk",["Memperbaiki","Membantu","Mengurangi"]],["Fastidious","Sangat Pemilih",["Sembarangan","Santai","Ramah"]],["Gregarious","Suka Bersosialisasi",["Penyendiri","Pemalu","Pendiam"]],["Lucid","Mudah Dipahami",["Rumit","Gelap","Sulit"]],["Nonchalant","Acuh Tak Acuh",["Peduli","Panik","Semangat"]],["Ostentatious","Suka Pamer",["Sederhana","Rendah Hati","Pendiam"]],["Adaptable","Mudah Menyesuaikan",["Kaku","Lambat","Lemah"]]],
-emoji:[["🐶","Anjing",["Kucing","Burung","Singa"],"Dog"],["🐱","Kucing",["Anjing","Kelinci","Sapi"],"Cat"],["🍎","Apel",["Pisang","Jeruk","Anggur"],"Apple"],["🚗","Mobil",["Motor","Sepeda","Pesawat"],"Car"],["🚀","Roket",["Mobil","Kapal","Kereta"],"Rocket"],["🍕","Piza",["Roti","Kue","Burger"],"Pizza"],["⚽","Bola Sepak",["Basket","Voli","Tenis"],"Soccer Ball"],["📚","Buku",["Pensil","Tas","Penggaris"],"Books"],["🌧️","Hujan",["Matahari","Awan","Angin"],"Rain"],["🔥","Api",["Air","Es","Tanah"],"Fire"],["🍌","Pisang",["Apel","Jeruk","Nanas"],"Banana"],["🐸","Katak",["Ular","Ikan","Kura-kura"],"Frog"],["🦁","Singa",["Harimau","Serigala","Beruang"],"Lion"],["✈️","Pesawat",["Helikopter","Kapal","Mobil"],"Airplane"],["🚲","Sepeda",["Motor","Mobil","Kereta"],"Bicycle"],["🍦","Es Krim",["Cokelat","Permen","Kue"],"Ice Cream"],["🎸","Gitar",["Drum","Piano","Biola"],"Guitar"],["☀️","Matahari",["Bulan","Bintang","Awan"],"Sun"],["🌙","Bulan",["Matahari","Bintang","Awan"],"Moon"],["🍔","Burger",["Piza","Roti","Kentang"],"Burger"],["🏀","Basket",["Bola Sepak","Voli","Tenis"],"Basketball"],["🎈","Balon",["Bola","Lampu","Mainan"],"Balloon"],["🔑","Kunci",["Pintu","Gembok","Rumah"],"Key"],["⏰","Jam Weker",["Jam Tangan","HP","Kalender"],"Alarm Clock"],["🎁","Hadiah",["Uang","Surat","Tas"],"Gift"]].map(x=>({word:x[0],correct:x[1],wrongs:x[2],listenWord:x[3]}))
+easy:[
+  ["Cat","Kucing",["Anjing","Burung","Kelinci"]],["Book","Buku",["Pensil","Tas","Meja"]],["Red","Merah",["Biru","Hijau","Kuning"]],["Mother","Ibu",["Ayah","Nenek","Kakak"]],
+  ["Water","Air",["Susu","Teh","Jus"]],["Sun","Matahari",["Bulan","Awan","Bintang"]],["Apple","Apel",["Pisang","Jeruk","Anggur"]],["Dog","Anjing",["Kucing","Kuda","Burung"]],
+  ["Milk","Susu",["Air","Teh","Kopi"]],["Chair","Kursi",["Meja","Pintu","Jendela"]],["Door","Pintu",["Jendela","Atap","Dinding"]],["Fish","Ikan",["Ayam","Bebek","Kelinci"]],
+  ["Bird","Burung",["Ikan","Kucing","Kuda"]],["Pen","Pulpen",["Pensil","Buku","Penggaris"]],["Bag","Tas",["Buku","Sepatu","Baju"]],["Shoe","Sepatu",["Sandal","Topi","Kaos Kaki"]],
+  ["Hat","Topi",["Baju","Celana","Sepatu"]],["Father","Ayah",["Ibu","Paman","Kakek"]],["Blue","Biru",["Merah","Hijau","Kuning"]],["Green","Hijau",["Kuning","Hitam","Putih"]],
+  ["Yellow","Kuning",["Merah","Ungu","Cokelat"]],["Black","Hitam",["Putih","Abu-abu","Cokelat"]],["White","Putih",["Hitam","Merah","Kuning"]],["House","Rumah",["Sekolah","Taman","Toko"]],
+  ["Car","Mobil",["Motor","Sepeda","Bus"]],["Tree","Pohon",["Bunga","Rumput","Daun"]],["Flower","Bunga",["Pohon","Buah","Taman"]],["Moon","Bulan",["Matahari","Bintang","Awan"]],
+  ["Star","Bintang",["Bulan","Matahari","Awan"]],["Sky","Langit",["Laut","Gunung","Awan"]],["Duck","Bebek",["Ayam","Burung","Ikan"]],["Chicken","Ayam",["Bebek","Sapi","Kambing"]],
+  ["Cow","Sapi",["Kambing","Kuda","Kelinci"]],["Horse","Kuda",["Sapi","Anjing","Kucing"]],["Table","Meja",["Kursi","Pintu","Lemari"]],["Box","Kotak",["Tas","Buku","Ember"]],
+  ["Bed","Kasur",["Bantal","Meja","Kursi"]],["Clock","Jam",["Kaca","Kamera","Pintu"]],["Key","Kunci",["Pintu","Rumah","Gembok"]],["Ring","Cincin",["Kalung","Gelang","Topi"]]
+],
+medium:[
+  ["Teacher","Guru",["Dokter","Polisi","Petani"]],["Kitchen","Dapur",["Kamar","Taman","Garasi"]],["Always","Selalu",["Jarang","Kadang-kadang","Tidak Pernah"]],["Library","Perpustakaan",["Kantin","Pasar","Rumah Sakit"]],
+  ["Delicious","Lezat",["Pahit","Asin","Pedas"]],["Mountain","Gunung",["Pantai","Danau","Sungai"]],["Doctor","Dokter",["Guru","Pilot","Petani"]],["Hospital","Rumah Sakit",["Sekolah","Pasar","Bank"]],
+  ["Market","Pasar",["Toko","Kantin","Sekolah"]],["Window","Jendela",["Pintu","Dinding","Atap"]],["Garden","Taman",["Hutan","Sawah","Dapur"]],["Breakfast","Sarapan",["Makan Siang","Makan Malam","Camilan"]],
+  ["Bicycle","Sepeda",["Motor","Mobil","Kereta"]],["River","Sungai",["Laut","Danau","Kolam"]],["Friend","Teman",["Musuh","Tetangga","Guru"]],["Pencil","Pensil",["Pulpen","Spidol","Kapur"]],
+  ["Student","Murid",["Guru","Satpam","Kepala Sekolah"]],["Village","Desa",["Kota","Negara","Hutan"]],["Weather","Cuaca",["Iklim","Musim","Suhu"]],["Island","Pulau",["Laut","Gunung","Pantai"]],
+  ["Clock","Jam",["Kalender","Kamera","Kaca"]],["Mirror","Cermin",["Jendela","Jam","Lampu"]],["Umbrella","Payung",["Topi","Handuk","Jas Hujan"]],["Bridge","Jembatan",["Jalan","Gedung","Stasiun"]],
+  ["Important","Penting",["Mudah","Cepat","Lambat"]],["Airport","Bandara",["Stasiun","Pelabuhan","Terminal"]],["Station","Stasiun",["Bandara","Halte","Taman"]],["Musician","Musisi",["Pelukis","Penulis","Aktor"]],
+  ["Painter","Pelukis",["Musisi","Penari","Penyanyi"]],["Farmer","Petani",["Nelayan","Gurun","Peternak"]],["Fisherman","Nelayan",["Petani","Sopir","Pilot"]],["Kitchen","Dapur",["Kamar Mandi","Ruang Tamu","Garasi"]],
+  ["Bathroom","Kamar Mandi",["Dapur","Kamar Tidur","Garasi"]],["Bedroom","Kamar Tidur",["Dapur","Taman","Teras"]],["Forest","Hutan",["Taman","Sawah","Gunung"]],["Beach","Pantai",["Laut","Sungai","Danau"]],
+  ["Ocean","Samudra",["Laut","Danau","Sungai"]],["Factory","Pabrik",["Toko","Kantor","Pasar"]],["Company","Perusahaan",["Kantor","Pabrik","Sekolah"]],["Neighbor","Tetangga",["Teman","Musuh","Saudara"]]
+],
+hard:[
+  ["Knowledge","Pengetahuan",["Pengalaman","Pendidikan","Informasi"]],["Environment","Lingkungan",["Masyarakat","Pembangunan","Sekolah"]],["Dangerous","Berbahaya",["Aman","Sulit","Cepat"]],["Improve","Meningkatkan",["Mengurangi","Menghentikan","Melupakan"]],
+  ["Government","Pemerintah",["Masyarakat","Sekolah","Perusahaan"]],["Century","Abad",["Tahun","Bulan","Hari"]],["Challenge","Tantangan",["Bantuan","Hadiah","Kesempatan"]],["Opportunity","Kesempatan",["Masalah","Bahaya","Kegagalan"]],
+  ["Behavior","Tingkah Laku",["Perasaan","Pikiran","Wajah"]],["Education","Pendidikan",["Pekerjaan","Permainan","Olahraga"]],["Protect","Melindungi",["Menyerang","Merusak","Meninggalkan"]],["Discover","Menemukan",["Kehilangan","Menghapus","Menutup"]],
+  ["Population","Populasi",["Wilayah","Pendapatan","Bangunan"]],["Structure","Struktur",["Fungsi","Tujuan","Bahan"]],["Technology","Teknologi",["Tradisi","Sejarah","Seni"]],["Advantage","Keuntungan",["Kerugian","Bahaya","Masalah"]],
+  ["Experience","Pengalaman",["Rencana","Harapan","Pertanyaan"]],["Decision","Keputusan",["Pertanyaan","Masalah","Nasihat"]],["Solution","Solusi",["Masalah","Alasan","Sebab"]],["Patience","Kesabaran",["Kemarahan","Keberanian","Kecepatan"]],
+  ["Honesty","Kejujuran",["Kebohongan","Kebaikan","Kemarahan"]],["Invention","Penemuan",["Pembelian","Penjualan","Pencurian"]],["Journey","Perjalanan",["Tujuan","Peta","Rumah"]],["Responsible","Bertanggung Jawab",["Ceroboh","Marah","Lambat"]],
+  ["Confidence","Kepercayaan Diri",["Ketakutan","Keraguan","Kesedihan"]],["Consequence","Akibat",["Sebab","Tujuan","Alasan"]],["Contribution","Kontribusi",["Hambatan","Kerugian","Bantuan"]],["Development","Pembangunan",["Pengurangan","Penurunan","Kerusakan"]],
+  ["Efficiency","Efisiensi",["Pemborosan","Keterlambatan","Kesulitan"]],["Encourage","Mendorong",["Mencegah","Melarang","Menghentikan"]],["Establish","Mendirikan",["Merusak","Menutup","Menghancurkan"]],["Independence","Kemerdekaan",["Ketergantungan","Penjajahan","Aturan"]],
+  ["Influence","Pengaruh",["Akibat","Hambatan","Bantuan"]],["Inspiration","Inspirasi",["Rencana","Keputusan","Aturan"]],["Investigation","Penyelidikan",["Penutupan","Pemberian","Pencegahan"]],["Permission","Izin",["Larangan","Hukuman","Perintah"]],
+  ["Prediction","Prediksi",["Fakta","Kenyataan","Bukti"]],["Relationship","Hubungan",["Pemisahan","Jarak","Perbedaan"]],["Requirement","Persyaratan",["Pilihan","Saran","Hadiah"]],["Transformation","Perubahan Bentuk",["Ketetapan","Keheningan","Pertumbuhan"]]
+],
+extreme:[
+  ["Ambiguous","Bermakna Ganda",["Jelas","Singkat","Sederhana"]],["Benevolent","Baik Hati",["Kejam","Marah","Egois"]],["Meticulous","Sangat Teliti",["Ceroboh","Lambat","Bingung"]],["Pragmatic","Praktis",["Teoretis","Emosional","Sulit"]],
+  ["Ubiquitous","Ada Di Mana-mana",["Langka","Jauh","Tersembunyi"]],["Ephemeral","Sesaat",["Abadi","Lama","Kuat"]],["Resilient","Tahan Banting",["Rapuh","Lemah","Takut"]],["Superfluous","Berlebihan",["Penting","Kurang","Sedikit"]],
+  ["Candid","Jujur Apa Adanya",["Palsu","Rahasia","Bohong"]],["Aesthetic","Keindahan",["Kekuatan","Kecepatan","Kebersihan"]],["Elusive","Sulit Ditangkap",["Mudah","Jelas","Dekat"]],["Ineffable","Sulit Diungkapkan",["Jelas","Biasa","Mudah"]],
+  ["Nostalgia","Kerinduan Masa Lalu",["Kemarahan","Kebosanan","Kegembiraan"]],["Scrutinize","Memeriksa Dengan Cermat",["Mengabaikan","Melupakan","Meninggalkan"]],["Tenacious","Gigih",["Pemalas","Penakut","Lemah"]],["Vindicate","Membuktikan Benar",["Menyalahkan","Menghukum","Menuduh"]],
+  ["Anachronism","Ketidaksesuaian Zaman",["Kesesuaian","Masa Depan","Perubahan"]],["Capricious","Suka Berubah",["Konsisten","Tenang","Tetap"]],["Exacerbate","Memperburuk",["Memperbaiki","Membantu","Mengurangi"]],["Fastidious","Sangat Pemilih",["Sembarangan","Santai","Ramah"]],
+  ["Gregarious","Suka Bersosialisasi",["Penyendiri","Pemalu","Pendiam"]],["Lucid","Mudah Dipahami",["Rumit","Gelap","Sulit"]],["Nonchalant","Acuh Tak Acuh",["Peduli","Panik","Semangat"]],["Ostentatious","Suka Pamer",["Sederhana","Rendah Hati","Pendiam"]],
+  ["Adaptable","Mudah Menyesuaikan",["Kaku","Lambat","Lemah"]],["Altruistic","Mementingkan Orang Lain",["Egois","Jahat","Sombong"]],["Cognitive","Berhubungan Kognitif",["Fisik","Emosi","Spiritual"]],["Diligent","Tekun dan Rajin",["Pemalas","Lalai","Ceroboh"]],
+  ["Equanimity","Ketenangan Pikiran",["Kepanikan","Kemarahan","Kecemasan"]],["Formidable","Sangat Tangguh",["Lemah","Kecil","Mudah"]],["Inquisitive","Sangat Ingin Tahu",["Apatis","Cuek","Pendiam"]],["Juxtapose","Menyejajarkan",["Mempisahkan","Menghancurkan","Menyembunyikan"]],
+  ["Magnanimous","Bermurah Hati",["Dendam","Kikir","Iri"]],["Perseverance","Ketekunan",["Keputusasaan","Kelemahan","Mogok"]],["Quixotic","Terlalu Idealistis",["Praktis","Realistis","Logis"]],["Serendipity","Keberuntungan Tak Terduga",["Kesialan","Rencana","Pola"]],["Tantamount","Sama Artimya",["Berbeda","Jauh","Bertentangan"]],["Unprecedented","Belum Pernah Ada",["Biasa","Rutin","Umum"]],["Vehement","Sangat المتحمس/Kuat",["Lemah","Ragu","Dingin"]],["Zealous","Sangat Semangat",["Apatis","Lesu","Takut"]]
+],
+emoji:[
+  ["🐶","Anjing",["Kucing","Burung","Singa"],"Dog"],["🐱","Kucing",["Anjing","Kelinci","Sapi"],"Cat"],["🍎","Apel",["Pisang","Jeruk","Anggur"],"Apple"],["🚗","Mobil",["Motor","Sepeda","Pesawat"],"Car"],
+  ["🚀","Roket",["Mobil","Kapal","Kereta"],"Rocket"],["🍕","Piza",["Roti","Kue","Burger"],"Pizza"],["⚽","Bola Sepak",["Basket","Voli","Tenis"],"Soccer Ball"],["📚","Buku",["Pensil","Tas","Penggaris"],"Books"],
+  ["🌧️","Hujan",["Matahari","Awan","Angin"],"Rain"],["🔥","Api",["Air","Es","Tanah"],"Fire"],["🍌","Pisang",["Apel","Jeruk","Nanas"],"Banana"],["🐸","Katak",["Ular","Ikan","Kura-kura"],"Frog"],
+  ["🦁","Singa",["Harimau","Serigala","Beruang"],"Lion"],["✈️","Pesawat",["Helikopter","Kapal","Mobil"],"Airplane"],["🚲","Sepeda",["Motor","Mobil","Kereta"],"Bicycle"],["🍦","Es Krim",["Cokelat","Permen","Kue"],"Ice Cream"],
+  ["🎸","Gitar",["Drum","Piano","Biola"],"Guitar"],["☀️","Matahari",["Bulan","Bintang","Awan"],"Sun"],["🌙","Bulan",["Matahari","Bintang","Awan"],"Moon"],["🍔","Burger",["Piza","Roti","Kentang"],"Burger"],
+  ["🏀","Basket",["Bola Sepak","Voli","Tenis"],"Basketball"],["🎈","Balon",["Bola","Lampu","Mainan"],"Balloon"],["🔑","Kunci",["Pintu","Gembok","Rumah"],"Key"],["⏰","Jam Weker",["Jam Tangan","HP","Kalender"],"Alarm Clock"],
+  ["🎁","Hadiah",["Uang","Surat","Tas"],"Gift"],["🥑","Alpukat",["Apel","Pisang","Jeruk"],"Avocado"],["🐼","Panda",["Beruang","Kucing","Anjing"],"Panda"],["🍩","Donat",["Kue","Roti","Permen"],"Donut"],
+  ["🌋","Gunung Berapi",["Gunung","Laut","Awan"],"Volcano"],["Rainbow","Pelangi",["Awan","Hujan","Matahari"],"Rainbow"],["🌵","Kaktus",["Pohon","Bunga","Rumput"],"Cactus"],["🍓","Stroberi",["Apel","Ceri","Anggur"],"Strawberry"],
+  ["🍿","Popcorn",["Keripik","Permen","Cokelat"],"Popcorn"],["🐬","Lumba-lumba",["Ikan","Paus","Hiu"],"Dolphin"],["👑","Mahkota",["Topi","Cincin","Baju"],"Crown"],["🎓","Toga Kelulusan",["Topi","Buku","Tas"],"Graduation Cap"],
+  ["🎨","Papan Lukis",["Buku","Pensil","Kamera"],"Palette"],["🎯","Papan Panah",["Bola","Gitar","Jam"],"Target"],["🎧","Headphone",["HP","Kamera","Lampu"],"Headphones"],["🔮","Bola Kristal",["Kaca","Jam","Bintang"],"Crystal Ball"]
+].map(x=>({word:x[0],correct:x[1],wrongs:x[2],listenWord:x[3]}))
 };
 
 function normalizeDatabase(){
@@ -444,7 +497,6 @@ function createPlayer(){
 }
 
 let matchState={ p1:createPlayer(), p2:createPlayer(), questionSets:{p1:[],p2:[]}, started:false, ended:false, paused:false };
-let pausedTimeLeft={p1:null,p2:null};
 
 /* ================= MENU ================= */
 function selectGameMode(mode){
@@ -481,32 +533,15 @@ function withShuffledOptions(q){
   return { ...q, shuffledOptions:options };
 }
 
-/* Builds two DISJOINT question lists (one per team) so no word repeats
-   across the whole match, and each team gets different words. */
+/* PERBAIKAN LOGIKA RANDOMIZE DAN SOAL KEDUA PEMAIN */
 function buildQuestionSets(){
   let pool=activeQuestionPacks[gameConfig.packKey]||activeQuestionPacks.medium;
-  pool=shuffleArray([...pool]);
+  let targetCount=gameConfig.questionCount>0?Math.min(gameConfig.questionCount, pool.length):pool.length;
 
-  let perPlayer;
-  if(gameConfig.questionCount>0){
-    perPlayer=Math.min(gameConfig.questionCount,Math.floor(pool.length/2));
-  }else{
-    perPlayer=Math.floor(pool.length/2);
-  }
+  let p1Pool=shuffleArray([...pool]).slice(0, targetCount);
+  let p2Pool=shuffleArray([...pool]).slice(0, targetCount);
 
-  if(perPlayer<1){
-    /* Pack too small to split into two unique halves — best effort fallback */
-    if(pool.length>0){
-      showToast("⚠️ Paket soal terlalu sedikit untuk dua set berbeda");
-    }
-    const fallback=pool.map(withShuffledOptions);
-    return { p1:fallback, p2:shuffleArray([...fallback]) };
-  }
-
-  const p1pool=shuffleArray(pool.slice(0,perPlayer));
-  const p2pool=shuffleArray(pool.slice(perPlayer,perPlayer*2));
-
-  return { p1:p1pool.map(withShuffledOptions), p2:p2pool.map(withShuffledOptions) };
+  return { p1:p1Pool.map(withShuffledOptions), p2:p2Pool.map(withShuffledOptions) };
 }
 
 function initiateGameSetup(){
@@ -552,7 +587,6 @@ function launchArena(){
 }
 
 function rematch(){
-  /* Reuses the exact same two question sets already stored in matchState.questionSets */
   document.getElementById("recap-modal").classList.add("hidden");
   launchArena();
 }
