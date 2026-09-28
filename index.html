@@ -78,6 +78,72 @@ html.force-landscape body{
   transform-origin:top left;
   transform:rotate(90deg);
 }
+
+/* ===== UI REFRESH ===== */
+body{
+  background:
+    radial-gradient(900px 500px at 8% -10%,rgba(239,68,68,.22),transparent 60%),
+    radial-gradient(900px 500px at 105% 110%,rgba(59,130,246,.25),transparent 60%),
+    radial-gradient(600px 400px at 50% 50%,rgba(99,102,241,.08),transparent 70%),
+    #060a14 !important;
+}
+#main-menu{background:rgba(6,10,20,.92) !important;}
+#main-menu > div > div{
+  background:linear-gradient(180deg,rgba(30,41,59,.85),rgba(15,23,42,.95)) !important;
+  border:1px solid rgba(129,140,248,.35) !important;
+  box-shadow:0 0 80px -15px rgba(99,102,241,.55),0 20px 50px -20px rgba(0,0,0,.8);
+}
+.menu-title{filter:drop-shadow(0 4px 18px rgba(250,204,21,.25));}
+#arena > div:first-child{
+  background:rgba(15,23,42,.75) !important;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(148,163,184,.2) !important;
+}
+#round-message{text-shadow:0 0 14px rgba(250,204,21,.5);letter-spacing:.06em;font-size:1.6rem !important;}
+#p1-card{
+  background:linear-gradient(165deg,rgba(127,29,29,.35),rgba(15,23,42,.96) 55%) !important;
+  border:1.5px solid rgba(248,113,113,.55) !important;
+  box-shadow:0 0 0 1px rgba(239,68,68,.12),0 14px 40px -14px rgba(239,68,68,.5);
+}
+#p2-card{
+  background:linear-gradient(165deg,rgba(30,58,138,.4),rgba(15,23,42,.96) 55%) !important;
+  border:1.5px solid rgba(96,165,250,.55) !important;
+  box-shadow:0 0 0 1px rgba(59,130,246,.12),0 14px 40px -14px rgba(59,130,246,.5);
+}
+#p1-timer-bar,#p2-timer-bar{border-radius:999px;box-shadow:0 0 10px currentColor;}
+#p1-timer-bar{background:linear-gradient(90deg,#ef4444,#f97316) !important;}
+#p2-timer-bar{background:linear-gradient(90deg,#3b82f6,#06b6d4) !important;}
+.question-text{
+  font-size:clamp(1.7rem,5vw,3.2rem) !important;
+  text-shadow:0 4px 24px rgba(0,0,0,.6);
+  letter-spacing:.01em;
+}
+.answer-btn{
+  font-size:.95rem !important;
+  min-height:48px;
+  border-radius:14px !important;
+  background:linear-gradient(180deg,#1e293b,#111827) !important;
+  border:1.5px solid #334155 !important;
+  box-shadow:0 3px 0 #0b1220;
+  transition:transform .12s,border-color .12s,box-shadow .12s;
+}
+.answer-btn:hover:not(:disabled){border-color:#818cf8 !important;transform:translateY(-1px);box-shadow:0 5px 0 #0b1220,0 0 18px rgba(129,140,248,.35);}
+.answer-btn:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #0b1220;}
+.opt-badge{
+  position:absolute;left:6px;top:50%;transform:translateY(-50%);
+  width:20px;height:20px;border-radius:7px;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  background:#334155;color:#e2e8f0;
+}
+#recap-modal > div > div, #leaderboard-modal > div > div, #teacher-modal > div > div{
+  box-shadow:0 0 70px -15px rgba(99,102,241,.5);
+}
+#winner-banner{text-shadow:0 0 25px rgba(250,204,21,.45);}
+@media(max-width:700px){
+  .answer-btn{font-size:.78rem !important;min-height:40px;}
+  .opt-badge{width:16px;height:16px;font-size:9px;left:4px;}
+  #round-message{font-size:1.25rem !important;}
+}
 </style>
 </head>
 
@@ -510,6 +576,319 @@ extreme:[["Ambiguous","Bermakna Ganda",["Jelas","Singkat","Sederhana"]],["Benevo
 emoji:[["🐶","Anjing",["Kucing","Burung","Singa"],"Dog"],["🐱","Kucing",["Anjing","Kelinci","Sapi"],"Cat"],["🍎","Apel",["Pisang","Jeruk","Anggur"],"Apple"],["🚗","Mobil",["Motor","Sepeda","Pesawat"],"Car"],["🚀","Roket",["Mobil","Kapal","Kereta"],"Rocket"],["🍕","Piza",["Roti","Kue","Burger"],"Pizza"],["⚽","Bola Sepak",["Basket","Voli","Tenis"],"Soccer Ball"],["📚","Buku",["Pensil","Tas","Penggaris"],"Books"],["🌧️","Hujan",["Matahari","Awan","Angin"],"Rain"],["🔥","Api",["Air","Es","Tanah"],"Fire"],["🍌","Pisang",["Apel","Jeruk","Nanas"],"Banana"],["🐸","Katak",["Ular","Ikan","Kura-kura"],"Frog"],["🦁","Singa",["Harimau","Serigala","Beruang"],"Lion"],["✈️","Pesawat",["Helikopter","Kapal","Mobil"],"Airplane"],["🚲","Sepeda",["Motor","Mobil","Kereta"],"Bicycle"],["🍦","Es Krim",["Cokelat","Permen","Kue"],"Ice Cream"],["🎸","Gitar",["Drum","Piano","Biola"],"Guitar"],["☀️","Matahari",["Bulan","Bintang","Awan"],"Sun"],["🌙","Bulan",["Matahari","Bintang","Awan"],"Moon"],["🍔","Burger",["Piza","Roti","Kentang"],"Burger"],["🏀","Basket",["Bola Sepak","Voli","Tenis"],"Basketball"],["🎈","Balon",["Bola","Lampu","Mainan"],"Balloon"],["🔑","Kunci",["Pintu","Gembok","Rumah"],"Key"],["⏰","Jam Weker",["Jam Tangan","HP","Kalender"],"Alarm Clock"],["🎁","Hadiah",["Uang","Surat","Tas"],"Gift"]].map(x=>({word:x[0],correct:x[1],wrongs:x[2],listenWord:x[3]}))
 };
 
+
+/* ===== Perluasan bank soal: format ringkas "kata|arti|pengecoh1,pengecoh2,pengecoh3[|listen]" ===== */
+function parsePack(text,emoji){
+  return text.trim().split("\n").filter(l=>l.trim()).map(l=>{
+    const p=l.split("|");
+    const a=[p[0].trim(),p[1].trim(),p[2].split(",").map(s=>s.trim())];
+    if(emoji) a.push((p[3]||"").trim());
+    return a;
+  });
+}
+
+defaultQuestions.easy.push(...parsePack(`
+Egg|Telur|Susu,Keju,Roti
+Bread|Roti|Kue,Nasi,Mie
+Rice|Nasi|Roti,Mie,Kentang
+Table|Meja|Kursi,Lemari,Rak
+Bed|Kasur|Sofa,Meja,Kursi
+School|Sekolah|Rumah,Kantor,Pasar
+Ball|Bola|Raket,Sepatu,Topi
+Star|Bintang|Bulan,Matahari,Awan
+Cloud|Awan|Hujan,Angin,Petir
+Rain|Hujan|Salju,Angin,Kabut
+Grandmother|Nenek|Kakek,Bibi,Paman
+Grandfather|Kakek|Nenek,Paman,Bibi
+Baby|Bayi|Anak,Remaja,Dewasa
+Tree|Pohon|Bunga,Rumput,Daun
+Flower|Bunga|Pohon,Daun,Akar
+Cow|Sapi|Kambing,Kuda,Ayam
+Chicken|Ayam|Bebek,Burung,Ikan
+Duck|Bebek|Ayam,Angsa,Burung
+Horse|Kuda|Sapi,Keledai,Kambing
+Banana|Pisang|Apel,Jeruk,Mangga
+Orange|Jeruk|Apel,Pisang,Anggur
+Tea|Teh|Kopi,Susu,Air
+Train|Kereta|Bus,Pesawat,Kapal
+Boat|Perahu|Mobil,Pesawat,Sepeda
+Moon|Bulan|Bintang,Matahari,Awan
+`));
+
+defaultQuestions.medium.push(...parsePack(`
+Airport|Bandara|Stasiun,Pelabuhan,Terminal
+Passport|Paspor|Tiket,Visa,KTP
+Vegetable|Sayuran|Buah,Daging,Ikan
+Fruit|Buah|Sayuran,Daging,Roti
+Season|Musim|Cuaca,Iklim,Bulan
+Holiday|Liburan|Kerja,Sekolah,Ujian
+Neighbor|Tetangga|Teman,Saudara,Guru
+Address|Alamat|Nama,Nomor,Tanggal
+Language|Bahasa|Budaya,Negara,Suku
+Habit|Kebiasaan|Aturan,Tujuan,Rencana
+Exercise|Olahraga|Istirahat,Belajar,Bermain
+Health|Kesehatan|Penyakit,Obat,Dokter
+Medicine|Obat|Penyakit,Vitamin,Racun
+Farmer|Petani|Nelayan,Pedagang,Guru
+Police|Polisi|Tentara,Satpam,Hakim
+Lunch|Makan Siang|Sarapan,Makan Malam,Camilan
+Dinner|Makan Malam|Sarapan,Makan Siang,Camilan
+Bedroom|Kamar Tidur|Dapur,Kamar Mandi,Ruang Tamu
+Bathroom|Kamar Mandi|Dapur,Kamar Tidur,Garasi
+Money|Uang|Emas,Kartu,Cek
+Gift|Hadiah|Surat,Uang,Bunga
+Story|Cerita|Lagu,Puisi,Gambar
+Music|Musik|Cahaya,Warna,Gambar
+Picture|Gambar|Suara,Rumah,Kata
+Lesson|Pelajaran|Ujian,Tugas,Libur
+`));
+
+defaultQuestions.hard.push(...parsePack(`
+Consequence|Akibat|Sebab,Tujuan,Rencana
+Evidence|Bukti|Dugaan,Opini,Rumor
+Genuine|Asli|Palsu,Tiruan,Rusak
+Reluctant|Enggan|Bersedia,Senang,Yakin
+Persuade|Membujuk|Memaksa,Menolak,Mengancam
+Compromise|Kompromi|Konflik,Kemenangan,Kekalahan
+Neglect|Mengabaikan|Merawat,Melindungi,Memperhatikan
+Sufficient|Cukup|Kurang,Berlebihan,Habis
+Justify|Membenarkan|Menyalahkan,Menyangkal,Meragukan
+Diverse|Beragam|Seragam,Sama,Tunggal
+Constraint|Batasan|Kebebasan,Peluang,Pilihan
+Inevitable|Tak Terelakkan|Terhindarkan,Mustahil,Jarang
+Contemplate|Merenungkan|Mengabaikan,Melupakan,Menolak
+Vulnerable|Rentan|Kuat,Aman,Kebal
+Achievement|Prestasi|Kegagalan,Hukuman,Kesalahan
+Attitude|Sikap|Bakat,Nasib,Penampilan
+Maintain|Mempertahankan|Merusak,Menghentikan,Melepaskan
+Reduce|Mengurangi|Menambah,Menyimpan,Menjual
+Increase|Meningkat|Menurun,Berhenti,Hilang
+Prevent|Mencegah|Mendorong,Membiarkan,Memulai
+Acquire|Memperoleh|Kehilangan,Memberikan,Menolak
+Ancient|Kuno|Modern,Baru,Cepat
+Generous|Dermawan|Pelit,Sombong,Malas
+Trustworthy|Dapat Dipercaya|Penipu,Ragu,Asing
+Independent|Mandiri|Bergantung,Manja,Lemah
+`));
+
+defaultQuestions.extreme.push(...parsePack(`
+Quintessential|Paling Mewakili|Tidak Relevan,Biasa Saja,Meragukan
+Vex|Menjengkelkan|Menyenangkan,Menenangkan,Membantu
+Placate|Menenangkan Amarah|Memprovokasi,Mengganggu,Menantang
+Debacle|Kekacauan Besar|Kesuksesan,Ketenangan,Kejayaan
+Austere|Sangat Sederhana|Mewah,Boros,Glamor
+Cajole|Membujuk Dengan Rayuan|Mengancam,Memaksa,Menolak
+Insidious|Berbahaya Diam-diam|Aman,Jelas,Terbuka
+Loquacious|Banyak Bicara|Pendiam,Pemalu,Tertutup
+Myriad|Sangat Banyak|Sedikit,Tunggal,Terbatas
+Prudent|Bijaksana|Ceroboh,Nekat,Bodoh
+Wistful|Rindu Sedih|Gembira,Marah,Acuh
+Zealous|Sangat Antusias|Malas,Acuh,Lesu
+Tacit|Tersirat|Terang-terangan,Jelas,Tertulis
+Robust|Kokoh|Lemah,Rapuh,Sakit
+Candor|Keterusterangan|Kebohongan,Kerahasiaan,Kepura-puraan
+Alleviate|Meringankan|Memperberat,Menambah,Mengabaikan
+Ambivalent|Bimbang|Yakin,Tegas,Senang
+Belligerent|Suka Berperang|Damai,Ramah,Tenang
+Conundrum|Teka-teki Rumit|Solusi,Jawaban,Kepastian
+Diligent|Rajin Dan Tekun|Malas,Ceroboh,Lalai
+Eloquent|Fasih Berbicara|Gagap,Pendiam,Kasar
+Frugal|Hemat|Boros,Mewah,Serakah
+Haphazard|Serampangan|Teratur,Terencana,Cermat
+Impartial|Tidak Memihak|Berat Sebelah,Curang,Fanatik
+Lethargic|Lesu|Bersemangat,Gesit,Waspada
+`));
+
+/* ---- EMOJI: 4 tingkat, masing-masing 50 soal ---- */
+defaultQuestions.emoji_easy=[...defaultQuestions.emoji, ...parsePack(`
+🐘|Gajah|Badak,Kuda Nil,Jerapah|Elephant
+🐵|Monyet|Gorila,Beruang,Kucing|Monkey
+🐷|Babi|Sapi,Kambing,Domba|Pig
+🐮|Sapi|Kerbau,Kuda,Kambing|Cow
+🐔|Ayam|Bebek,Burung,Angsa|Chicken
+🐟|Ikan|Ular,Kura-kura,Paus|Fish
+🐢|Kura-kura|Katak,Ular,Buaya|Turtle
+🦋|Kupu-kupu|Lebah,Capung,Semut|Butterfly
+🐝|Lebah|Kupu-kupu,Semut,Lalat|Bee
+🍇|Anggur|Apel,Ceri,Melon|Grapes
+🍉|Semangka|Melon,Jeruk,Nanas|Watermelon
+🍓|Stroberi|Apel,Ceri,Anggur|Strawberry
+🥕|Wortel|Jagung,Tomat,Kentang|Carrot
+🌽|Jagung|Wortel,Padi,Kacang|Corn
+🍞|Roti|Kue,Keju,Biskuit|Bread
+🥛|Susu|Air,Teh,Jus|Milk
+☕|Kopi|Teh,Susu,Cokelat|Coffee
+🏠|Rumah|Sekolah,Toko,Kantor|House
+🌳|Pohon|Bunga,Rumput,Gunung|Tree
+🌸|Bunga|Pohon,Daun,Rumput|Flower
+⭐|Bintang|Bulan,Matahari,Awan|Star
+🚌|Bus|Mobil,Kereta,Kapal|Bus
+🚂|Kereta|Bus,Pesawat,Kapal|Train
+⛵|Perahu Layar|Pesawat,Kereta,Mobil|Sailboat
+📱|Ponsel|Komputer,Televisi,Radio|Phone
+`,true)];
+delete defaultQuestions.emoji;
+
+defaultQuestions.emoji_medium=parsePack(`
+🏥|Rumah Sakit|Sekolah,Bank,Pasar|Hospital
+🏫|Sekolah|Rumah Sakit,Toko,Kantor|School
+🏪|Toko|Sekolah,Bank,Pasar|Store
+🏦|Bank|Toko,Sekolah,Pasar|Bank
+⛪|Gereja|Masjid,Sekolah,Rumah|Church
+🕌|Masjid|Gereja,Pura,Sekolah|Mosque
+🏰|Kastil|Rumah,Menara,Penjara|Castle
+🌉|Jembatan|Jalan,Terowongan,Gedung|Bridge
+🏔️|Gunung|Bukit,Pantai,Danau|Mountain
+🌊|Ombak|Sungai,Hujan,Kolam|Wave
+🏝️|Pulau|Pantai,Gunung,Hutan|Island
+🌋|Gunung Berapi|Gunung,Bukit,Pulau|Volcano
+👨‍⚕️|Dokter|Guru,Polisi,Koki|Doctor
+👩‍🏫|Guru|Dokter,Pilot,Petani|Teacher
+👮|Polisi|Tentara,Dokter,Petani|Police Officer
+👨‍🍳|Koki|Petani,Nelayan,Guru|Chef
+👨‍🌾|Petani|Nelayan,Koki,Guru|Farmer
+👩‍🚒|Pemadam Kebakaran|Polisi,Dokter,Tentara|Firefighter
+🧑‍✈️|Pilot|Sopir,Nahkoda,Masinis|Pilot
+🏃|Berlari|Berjalan,Melompat,Berenang|Running
+🏊|Berenang|Menyelam,Berlari,Terbang|Swimming
+🚴|Bersepeda|Berlari,Berjalan,Berkuda|Cycling
+😴|Tidur|Bangun,Makan,Mandi|Sleeping
+😢|Sedih|Senang,Marah,Takut|Sad
+😡|Marah|Senang,Sedih,Bingung|Angry
+😂|Tertawa|Menangis,Tidur,Marah|Laughing
+😱|Terkejut|Senang,Bosan,Sedih|Shocked
+🤒|Sakit|Sehat,Lapar,Senang|Sick
+📖|Membaca|Menulis,Berbicara,Menggambar|Reading
+✏️|Pensil|Pulpen,Penghapus,Penggaris|Pencil
+📏|Penggaris|Pensil,Buku,Gunting|Ruler
+✂️|Gunting|Pisau,Penggaris,Lem|Scissors
+🎨|Palet Cat|Pensil,Buku,Kertas|Paint Palette
+🎤|Mikrofon|Gitar,Radio,Speaker|Microphone
+🎹|Piano|Gitar,Drum,Biola|Piano
+🥁|Drum|Piano,Gitar,Terompet|Drum
+🕐|Jam|Kalender,Kompas,Peta|Clock
+📅|Kalender|Jam,Buku,Surat|Calendar
+💰|Uang|Emas,Kartu,Cek|Money
+🔦|Senter|Lilin,Lampu,Api|Flashlight
+🧹|Sapu|Pel,Sikat,Kain|Broom
+🛒|Troli Belanja|Tas,Kotak,Keranjang Buah|Shopping Cart
+🧭|Kompas|Peta,Jam,Teropong|Compass
+🔭|Teleskop|Kamera,Kacamata,Mikroskop|Telescope
+🔬|Mikroskop|Teleskop,Kamera,Kaca|Microscope
+🌡️|Termometer|Jam,Penggaris,Timbangan|Thermometer
+💊|Pil|Permen,Kancing,Biji|Pill
+🩹|Plester|Perban,Obat,Jarum|Bandage
+🧼|Sabun|Sampo,Handuk,Sikat Gigi|Soap
+🧻|Tisu Toilet|Handuk,Kertas,Kain|Toilet Paper
+`,true);
+
+defaultQuestions.emoji_hard=parsePack(`
+🦉|Burung Hantu|Elang,Merpati,Kelelawar|Owl
+🦊|Rubah|Serigala,Anjing,Kucing|Fox
+🐺|Serigala|Rubah,Anjing,Beruang|Wolf
+🦌|Rusa|Kambing,Kuda,Sapi|Deer
+🦓|Zebra|Kuda,Keledai,Jerapah|Zebra
+🦒|Jerapah|Unta,Zebra,Rusa|Giraffe
+🦘|Kanguru|Koala,Tupai,Kelinci|Kangaroo
+🐨|Koala|Panda,Kanguru,Beruang|Koala
+🐼|Panda|Koala,Beruang,Kucing|Panda
+🦔|Landak|Tikus,Kelinci,Musang|Hedgehog
+🦇|Kelelawar|Burung,Tikus,Lebah|Bat
+🐙|Gurita|Cumi-cumi,Ubur-ubur,Kepiting|Octopus
+🦀|Kepiting|Udang,Lobster,Kerang|Crab
+🦐|Udang|Kepiting,Ikan,Cumi-cumi|Shrimp
+🐬|Lumba-lumba|Hiu,Paus,Ikan|Dolphin
+🦈|Hiu|Lumba-lumba,Paus,Pari|Shark
+🐳|Paus|Hiu,Lumba-lumba,Gurita|Whale
+🦅|Elang|Burung Hantu,Merpati,Bebek|Eagle
+🦜|Burung Beo|Elang,Merpati,Bangau|Parrot
+🐧|Penguin|Bebek,Angsa,Camar|Penguin
+🦢|Angsa|Bebek,Bangau,Merpati|Swan
+🦩|Flamingo|Bangau,Angsa,Merak|Flamingo
+🐍|Ular|Cacing,Belut,Kadal|Snake
+🦎|Kadal|Ular,Buaya,Katak|Lizard
+🐊|Buaya|Kadal,Ular,Kura-kura|Crocodile
+🍍|Nanas|Mangga,Pepaya,Jeruk|Pineapple
+🥭|Mangga|Nanas,Pepaya,Jambu|Mango
+🥥|Kelapa|Semangka,Nanas,Labu|Coconut
+🍋|Lemon|Jeruk,Apel,Melon|Lemon
+🍑|Persik|Apel,Jeruk,Mangga|Peach
+🥝|Kiwi|Apel,Anggur,Alpukat|Kiwi
+🥑|Alpukat|Mentimun,Kiwi,Melon|Avocado
+🍆|Terong|Timun,Wortel,Labu|Eggplant
+🥦|Brokoli|Kol,Bayam,Selada|Broccoli
+🌶️|Cabai|Tomat,Paprika,Wortel|Chili
+🧄|Bawang Putih|Bawang Merah,Jahe,Kentang|Garlic
+🧅|Bawang Bombay|Bawang Putih,Kentang,Jahe|Onion
+🍄|Jamur|Kacang,Bunga,Lumut|Mushroom
+🥨|Pretzel|Roti,Kue,Biskuit|Pretzel
+🧀|Keju|Mentega,Roti,Telur|Cheese
+🥞|Pancake|Roti,Wafel,Kue|Pancakes
+🍩|Donat|Kue,Roti,Biskuit|Donut
+🍫|Cokelat|Permen,Kue,Biskuit|Chocolate
+🍿|Popcorn|Jagung,Keripik,Kacang|Popcorn
+🎻|Biola|Gitar,Piano,Seruling|Violin
+🎺|Terompet|Seruling,Drum,Biola|Trumpet
+⚓|Jangkar|Kapal,Tali,Layar|Anchor
+🪁|Layang-layang|Balon,Burung,Parasut|Kite
+🧲|Magnet|Baterai,Besi,Kunci|Magnet
+🔋|Baterai|Lampu,Kabel,Magnet|Battery
+`,true);
+
+defaultQuestions.emoji_extreme=parsePack(`
+🦥|Kungkang|Koala,Panda,Monyet|Sloth
+🦦|Berang-berang|Tupai,Musang,Kucing|Otter
+🦡|Luwak Madu|Berang-berang,Landak,Tikus|Badger
+🦛|Kuda Nil|Badak,Gajah,Sapi|Hippopotamus
+🦏|Badak|Kuda Nil,Gajah,Banteng|Rhinoceros
+🐪|Unta|Kuda,Keledai,Sapi|Camel
+🦙|Llama|Unta,Domba,Rusa|Llama
+🦬|Bison|Sapi,Kerbau,Banteng|Bison
+🦃|Kalkun|Ayam,Bebek,Angsa|Turkey
+🦚|Merak|Kalkun,Angsa,Flamingo|Peacock
+🦂|Kalajengking|Laba-laba,Kepiting,Kumbang|Scorpion
+🕷️|Laba-laba|Kalajengking,Semut,Kumbang|Spider
+🦗|Jangkrik|Belalang,Semut,Lebah|Cricket
+🐜|Semut|Lebah,Kumbang,Lalat|Ant
+🦟|Nyamuk|Lalat,Lebah,Semut|Mosquito
+🐌|Siput|Cacing,Kura-kura,Ulat|Snail
+🦑|Cumi-cumi|Gurita,Ubur-ubur,Ikan|Squid
+🐚|Kerang|Siput,Kepiting,Mutiara|Shell
+🛰️|Satelit|Roket,Pesawat,Bintang|Satellite
+🪐|Planet Saturnus|Bulan,Bintang,Komet|Ringed Planet
+☄️|Komet|Meteor,Bintang,Bulan|Comet
+🌌|Galaksi|Bintang,Awan,Planet|Galaxy
+🧬|DNA|Sel,Virus,Tulang|DNA
+🦠|Kuman|Serangga,Sel,Debu|Germ
+💉|Suntikan|Obat,Pil,Plester|Syringe
+🩺|Stetoskop|Termometer,Jarum,Kaca|Stethoscope
+⚖️|Timbangan Keadilan|Jam,Kompas,Buku|Scales of Justice
+🏛️|Gedung Klasik|Sekolah,Bank,Kastil|Classical Building
+⚙️|Roda Gigi|Mur,Baut,Rantai|Gear
+🔧|Kunci Inggris|Palu,Obeng,Gergaji|Wrench
+🔨|Palu|Kunci Inggris,Obeng,Gergaji|Hammer
+🧯|Alat Pemadam Api|Tabung Gas,Botol,Ember|Fire Extinguisher
+🧺|Keranjang Cucian|Ember,Tas,Kotak|Laundry Basket
+🕯️|Lilin|Lampu,Senter,Api|Candle
+🛏️|Tempat Tidur|Sofa,Meja,Lemari|Bed
+🧸|Boneka Beruang|Mainan,Bantal,Balon|Teddy Bear
+🎭|Topeng Teater|Boneka,Topi,Kostum|Theater Masks
+🎪|Sirkus|Taman,Pasar,Konser|Circus
+🎢|Roller Coaster|Bianglala,Perahu,Kereta|Roller Coaster
+🎡|Bianglala|Roller Coaster,Karusel,Sirkus|Ferris Wheel
+🗿|Patung Batu|Batu,Gunung,Topeng|Stone Statue
+🗽|Patung Liberty|Menara,Gedung,Jembatan|Statue of Liberty
+🗼|Menara|Gedung,Jembatan,Kastil|Tower
+🧳|Koper|Tas,Kotak,Ransel|Suitcase
+🚁|Helikopter|Pesawat,Roket,Balon Udara|Helicopter
+🚜|Traktor|Mobil,Truk,Bus|Tractor
+🏗️|Derek Konstruksi|Traktor,Truk,Kapal|Construction Crane
+🧵|Benang|Tali,Jarum,Kain|Thread
+🧶|Benang Wol|Tali,Kain,Kapas|Yarn
+🎠|Komidi Putar|Bianglala,Roller Coaster,Sirkus|Carousel
+`,true);
+
+
 function normalizeDatabase(){
   const result={};
   Object.keys(defaultQuestions).forEach(level=>{
@@ -583,26 +962,21 @@ function buildQuestionSets(){
   let pool=activeQuestionPacks[gameConfig.packKey]||activeQuestionPacks.medium;
   pool=shuffleArray([...pool]);
 
-  let perPlayer;
-  if(gameConfig.questionCount>0){
-    perPlayer=Math.min(gameConfig.questionCount,Math.floor(pool.length/2));
-  }else{
-    perPlayer=Math.floor(pool.length/2);
+  /* Jumlah soal per tim SELALU dihormati (mis. pilih 15 => tiap tim 15 soal).
+     Soal dibagi tanpa tumpang tindih sebisa mungkin; kalau paket terlalu kecil,
+     sisanya diisi ulang dengan urutan berbeda. "Semua" = seluruh paket dibagi dua. */
+  const want=gameConfig.questionCount>0?gameConfig.questionCount:Math.max(1,Math.floor(pool.length/2));
+  const perPlayer=Math.min(want,pool.length);
+
+  const p1pool=pool.slice(0,perPlayer);
+  const p2pool=pool.slice(perPlayer,perPlayer*2);
+  if(p2pool.length<perPlayer){
+    const filler=shuffleArray(pool.filter(q=>!p2pool.includes(q)));
+    while(p2pool.length<perPlayer && filler.length){ p2pool.push(filler.shift()); }
+    showToast("ℹ️ Paket kecil: sebagian soal dipakai ulang antar tim");
   }
 
-  if(perPlayer<1){
-    /* Pack too small to split into two unique halves — best effort fallback */
-    if(pool.length>0){
-      showToast("⚠️ Paket soal terlalu sedikit untuk dua set berbeda");
-    }
-    const fallback=pool.map(withShuffledOptions);
-    return { p1:fallback, p2:shuffleArray([...fallback]) };
-  }
-
-  const p1pool=shuffleArray(pool.slice(0,perPlayer));
-  const p2pool=shuffleArray(pool.slice(perPlayer,perPlayer*2));
-
-  return { p1:p1pool.map(withShuffledOptions), p2:p2pool.map(withShuffledOptions) };
+  return { p1:shuffleArray(p1pool).map(withShuffledOptions), p2:shuffleArray(p2pool).map(withShuffledOptions) };
 }
 
 function initiateGameSetup(){
@@ -772,10 +1146,16 @@ function renderPlayer(player){
 function renderOptions(player,q){
   const grid=document.getElementById(`${player}-options`);
   grid.innerHTML="";
-  q.shuffledOptions.forEach(option=>{
+  q.shuffledOptions.forEach((option,idx)=>{
     const button=document.createElement("button");
     button.className="answer-btn w-full h-full min-h-[45px] bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 text-white rounded-xl p-1 font-bold text-xs md:text-sm transition flex items-center justify-center text-center";
-    button.innerText=option;
+    const badge=document.createElement("span");
+    badge.className="opt-badge";
+    badge.textContent="ABCD"[idx]||"";
+    const label=document.createElement("span");
+    label.className="px-5 leading-tight";
+    label.textContent=option;
+    button.append(badge,label);
     button.onclick=()=>{ handleAnswer(player,option,q.correct); };
     grid.appendChild(button);
   });
