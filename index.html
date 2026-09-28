@@ -144,6 +144,9 @@ body{
   .opt-badge{width:16px;height:16px;font-size:9px;left:4px;}
   #round-message{font-size:1.25rem !important;}
 }
+/* ===== MULTI-TOUCH ===== */
+#arena,#arena *{touch-action:none;-webkit-tap-highlight-color:transparent;}
+.answer-btn{touch-action:none;}
 </style>
 </head>
 
@@ -699,195 +702,180 @@ Impartial|Tidak Memihak|Berat Sebelah,Curang,Fanatik
 Lethargic|Lesu|Bersemangat,Gesit,Waspada
 `));
 
-/* ---- EMOJI: 4 tingkat, masing-masing 50 soal ---- */
-defaultQuestions.emoji_easy=[...defaultQuestions.emoji, ...parsePack(`
-🐘|Gajah|Badak,Kuda Nil,Jerapah|Elephant
-🐵|Monyet|Gorila,Beruang,Kucing|Monkey
-🐷|Babi|Sapi,Kambing,Domba|Pig
-🐮|Sapi|Kerbau,Kuda,Kambing|Cow
-🐔|Ayam|Bebek,Burung,Angsa|Chicken
-🐟|Ikan|Ular,Kura-kura,Paus|Fish
-🐢|Kura-kura|Katak,Ular,Buaya|Turtle
-🦋|Kupu-kupu|Lebah,Capung,Semut|Butterfly
-🐝|Lebah|Kupu-kupu,Semut,Lalat|Bee
-🍇|Anggur|Apel,Ceri,Melon|Grapes
-🍉|Semangka|Melon,Jeruk,Nanas|Watermelon
-🍓|Stroberi|Apel,Ceri,Anggur|Strawberry
-🥕|Wortel|Jagung,Tomat,Kentang|Carrot
-🌽|Jagung|Wortel,Padi,Kacang|Corn
-🍞|Roti|Kue,Keju,Biskuit|Bread
-🥛|Susu|Air,Teh,Jus|Milk
-☕|Kopi|Teh,Susu,Cokelat|Coffee
-🏠|Rumah|Sekolah,Toko,Kantor|House
-🌳|Pohon|Bunga,Rumput,Gunung|Tree
-🌸|Bunga|Pohon,Daun,Rumput|Flower
-⭐|Bintang|Bulan,Matahari,Awan|Star
-🚌|Bus|Mobil,Kereta,Kapal|Bus
-🚂|Kereta|Bus,Pesawat,Kapal|Train
-⛵|Perahu Layar|Pesawat,Kereta,Mobil|Sailboat
-📱|Ponsel|Komputer,Televisi,Radio|Phone
-`,true)];
+/* ---- EMOJI: 4 tingkat, masing-masing 40 soal, jawaban Bahasa Inggris ---- */
 delete defaultQuestions.emoji;
 
+defaultQuestions.emoji_easy=parsePack(`
+🐶|Dog|Cat,Bird,Lion|Dog
+🐱|Cat|Dog,Rabbit,Cow|Cat
+🍎|Apple|Banana,Orange,Grape|Apple
+🚗|Car|Bike,Plane,Bus|Car
+🚀|Rocket|Car,Ship,Train|Rocket
+🍕|Pizza|Bread,Cake,Burger|Pizza
+⚽|Soccer Ball|Basketball,Volleyball,Tennis Ball|Soccer Ball
+📚|Books|Pencil,Bag,Ruler|Books
+🌧️|Rain|Sun,Cloud,Wind|Rain
+🔥|Fire|Water,Ice,Earth|Fire
+🍌|Banana|Apple,Orange,Pineapple|Banana
+🐸|Frog|Snake,Fish,Turtle|Frog
+🦁|Lion|Tiger,Wolf,Bear|Lion
+✈️|Airplane|Helicopter,Ship,Car|Airplane
+🚲|Bicycle|Motorcycle,Car,Train|Bicycle
+🍦|Ice Cream|Chocolate,Candy,Cake|Ice Cream
+🎸|Guitar|Drum,Piano,Violin|Guitar
+☀️|Sun|Moon,Star,Cloud|Sun
+🌙|Moon|Sun,Star,Cloud|Moon
+🍔|Burger|Pizza,Bread,Fries|Burger
+🏀|Basketball|Soccer Ball,Volleyball,Tennis Ball|Basketball
+🎈|Balloon|Ball,Lamp,Toy|Balloon
+🔑|Key|Door,Lock,House|Key
+⏰|Alarm Clock|Watch,Phone,Calendar|Alarm Clock
+🎁|Gift|Money,Letter,Bag|Gift
+🐘|Elephant|Rhino,Hippo,Giraffe|Elephant
+🐵|Monkey|Gorilla,Bear,Cat|Monkey
+🐷|Pig|Cow,Goat,Sheep|Pig
+🐔|Chicken|Duck,Bird,Goose|Chicken
+🐟|Fish|Snake,Turtle,Whale|Fish
+🐢|Turtle|Frog,Snake,Crocodile|Turtle
+🦋|Butterfly|Bee,Dragonfly,Ant|Butterfly
+🍇|Grapes|Apple,Cherry,Melon|Grapes
+🍉|Watermelon|Melon,Orange,Pineapple|Watermelon
+🥕|Carrot|Corn,Tomato,Potato|Carrot
+🥛|Milk|Water,Tea,Juice|Milk
+☕|Coffee|Tea,Milk,Chocolate|Coffee
+🏠|House|School,Shop,Office|House
+🌳|Tree|Flower,Grass,Mountain|Tree
+🌸|Flower|Tree,Leaf,Grass|Flower
+`,true);
+
 defaultQuestions.emoji_medium=parsePack(`
-🏥|Rumah Sakit|Sekolah,Bank,Pasar|Hospital
-🏫|Sekolah|Rumah Sakit,Toko,Kantor|School
-🏪|Toko|Sekolah,Bank,Pasar|Store
-🏦|Bank|Toko,Sekolah,Pasar|Bank
-⛪|Gereja|Masjid,Sekolah,Rumah|Church
-🕌|Masjid|Gereja,Pura,Sekolah|Mosque
-🏰|Kastil|Rumah,Menara,Penjara|Castle
-🌉|Jembatan|Jalan,Terowongan,Gedung|Bridge
-🏔️|Gunung|Bukit,Pantai,Danau|Mountain
-🌊|Ombak|Sungai,Hujan,Kolam|Wave
-🏝️|Pulau|Pantai,Gunung,Hutan|Island
-🌋|Gunung Berapi|Gunung,Bukit,Pulau|Volcano
-👨‍⚕️|Dokter|Guru,Polisi,Koki|Doctor
-👩‍🏫|Guru|Dokter,Pilot,Petani|Teacher
-👮|Polisi|Tentara,Dokter,Petani|Police Officer
-👨‍🍳|Koki|Petani,Nelayan,Guru|Chef
-👨‍🌾|Petani|Nelayan,Koki,Guru|Farmer
-👩‍🚒|Pemadam Kebakaran|Polisi,Dokter,Tentara|Firefighter
-🧑‍✈️|Pilot|Sopir,Nahkoda,Masinis|Pilot
-🏃|Berlari|Berjalan,Melompat,Berenang|Running
-🏊|Berenang|Menyelam,Berlari,Terbang|Swimming
-🚴|Bersepeda|Berlari,Berjalan,Berkuda|Cycling
-😴|Tidur|Bangun,Makan,Mandi|Sleeping
-😢|Sedih|Senang,Marah,Takut|Sad
-😡|Marah|Senang,Sedih,Bingung|Angry
-😂|Tertawa|Menangis,Tidur,Marah|Laughing
-😱|Terkejut|Senang,Bosan,Sedih|Shocked
-🤒|Sakit|Sehat,Lapar,Senang|Sick
-📖|Membaca|Menulis,Berbicara,Menggambar|Reading
-✏️|Pensil|Pulpen,Penghapus,Penggaris|Pencil
-📏|Penggaris|Pensil,Buku,Gunting|Ruler
-✂️|Gunting|Pisau,Penggaris,Lem|Scissors
-🎨|Palet Cat|Pensil,Buku,Kertas|Paint Palette
-🎤|Mikrofon|Gitar,Radio,Speaker|Microphone
-🎹|Piano|Gitar,Drum,Biola|Piano
-🥁|Drum|Piano,Gitar,Terompet|Drum
-🕐|Jam|Kalender,Kompas,Peta|Clock
-📅|Kalender|Jam,Buku,Surat|Calendar
-💰|Uang|Emas,Kartu,Cek|Money
-🔦|Senter|Lilin,Lampu,Api|Flashlight
-🧹|Sapu|Pel,Sikat,Kain|Broom
-🛒|Troli Belanja|Tas,Kotak,Keranjang Buah|Shopping Cart
-🧭|Kompas|Peta,Jam,Teropong|Compass
-🔭|Teleskop|Kamera,Kacamata,Mikroskop|Telescope
-🔬|Mikroskop|Teleskop,Kamera,Kaca|Microscope
-🌡️|Termometer|Jam,Penggaris,Timbangan|Thermometer
-💊|Pil|Permen,Kancing,Biji|Pill
-🩹|Plester|Perban,Obat,Jarum|Bandage
-🧼|Sabun|Sampo,Handuk,Sikat Gigi|Soap
-🧻|Tisu Toilet|Handuk,Kertas,Kain|Toilet Paper
+🏥|Hospital|School,Bank,Market|Hospital
+🏫|School|Hospital,Store,Office|School
+🏦|Bank|Store,School,Market|Bank
+⛪|Church|Mosque,School,House|Church
+🕌|Mosque|Church,Temple,School|Mosque
+🏰|Castle|House,Tower,Prison|Castle
+🌉|Bridge|Road,Tunnel,Building|Bridge
+🏔️|Mountain|Hill,Beach,Lake|Mountain
+🌊|Wave|River,Rain,Pond|Wave
+🏝️|Island|Beach,Mountain,Forest|Island
+🌋|Volcano|Mountain,Hill,Island|Volcano
+👨‍⚕️|Doctor|Teacher,Police Officer,Chef|Doctor
+👩‍🏫|Teacher|Doctor,Pilot,Farmer|Teacher
+👮|Police Officer|Soldier,Doctor,Farmer|Police Officer
+👨‍🍳|Chef|Farmer,Fisherman,Teacher|Chef
+👨‍🌾|Farmer|Fisherman,Chef,Teacher|Farmer
+👩‍🚒|Firefighter|Police Officer,Doctor,Soldier|Firefighter
+🧑‍✈️|Pilot|Driver,Captain,Engineer|Pilot
+🏃|Running|Walking,Jumping,Swimming|Running
+🏊|Swimming|Diving,Running,Flying|Swimming
+🚴|Cycling|Running,Walking,Riding a Horse|Cycling
+😴|Sleeping|Waking Up,Eating,Bathing|Sleeping
+😢|Sad|Happy,Angry,Scared|Sad
+😡|Angry|Happy,Sad,Confused|Angry
+😂|Laughing|Crying,Sleeping,Angry|Laughing
+😱|Shocked|Happy,Bored,Sad|Shocked
+🤒|Sick|Healthy,Hungry,Happy|Sick
+📖|Reading|Writing,Speaking,Drawing|Reading
+✏️|Pencil|Pen,Eraser,Ruler|Pencil
+📏|Ruler|Pencil,Book,Scissors|Ruler
+✂️|Scissors|Knife,Ruler,Glue|Scissors
+🎤|Microphone|Guitar,Radio,Speaker|Microphone
+🎹|Piano|Guitar,Drum,Violin|Piano
+🥁|Drum|Piano,Guitar,Trumpet|Drum
+🕐|Clock|Calendar,Compass,Map|Clock
+📅|Calendar|Clock,Book,Letter|Calendar
+🔦|Flashlight|Candle,Lamp,Fire|Flashlight
+🧹|Broom|Mop,Brush,Cloth|Broom
+🧭|Compass|Map,Clock,Telescope|Compass
+🔬|Microscope|Telescope,Camera,Glass|Microscope
 `,true);
 
 defaultQuestions.emoji_hard=parsePack(`
-🦉|Burung Hantu|Elang,Merpati,Kelelawar|Owl
-🦊|Rubah|Serigala,Anjing,Kucing|Fox
-🐺|Serigala|Rubah,Anjing,Beruang|Wolf
-🦌|Rusa|Kambing,Kuda,Sapi|Deer
-🦓|Zebra|Kuda,Keledai,Jerapah|Zebra
-🦒|Jerapah|Unta,Zebra,Rusa|Giraffe
-🦘|Kanguru|Koala,Tupai,Kelinci|Kangaroo
-🐨|Koala|Panda,Kanguru,Beruang|Koala
-🐼|Panda|Koala,Beruang,Kucing|Panda
-🦔|Landak|Tikus,Kelinci,Musang|Hedgehog
-🦇|Kelelawar|Burung,Tikus,Lebah|Bat
-🐙|Gurita|Cumi-cumi,Ubur-ubur,Kepiting|Octopus
-🦀|Kepiting|Udang,Lobster,Kerang|Crab
-🦐|Udang|Kepiting,Ikan,Cumi-cumi|Shrimp
-🐬|Lumba-lumba|Hiu,Paus,Ikan|Dolphin
-🦈|Hiu|Lumba-lumba,Paus,Pari|Shark
-🐳|Paus|Hiu,Lumba-lumba,Gurita|Whale
-🦅|Elang|Burung Hantu,Merpati,Bebek|Eagle
-🦜|Burung Beo|Elang,Merpati,Bangau|Parrot
-🐧|Penguin|Bebek,Angsa,Camar|Penguin
-🦢|Angsa|Bebek,Bangau,Merpati|Swan
-🦩|Flamingo|Bangau,Angsa,Merak|Flamingo
-🐍|Ular|Cacing,Belut,Kadal|Snake
-🦎|Kadal|Ular,Buaya,Katak|Lizard
-🐊|Buaya|Kadal,Ular,Kura-kura|Crocodile
-🍍|Nanas|Mangga,Pepaya,Jeruk|Pineapple
-🥭|Mangga|Nanas,Pepaya,Jambu|Mango
-🥥|Kelapa|Semangka,Nanas,Labu|Coconut
-🍋|Lemon|Jeruk,Apel,Melon|Lemon
-🍑|Persik|Apel,Jeruk,Mangga|Peach
-🥝|Kiwi|Apel,Anggur,Alpukat|Kiwi
-🥑|Alpukat|Mentimun,Kiwi,Melon|Avocado
-🍆|Terong|Timun,Wortel,Labu|Eggplant
-🥦|Brokoli|Kol,Bayam,Selada|Broccoli
-🌶️|Cabai|Tomat,Paprika,Wortel|Chili
-🧄|Bawang Putih|Bawang Merah,Jahe,Kentang|Garlic
-🧅|Bawang Bombay|Bawang Putih,Kentang,Jahe|Onion
-🍄|Jamur|Kacang,Bunga,Lumut|Mushroom
-🥨|Pretzel|Roti,Kue,Biskuit|Pretzel
-🧀|Keju|Mentega,Roti,Telur|Cheese
-🥞|Pancake|Roti,Wafel,Kue|Pancakes
-🍩|Donat|Kue,Roti,Biskuit|Donut
-🍫|Cokelat|Permen,Kue,Biskuit|Chocolate
-🍿|Popcorn|Jagung,Keripik,Kacang|Popcorn
-🎻|Biola|Gitar,Piano,Seruling|Violin
-🎺|Terompet|Seruling,Drum,Biola|Trumpet
-⚓|Jangkar|Kapal,Tali,Layar|Anchor
-🪁|Layang-layang|Balon,Burung,Parasut|Kite
-🧲|Magnet|Baterai,Besi,Kunci|Magnet
-🔋|Baterai|Lampu,Kabel,Magnet|Battery
+🦉|Owl|Eagle,Pigeon,Bat|Owl
+🦊|Fox|Wolf,Dog,Cat|Fox
+🐺|Wolf|Fox,Dog,Bear|Wolf
+🦌|Deer|Goat,Horse,Cow|Deer
+🦓|Zebra|Horse,Donkey,Giraffe|Zebra
+🦒|Giraffe|Camel,Zebra,Deer|Giraffe
+🦘|Kangaroo|Koala,Squirrel,Rabbit|Kangaroo
+🐨|Koala|Panda,Kangaroo,Bear|Koala
+🐼|Panda|Koala,Bear,Cat|Panda
+🦔|Hedgehog|Mouse,Rabbit,Squirrel|Hedgehog
+🦇|Bat|Bird,Mouse,Bee|Bat
+🐙|Octopus|Squid,Jellyfish,Crab|Octopus
+🦀|Crab|Shrimp,Lobster,Shell|Crab
+🦐|Shrimp|Crab,Fish,Squid|Shrimp
+🐬|Dolphin|Shark,Whale,Fish|Dolphin
+🦈|Shark|Dolphin,Whale,Ray|Shark
+🐳|Whale|Shark,Dolphin,Octopus|Whale
+🦅|Eagle|Owl,Pigeon,Duck|Eagle
+🦜|Parrot|Eagle,Pigeon,Crane|Parrot
+🐧|Penguin|Duck,Swan,Seagull|Penguin
+🦢|Swan|Duck,Crane,Pigeon|Swan
+🐍|Snake|Worm,Eel,Lizard|Snake
+🐊|Crocodile|Lizard,Snake,Turtle|Crocodile
+🍍|Pineapple|Mango,Papaya,Orange|Pineapple
+🥭|Mango|Pineapple,Papaya,Guava|Mango
+🥥|Coconut|Watermelon,Pineapple,Pumpkin|Coconut
+🍋|Lemon|Orange,Apple,Melon|Lemon
+🥑|Avocado|Cucumber,Kiwi,Melon|Avocado
+🍆|Eggplant|Cucumber,Carrot,Pumpkin|Eggplant
+🥦|Broccoli|Cabbage,Spinach,Lettuce|Broccoli
+🌶️|Chili|Tomato,Carrot,Radish|Chili
+🧄|Garlic|Ginger,Potato,Onion|Garlic
+🍄|Mushroom|Nut,Flower,Moss|Mushroom
+🧀|Cheese|Butter,Bread,Egg|Cheese
+🍩|Donut|Cake,Bread,Cookie|Donut
+🍫|Chocolate|Candy,Cake,Cookie|Chocolate
+🎻|Violin|Guitar,Piano,Flute|Violin
+🎺|Trumpet|Flute,Drum,Violin|Trumpet
+⚓|Anchor|Ship,Rope,Sail|Anchor
+🔋|Battery|Lamp,Cable,Magnet|Battery
 `,true);
 
 defaultQuestions.emoji_extreme=parsePack(`
-🦥|Kungkang|Koala,Panda,Monyet|Sloth
-🦦|Berang-berang|Tupai,Musang,Kucing|Otter
-🦡|Luwak Madu|Berang-berang,Landak,Tikus|Badger
-🦛|Kuda Nil|Badak,Gajah,Sapi|Hippopotamus
-🦏|Badak|Kuda Nil,Gajah,Banteng|Rhinoceros
-🐪|Unta|Kuda,Keledai,Sapi|Camel
-🦙|Llama|Unta,Domba,Rusa|Llama
-🦬|Bison|Sapi,Kerbau,Banteng|Bison
-🦃|Kalkun|Ayam,Bebek,Angsa|Turkey
-🦚|Merak|Kalkun,Angsa,Flamingo|Peacock
-🦂|Kalajengking|Laba-laba,Kepiting,Kumbang|Scorpion
-🕷️|Laba-laba|Kalajengking,Semut,Kumbang|Spider
-🦗|Jangkrik|Belalang,Semut,Lebah|Cricket
-🐜|Semut|Lebah,Kumbang,Lalat|Ant
-🦟|Nyamuk|Lalat,Lebah,Semut|Mosquito
-🐌|Siput|Cacing,Kura-kura,Ulat|Snail
-🦑|Cumi-cumi|Gurita,Ubur-ubur,Ikan|Squid
-🐚|Kerang|Siput,Kepiting,Mutiara|Shell
-🛰️|Satelit|Roket,Pesawat,Bintang|Satellite
-🪐|Planet Saturnus|Bulan,Bintang,Komet|Ringed Planet
-☄️|Komet|Meteor,Bintang,Bulan|Comet
-🌌|Galaksi|Bintang,Awan,Planet|Galaxy
-🧬|DNA|Sel,Virus,Tulang|DNA
-🦠|Kuman|Serangga,Sel,Debu|Germ
-💉|Suntikan|Obat,Pil,Plester|Syringe
-🩺|Stetoskop|Termometer,Jarum,Kaca|Stethoscope
-⚖️|Timbangan Keadilan|Jam,Kompas,Buku|Scales of Justice
-🏛️|Gedung Klasik|Sekolah,Bank,Kastil|Classical Building
-⚙️|Roda Gigi|Mur,Baut,Rantai|Gear
-🔧|Kunci Inggris|Palu,Obeng,Gergaji|Wrench
-🔨|Palu|Kunci Inggris,Obeng,Gergaji|Hammer
-🧯|Alat Pemadam Api|Tabung Gas,Botol,Ember|Fire Extinguisher
-🧺|Keranjang Cucian|Ember,Tas,Kotak|Laundry Basket
-🕯️|Lilin|Lampu,Senter,Api|Candle
-🛏️|Tempat Tidur|Sofa,Meja,Lemari|Bed
-🧸|Boneka Beruang|Mainan,Bantal,Balon|Teddy Bear
-🎭|Topeng Teater|Boneka,Topi,Kostum|Theater Masks
-🎪|Sirkus|Taman,Pasar,Konser|Circus
-🎢|Roller Coaster|Bianglala,Perahu,Kereta|Roller Coaster
-🎡|Bianglala|Roller Coaster,Karusel,Sirkus|Ferris Wheel
-🗿|Patung Batu|Batu,Gunung,Topeng|Stone Statue
-🗽|Patung Liberty|Menara,Gedung,Jembatan|Statue of Liberty
-🗼|Menara|Gedung,Jembatan,Kastil|Tower
-🧳|Koper|Tas,Kotak,Ransel|Suitcase
-🚁|Helikopter|Pesawat,Roket,Balon Udara|Helicopter
-🚜|Traktor|Mobil,Truk,Bus|Tractor
-🏗️|Derek Konstruksi|Traktor,Truk,Kapal|Construction Crane
-🧵|Benang|Tali,Jarum,Kain|Thread
-🧶|Benang Wol|Tali,Kain,Kapas|Yarn
-🎠|Komidi Putar|Bianglala,Roller Coaster,Sirkus|Carousel
+🦥|Sloth|Koala,Panda,Monkey|Sloth
+🦦|Otter|Squirrel,Weasel,Cat|Otter
+🦛|Hippopotamus|Rhinoceros,Elephant,Cow|Hippopotamus
+🦏|Rhinoceros|Hippopotamus,Elephant,Bull|Rhinoceros
+🐪|Camel|Horse,Donkey,Cow|Camel
+🦙|Llama|Camel,Sheep,Deer|Llama
+🦬|Bison|Cow,Horse,Goat|Bison
+🦃|Turkey|Chicken,Duck,Goose|Turkey
+🦚|Peacock|Turkey,Swan,Flamingo|Peacock
+🦂|Scorpion|Spider,Crab,Beetle|Scorpion
+🕷️|Spider|Scorpion,Ant,Beetle|Spider
+🦗|Cricket|Bee,Ant,Fly|Cricket
+🐜|Ant|Bee,Beetle,Fly|Ant
+🦟|Mosquito|Fly,Bee,Ant|Mosquito
+🐌|Snail|Worm,Turtle,Caterpillar|Snail
+🦑|Squid|Octopus,Jellyfish,Fish|Squid
+🐚|Shell|Snail,Crab,Pearl|Shell
+🛰️|Satellite|Rocket,Airplane,Star|Satellite
+🪐|Ringed Planet|Moon,Star,Comet|Ringed Planet
+☄️|Comet|Star,Moon,Planet|Comet
+🌌|Galaxy|Star,Cloud,Planet|Galaxy
+🧬|DNA|Cell,Virus,Bone|DNA
+🦠|Germ|Insect,Cell,Dust|Germ
+💉|Syringe|Medicine,Pill,Bandage|Syringe
+🩺|Stethoscope|Thermometer,Needle,Mirror|Stethoscope
+⚖️|Scales|Clock,Compass,Book|Scales
+⚙️|Gear|Nut,Bolt,Chain|Gear
+🔧|Wrench|Hammer,Screwdriver,Saw|Wrench
+🔨|Hammer|Wrench,Screwdriver,Saw|Hammer
+🧯|Fire Extinguisher|Gas Tank,Bottle,Bucket|Fire Extinguisher
+🕯️|Candle|Lamp,Flashlight,Fire|Candle
+🧸|Teddy Bear|Toy Car,Pillow,Balloon|Teddy Bear
+🎭|Theater Masks|Doll,Hat,Costume|Theater Masks
+🎪|Circus|Park,Market,Concert|Circus
+🎢|Roller Coaster|Ferris Wheel,Boat,Train|Roller Coaster
+🎡|Ferris Wheel|Roller Coaster,Carousel,Circus|Ferris Wheel
+🗽|Statue of Liberty|Tower,Building,Bridge|Statue of Liberty
+🗼|Tower|Building,Bridge,Castle|Tower
+🧳|Suitcase|Bag,Box,Backpack|Suitcase
+🚁|Helicopter|Airplane,Rocket,Hot Air Balloon|Helicopter
 `,true);
-
 
 function normalizeDatabase(){
   const result={};
@@ -1156,7 +1144,17 @@ function renderOptions(player,q){
     label.className="px-5 leading-tight";
     label.textContent=option;
     button.append(badge,label);
-    button.onclick=()=>{ handleAnswer(player,option,q.correct); };
+    /* Multi-touch: pakai pointerdown (bukan click) supaya dua jari di dua sisi layar
+       bisa menjawab BERSAMAAN tanpa saling membatalkan. click hanya untuk keyboard. */
+    button.addEventListener("pointerdown",(e)=>{
+      if(e.button!==undefined && e.button>0)return;
+      e.preventDefault();
+      if(button.disabled)return;
+      handleAnswer(player,option,q.correct);
+    });
+    button.addEventListener("click",(e)=>{
+      if(e.detail===0){ handleAnswer(player,option,q.correct); }
+    });
     grid.appendChild(button);
   });
 }
