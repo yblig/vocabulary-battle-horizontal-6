@@ -149,6 +149,85 @@ body{
 .answer-btn{touch-action:none;}
 /* hidden selalu menang atas flex/grid */
 .hidden{display:none !important;}
+/* ===== UI REFRESH 2 ===== */
+body::before{
+  content:"";position:fixed;inset:-20%;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(420px 420px at 15% 20%,rgba(239,68,68,.14),transparent 70%),
+    radial-gradient(480px 480px at 85% 75%,rgba(59,130,246,.16),transparent 70%),
+    radial-gradient(360px 360px at 60% 10%,rgba(168,85,247,.10),transparent 70%);
+  animation:drift 18s ease-in-out infinite alternate;
+}
+@keyframes drift{from{transform:translate3d(-2%,-1%,0) scale(1)}to{transform:translate3d(2%,2%,0) scale(1.08)}}
+#main-menu,#arena{position:relative;z-index:1;}
+#main-menu{position:fixed;}
+
+/* menu */
+#main-menu label.text-xs{color:#a5b4fc !important;letter-spacing:.08em;}
+.mode-btn,.qcount-btn,.timer-btn{transition:transform .12s,box-shadow .12s,border-color .12s;}
+.mode-btn:hover,.qcount-btn:hover,.timer-btn:hover{transform:translateY(-1px);}
+.mode-btn:active,.qcount-btn:active,.timer-btn:active{transform:scale(.96);}
+.qcount-btn.border-2,.timer-btn.border-2{box-shadow:0 0 16px rgba(99,102,241,.45);}
+#main-menu button[onclick="initiateGameSetup()"]{
+  font-size:1.1rem;letter-spacing:.08em;padding:.9rem;
+  box-shadow:0 8px 26px -6px rgba(16,185,129,.7),inset 0 1px 0 rgba(255,255,255,.25);
+  transition:transform .12s,filter .12s;
+}
+#main-menu button[onclick="initiateGameSetup()"]:hover{filter:brightness(1.1);transform:translateY(-1px);}
+#main-menu button[onclick="initiateGameSetup()"]:active{transform:scale(.98);}
+#main-menu select,#main-menu input[type=text],#main-menu input:not([type=checkbox]){
+  transition:border-color .15s,box-shadow .15s;
+}
+#main-menu select:focus,#main-menu input:focus{outline:none;border-color:#818cf8 !important;box-shadow:0 0 0 3px rgba(129,140,248,.25);}
+
+/* arena: kotak soal */
+#p1-card > div.flex-1,#p2-card > div.flex-1{
+  position:relative;padding:22px 8px 8px;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.35);
+}
+#p1-sub,#p2-sub{position:absolute;top:6px;left:0;right:0;text-align:center;font-size:9px;opacity:.8;}
+.question-text{margin:0;line-height:1.1;}
+.q-actions button{transition:transform .1s,filter .1s;}
+.q-actions button:active{transform:scale(.93);filter:brightness(1.2);}
+
+/* tombol jawaban: badge di pojok kiri-atas, teks di tengah, tidak tertimpa */
+.answer-btn{padding:14px 6px 6px !important;}
+.opt-badge{top:5px !important;left:5px !important;transform:none !important;width:17px !important;height:17px !important;font-size:10px !important;border-radius:6px !important;}
+.answer-label{
+  display:block;width:100%;text-align:center;line-height:1.15;
+  font-size:clamp(.72rem,2.6vw,1rem);word-break:normal;overflow-wrap:break-word;hyphens:manual;padding:0 1px;
+}
+
+/* skor bawah */
+#arena > div:last-child{
+  background:rgba(15,23,42,.8) !important;backdrop-filter:blur(8px);
+  border:1px solid rgba(148,163,184,.2) !important;
+}
+#p1-score,#p2-score{font-size:1.25rem;font-family:'Teko',sans-serif;letter-spacing:.05em;}
+
+/* HP landscape (layar pendek): padat tapi tetap terbaca */
+@media (orientation:landscape) and (max-height:520px){
+  #arena{padding:4px !important;}
+  #arena > div:first-child{padding:2px 10px !important;margin-bottom:4px !important;}
+  #round-message{font-size:1.2rem !important;}
+  #p1-card,#p2-card{padding:6px !important;border-radius:14px !important;}
+  #p1-card > div.flex-1,#p2-card > div.flex-1{padding-top:16px;margin-top:4px !important;}
+  .question-text{font-size:clamp(1.3rem,8vh,2.2rem) !important;}
+  .q-actions{margin-top:4px !important;}
+  .q-actions button{padding:1px 10px !important;font-size:9px !important;}
+  #p1-hint,#p2-hint{font-size:9px !important;margin-top:2px !important;}
+  #p1-options,#p2-options{height:46% !important;margin-top:4px !important;gap:5px !important;}
+  .answer-btn{min-height:34px !important;font-size:.8rem !important;}
+  .answer-label{font-size:clamp(.7rem,3.2vh,.95rem);}
+  #arena > div:last-child{margin-top:4px !important;padding:2px 8px !important;}
+}
+/* HP portrait */
+@media (orientation:portrait) and (max-width:520px){
+  .answer-label{font-size:clamp(.6rem,3vw,.78rem);}
+  #p1-options,#p2-options{height:46% !important;grid-auto-rows:1fr;}
+  .q-actions{gap:4px !important;}
+  .q-actions button{white-space:nowrap;padding:3px 7px !important;font-size:9px !important;}
+}
 </style>
 </head>
 
@@ -165,9 +244,9 @@ body{
 <p class="text-xs text-slate-400">Ultimate Classroom Edition</p>
 </div>
 <div class="flex flex-col gap-1">
-<button onclick="toggleAudioMute()" id="audio-toggle-btn" class="text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2"><i id="audio-icon" class="fa-solid fa-volume-high text-indigo-400"></i></button>
-<button onclick="toggleBigText()" id="bigtext-btn" class="text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2"><i class="fa-solid fa-text-height text-indigo-400"></i></button>
-<button onclick="toggleFullscreen()" id="menu-fullscreen-btn" class="text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2"><i class="fa-solid fa-expand text-indigo-400"></i></button>
+<button onclick="toggleAudioMute()" id="audio-toggle-btn" class="text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2"><span id="audio-icon">🔊</span></button>
+<button onclick="toggleBigText()" id="bigtext-btn" class="text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2"><span>🔠</span></button>
+<button onclick="toggleFullscreen()" id="menu-fullscreen-btn" class="text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2"><span>⛶</span></button>
 </div>
 </div>
 
@@ -239,7 +318,7 @@ body{
 </div>
 
 <div class="flex gap-2 mt-2">
-<button onclick="initiateGameSetup()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-3 font-bold shadow-lg"><i class="fa-solid fa-play"></i> MULAI ARENA</button>
+<button onclick="initiateGameSetup()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-3 font-bold shadow-lg">▶ MULAI ARENA</button>
 </div>
 
 </div>
@@ -253,8 +332,8 @@ body{
 <div class="text-xs whitespace-nowrap"><span class="text-slate-400">Soal:</span> <strong id="global-question-info">1</strong></div>
 <div id="round-message" class="font-teko text-xl text-yellow-400">READY</div>
 <div class="flex gap-1.5">
-<button onclick="togglePause()" id="pause-btn" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg px-3 py-2"><i class="fa-solid fa-pause"></i></button>
-<button onclick="toggleFullscreen()" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg px-3 py-2"><i class="fa-solid fa-expand"></i></button>
+<button onclick="togglePause()" id="pause-btn" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg px-3 py-2">⏸</button>
+<button onclick="toggleFullscreen()" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg px-3 py-2">⛶</button>
 <button onclick="confirmExitGame()" class="text-xs bg-red-900/40 hover:bg-red-700 border border-red-700 rounded-lg px-3 py-2"><i class="fa-solid fa-door-open"></i> Keluar</button>
 </div>
 </div>
@@ -274,8 +353,10 @@ body{
 <div class="flex-1 min-h-0 mt-2 bg-red-950/30 border border-red-500/30 rounded-xl flex flex-col items-center justify-center relative">
 <span id="p1-sub" class="text-[9px] uppercase tracking-widest text-red-300">Bahasa Inggris</span>
 <h2 id="p1-question" class="question-text text-3xl font-bold text-white text-center px-2 break-words">...</h2>
-<button onclick="speakWord('p1')" class="mt-2 bg-red-900/70 border border-red-500/50 rounded-full px-3 py-1 text-[9px] text-red-300"><i class="fa-solid fa-volume-high"></i> LISTEN</button>
-<button id="p1-hint-btn" onclick="useHint('p1')" class="mt-2 bg-amber-900/60 border border-amber-500/50 rounded-full px-3 py-1 text-[9px] text-amber-300">💡 HINT</button>
+<div class="q-actions flex flex-row items-center justify-center gap-2 mt-2">
+<button data-tap="speakWord('p1')" class="bg-red-900/70 border border-red-500/50 rounded-full px-3 py-1 text-[10px] text-red-300">🔊 LISTEN</button>
+<button id="p1-hint-btn" data-tap="useHint('p1')" class="bg-amber-900/60 border border-amber-500/50 rounded-full px-3 py-1 text-[10px] text-amber-300">💡 HINT</button>
+</div>
 <div id="p1-hint" class="hidden text-[10px] text-yellow-300 mt-2 text-center px-2"></div>
 </div>
 <div id="p1-options" class="grid grid-cols-2 gap-1.5 h-[42%] mt-2"></div>
@@ -294,8 +375,10 @@ body{
 <div class="flex-1 min-h-0 mt-2 bg-blue-950/30 border border-blue-500/30 rounded-xl flex flex-col items-center justify-center relative">
 <span id="p2-sub" class="text-[9px] uppercase tracking-widest text-blue-300">Bahasa Inggris</span>
 <h2 id="p2-question" class="question-text text-3xl font-bold text-white text-center px-2 break-words">...</h2>
-<button onclick="speakWord('p2')" class="mt-2 bg-blue-900/70 border border-blue-500/50 rounded-full px-3 py-1 text-[9px] text-blue-300"><i class="fa-solid fa-volume-high"></i> LISTEN</button>
-<button id="p2-hint-btn" onclick="useHint('p2')" class="mt-2 bg-amber-900/60 border border-amber-500/50 rounded-full px-3 py-1 text-[9px] text-amber-300">💡 HINT</button>
+<div class="q-actions flex flex-row items-center justify-center gap-2 mt-2">
+<button data-tap="speakWord('p2')" class="bg-blue-900/70 border border-blue-500/50 rounded-full px-3 py-1 text-[10px] text-blue-300">🔊 LISTEN</button>
+<button id="p2-hint-btn" data-tap="useHint('p2')" class="bg-amber-900/60 border border-amber-500/50 rounded-full px-3 py-1 text-[10px] text-amber-300">💡 HINT</button>
+</div>
 <div id="p2-hint" class="hidden text-[10px] text-yellow-300 mt-2 text-center px-2"></div>
 </div>
 <div id="p2-options" class="grid grid-cols-2 gap-1.5 h-[42%] mt-2"></div>
@@ -474,7 +557,7 @@ const audioCtx=new(window.AudioContext||window.webkitAudioContext)();
 
 function toggleAudioMute(){
   isMuted=!isMuted;
-  document.getElementById("audio-icon").className=isMuted?"fa-solid fa-volume-xmark text-red-400":"fa-solid fa-volume-high text-indigo-400";
+  document.getElementById("audio-icon").textContent=isMuted?"🔇":"🔊";
 }
 
 function toggleBigText(){
@@ -580,10 +663,10 @@ function vibrate(pattern){
 /* ===== SFX kustom =====
    Taruh 4 file mp3 ini di folder yang SAMA dengan file HTML ini (nama harus persis): */
 const SFX_FILES={
-  wrong:"incorrect-buzzer-noise.mp3",
-  timeout:"old-clock-ringing-short.mp3",
-  click:"minecraft_click.mp3",
-  correct:"duolingo-correct-sound-effect.mp3"
+  wrong:"wrong.mp3",
+  timeout:"timeup.mp3",
+  click:"click.mp3",
+  correct:"right.mp3"
 };
 const SFX_MAX_SECONDS={ timeout:2.5 };          /* suara jam dipotong biar tidak kepanjangan */
 const SFX_GAIN={ wrong:1.7, timeout:1.9, click:6, correct:2.8 };
@@ -651,6 +734,23 @@ document.addEventListener("pointerdown",(e)=>{
     if(!btn || btn.classList.contains("answer-btn") || btn.disabled)return;
     playSound("click");
   }catch(err){}
+},true);
+
+
+/* Tombol LISTEN/HINT juga multi-touch: pakai pointerdown, bukan click */
+function runTapAction(spec){
+  const m=/^(\w+)\((?:'([^']*)')?\)$/.exec(spec||"");
+  if(m && typeof window[m[1]]==="function"){ window[m[1]](m[2]); }
+}
+document.addEventListener("pointerdown",(e)=>{
+  const t=e.target.closest && e.target.closest("[data-tap]");
+  if(!t || t.disabled)return;
+  e.preventDefault();
+  runTapAction(t.getAttribute("data-tap"));
+},true);
+document.addEventListener("click",(e)=>{
+  const t=e.target.closest && e.target.closest("[data-tap]");
+  if(t && e.detail===0 && !t.disabled){ runTapAction(t.getAttribute("data-tap")); }
 },true);
 
 function playSound(type){
@@ -1189,7 +1289,7 @@ function togglePause(){
   if(!matchState.started||matchState.ended)return;
   matchState.paused=!matchState.paused;
   document.getElementById("pause-overlay").classList.toggle("hidden",!matchState.paused);
-  document.getElementById("pause-btn").innerHTML=matchState.paused?'<i class="fa-solid fa-play"></i>':'<i class="fa-solid fa-pause"></i>';
+  document.getElementById("pause-btn").innerHTML=matchState.paused?'▶️':'⏸';
 }
 
 /* ================= RENDER PLAYER ================= */
@@ -1243,7 +1343,7 @@ function renderOptions(player,q){
     badge.className="opt-badge";
     badge.textContent="ABCD"[idx]||"";
     const label=document.createElement("span");
-    label.className="px-5 leading-tight";
+    label.className="answer-label";
     label.textContent=option;
     button.append(badge,label);
     /* Multi-touch: pakai pointerdown (bukan click) supaya dua jari di dua sisi layar
